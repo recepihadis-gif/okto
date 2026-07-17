@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKTO — Post Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0e18;--card:#121a2c;--line:#22304d;--text:#eef2fb;--mut:#8b95ab;
+    --vio:#7c6cff;--cyan:#38d4c3;--gold:#f5b942;--green:#31c979;--red:#ff6b6b;--rose:#e1508d}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:18px}
+  .disp{font-family:'Space Grotesk',sans-serif}
+
+  .top{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:560px;margin-bottom:10px}
+  .top b{font-family:'Space Grotesk',sans-serif;font-size:1rem}
+  .top b span{color:var(--cyan)}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid var(--line);color:var(--mut);padding:5px 11px;
+    border-radius:8px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .lang button.active{background:var(--vio);border-color:var(--vio);color:#fff}
+
+  .hint{font-size:.78rem;color:var(--mut);text-align:center;max-width:520px;margin-bottom:16px;line-height:1.5}
+  .hint b{color:var(--gold)}
+
+  /* THE POST CARD — square 1:1 */
+  .stage{width:100%;max-width:540px}
+  .post{aspect-ratio:1/1;border-radius:6px;position:relative;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:center;padding:8%;
+    background:radial-gradient(120% 90% at 85% -10%,rgba(124,108,255,.35),transparent 55%),
+      radial-gradient(100% 80% at -10% 110%,rgba(56,212,195,.22),transparent 55%),#0b1020}
+  .post .brand{position:absolute;top:5.5%;left:8%;display:flex;align-items:center;gap:8px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(.8rem,3vw,1.05rem);letter-spacing:.04em}
+  .post .brand .oct{font-size:1.2em}
+  .post .handle{position:absolute;bottom:5.5%;left:8%;font-size:clamp(.6rem,2.2vw,.78rem);color:var(--mut);font-weight:600}
+  .post .num{position:absolute;top:5.5%;right:8%;font-family:'Space Grotesk',sans-serif;color:var(--mut);
+    font-size:clamp(.6rem,2.2vw,.78rem);letter-spacing:.2em}
+  .post .kick{font-size:clamp(.62rem,2.4vw,.82rem);letter-spacing:.3em;text-transform:uppercase;
+    font-weight:700;margin-bottom:4%}
+  .post h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.5rem,6.6vw,2.5rem);
+    line-height:1.12;letter-spacing:-.01em;margin-bottom:4%}
+  .post .sub{color:#b9c2d8;font-size:clamp(.78rem,3vw,1.02rem);line-height:1.55;max-width:92%}
+  .post .cta{margin-top:6%;display:inline-flex;align-self:flex-start;background:#fff;color:#0b1020;
+    font-weight:800;font-size:clamp(.7rem,2.6vw,.9rem);padding:.9em 1.8em;border-radius:99px}
+  .post .rows{margin-top:4%;display:flex;flex-direction:column;gap:2.5%}
+  .post .row{display:flex;gap:10px;align-items:flex-start;font-size:clamp(.74rem,2.8vw,.95rem);color:#cdd5e8;line-height:1.45}
+  .post .row b{color:#fff}
+  .post .row .x{font-weight:900}
+
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5%}
+  .vsbox{border-radius:14px;padding:6% 5%;border:2px solid}
+  .vsbox.bad{border-color:rgba(255,107,107,.55);background:rgba(255,107,107,.08)}
+  .vsbox.good{border-color:rgba(49,201,121,.55);background:rgba(49,201,121,.08)}
+  .vsbox .em{font-size:clamp(1.1rem,4vw,1.5rem)}
+  .vsbox .money{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.3rem,5.6vw,2.1rem);margin:2% 0}
+  .vsbox.bad .money{color:var(--red)} .vsbox.good .money{color:var(--green)}
+  .vsbox p{font-size:clamp(.62rem,2.3vw,.8rem);color:#cdd5e8;line-height:1.4}
+
+  .bigmoney{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.4rem,11vw,4.2rem);
+    line-height:1;margin:3% 0}
+
+  /* controls + caption */
+  .nav{display:flex;gap:10px;align-items:center;justify-content:center;margin:16px 0 10px}
+  .nav button{background:var(--card);border:1px solid var(--line);color:var(--text);width:44px;height:44px;
+    border-radius:50%;font-size:1.1rem;cursor:pointer}
+  .nav .cnt{font-size:.8rem;color:var(--mut);min-width:64px;text-align:center;font-weight:700}
+  .cap{width:100%;max-width:540px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .cap .cl{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between}
+  .cap p{font-size:.82rem;color:#c6cee2;line-height:1.6;white-space:pre-line}
+  .copybtn{background:none;border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:3px 10px;
+    font-size:.64rem;font-weight:700;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <b>🐙 OKTO <span>Post Studio</span></b>
+  <div class="lang">
+    <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+  </div>
+</div>
+<p class="hint" id="hint"><b>How to use:</b> open this page on your phone → pick language → screenshot each card → post with the caption below it. 9 cards = 9 posts.</p>
+
+<div class="stage"><div class="post" id="post"></div></div>
+
+<div class="nav">
+  <button onclick="go(-1)">←</button>
+  <span class="cnt" id="cnt">1 / 9</span>
+  <button onclick="go(1)">→</button>
+</div>
+
+<div class="cap">
+  <div class="cl"><span id="cl">CAPTION — copy this</span><button class="copybtn" onclick="copyCap()" id="cpb">COPY</button></div>
+  <p id="cap"></p>
+</div>
+
+<script>
+const T={
+en:{hint:'<b>How to use:</b> open this page on your phone → pick language → screenshot each card → post with the caption below it. 9 cards = 9 posts.',
+ cl:'CAPTION — copy this', copy:'COPY', copied:'COPIED ✓',
+ cards:[
+ {kick:'WEBSITES · SYSTEMS · AUTOMATION',kc:'var(--cyan)',h:'Eight arms<br>for your business.',
+  sub:'Websites, online bookings, automatic replies — systems that work while you sleep. In 3 languages.',
+  cta:'OKTO — nice to meet you 🐙',
+  cap:'One brain. Eight arms. 🐙\nOKTO builds websites and systems that answer your customers, take bookings and collect reviews — automatically, in 3 languages, day and night.\n\nLive demos → link in bio\nDM "EXAMPLE" for a free preview of YOUR business.'},
+ {kick:"IT'S 21:03",kc:'var(--gold)',h:'A customer<br>just wrote to you.',
+  sub:'You are asleep. He wants to pay. Who answers him — you, or your competitor?',
+  cta:'Watch the story → link in bio',
+  cap:"It's 21:03. Your business is closed. A customer writes: \"Do you have a table for tomorrow?\"\n\nWithout a system: silence → he books elsewhere.\nWith a system: answered in 6 seconds → he books with YOU.\n\nWatch the full story in our bio 🐙"},
+ {kick:'THE MATH',kc:'var(--red)',vs:true,
+  h:'One message.<br>Two endings.',
+  bad:['😴','− 40 €','No answer all night. He booked at your competitor.'],
+  good:['⚡','+ 40 €','Answered in 6 seconds. Booked with you. You were asleep.'],
+  cap:'The same message. Two very different mornings.\n\n40 € per day × 30 days = 1,200 €/month — going to whoever answers first.\n\nBe the one who answers first. Even at 3 AM. 🐙 Link in bio.'},
+ {kick:'HARD TRUTH',kc:'var(--rose)',h:'A Facebook page<br>is not a website.',
+  rows:[['✗','On Facebook, customers can\'t find you on Google'],
+        ['✗','No online booking, no automatic answers'],
+        ['✗','The algorithm decides who sees you'],
+        ['✓','Your website = your property. Forever.']],
+  cap:'"I have a Facebook page, I don\'t need a website."\n\nRespectfully — your future customers are searching on Google right now, and they can\'t see you.\n\nSee what your business could look like → live demos in bio 🐙'},
+ {kick:'LIVE DEMOS',kc:'var(--vio)',h:'Don\'t trust us.<br>Tap and try.',
+  sub:'A dentist site. A beauty salon. A restaurant. A smart inbox that answers alone. All live, all real, all in your pocket.',
+  cta:'Link in bio → try everything',
+  cap:'We don\'t show screenshots. We show LIVE demos you can tap, scroll and book inside.\n\n🦷 Dental clinic\n💅 Beauty salon\n🏗️ Construction company\n📥 Smart Inbox that answers alone\n\nAll in the link in bio. Imagine YOUR business in there. 🐙'},
+ {kick:'FOR CAFES & RESTAURANTS',kc:'var(--gold)',h:'Change your prices<br>in 10 seconds.',
+  sub:'QR menu: customer scans, menu opens. You edit a price from your phone — no reprinting, ever again.',
+  cta:'See the QR demo → bio',
+  cap:'Still printing new menus every time a price changes? 🧾\n\nQR menu: scan → menu opens → you change prices from your phone in 10 seconds.\n\nWorks in 3 languages for your tourists too. Demo in bio 🐙'},
+ {kick:'FOR CLINICS & SALONS',kc:'var(--green)',h:'No-shows are<br>eating your money.',
+  sub:'Online booking + automatic reminder 24h before. Patients stop forgetting. Your calendar fills itself.',
+  cta:'See the booking demo → bio',
+  cap:'Every empty chair from a forgotten appointment = money lost forever.\n\nOur booking system: customer books online → gets confirmation → gets a reminder 24h before. No-shows drop massively.\n\nDemo in bio 🐙'},
+ {kick:'YOUR REPUTATION',kc:'var(--gold)',h:'50+ Google reviews.<br>On autopilot.',
+  sub:'After every job, your customer automatically gets a polite review invite. Your rating grows every week — hands-free.',
+  cta:'★★★★★ demo in bio',
+  cap:'How do smart businesses collect hundreds of Google reviews? Not by begging.\n\nAfter every visit, the system politely asks — automatically. More reviews = higher on Google Maps = more customers.\n\nWatch it work → bio 🐙'},
+ {kick:'THIS MONTH',kc:'var(--cyan)',h:'First 3 businesses<br>get a special deal.',
+  sub:'Free preview of YOUR business before you pay anything. If you don\'t love it, you owe nothing.',
+  cta:'DM "EXAMPLE" now',
+  cap:'Ready to stop losing customers? 🐙\n\nThe first 3 businesses this month get a special price + a FREE preview of their website or system before deciding anything.\n\nDM us "EXAMPLE" with your business name — we\'ll show you what you could look like.'}]},
+sq:{hint:'<b>Si përdoret:</b> hapeni këtë faqe në telefon → zgjidhni gjuhën → bëni screenshot çdo kartë → postojeni me përshkrimin poshtë saj. 9 karta = 9 postime.',
+ cl:'PËRSHKRIMI — kopjojeni', copy:'KOPJO', copied:'U KOPJUA ✓',
+ cards:[
+ {kick:'UEB-FAQE · SISTEME · AUTOMATIZIM',kc:'var(--cyan)',h:'Tetë krahë<br>për biznesin tuaj.',
+  sub:'Ueb-faqe, rezervime online, përgjigje automatike — sisteme që punojnë ndërsa ju flini. Në 3 gjuhë.',
+  cta:'OKTO — gëzohemi që u njohëm 🐙',
+  cap:'Një tru. Tetë krahë. 🐙\nOKTO ndërton ueb-faqe dhe sisteme që u përgjigjen klientëve, marrin rezervime dhe mbledhin review — automatikisht, në 3 gjuhë, ditë e natë.\n\nDemo live → linku në bio\nDM "SHEMBULL" për një pamje falas të biznesit TUAJ.'},
+ {kick:'ORA 21:03',kc:'var(--gold)',h:'Një klient<br>sapo ju shkroi.',
+  sub:'Ju flini. Ai do të paguajë. Kush i përgjigjet — ju, apo konkurrenca?',
+  cta:'Shikoni historinë → linku në bio',
+  cap:'Ora 21:03. Biznesi juaj është mbyllur. Një klient shkruan: "A keni tavolinë për nesër?"\n\nPa sistem: heshtje → rezervon diku tjetër.\nMe sistem: përgjigje për 6 sekonda → rezervon te JU.\n\nHistoria e plotë në bio 🐙'},
+ {kick:'MATEMATIKA',kc:'var(--red)',vs:true,
+  h:'Një mesazh.<br>Dy fundet.',
+  bad:['😴','− 40 €','Pa përgjigje gjithë natën. Rezervoi te konkurrenca.'],
+  good:['⚡','+ 40 €','Përgjigje për 6 sekonda. Rezervoi te ju. Ju flinit.'],
+  cap:'I njëjti mesazh. Dy mëngjese krejt të ndryshme.\n\n40 € në ditë × 30 ditë = 1.200 €/muaj — shkojnë te ai që përgjigjet i pari.\n\nBëhuni ju ai që përgjigjet i pari. Edhe në 3 të mëngjesit. 🐙 Linku në bio.'},
+ {kick:'E VËRTETA E HIDHUR',kc:'var(--rose)',h:'Faqja në Facebook<br>nuk është ueb-faqe.',
+  rows:[['✗','Në Facebook klientët s\'ju gjejnë dot në Google'],
+        ['✗','Pa rezervime online, pa përgjigje automatike'],
+        ['✗','Algoritmi vendos kush ju sheh'],
+        ['✓','Ueb-faqja juaj = prona juaj. Përgjithmonë.']],
+  cap:'"Kam faqe në Facebook, s\'më duhet ueb-faqe."\n\nMe respekt — klientët tuaj të ardhshëm po kërkojnë në Google tani, dhe nuk ju shohin dot.\n\nShihni si mund të duket biznesi juaj → demot live në bio 🐙'},
+ {kick:'DEMO LIVE',kc:'var(--vio)',h:'Mos na besoni.<br>Prekni dhe provoni.',
+  sub:'Faqe dentisti. Sallon bukurie. Restorant. Inbox i zgjuar që përgjigjet vetë. Të gjitha live, në xhepin tuaj.',
+  cta:'Linku në bio → provoni gjithçka',
+  cap:'Ne nuk tregojmë screenshots. Tregojmë demo LIVE ku mund të prekni, lëvizni dhe rezervoni.\n\n🦷 Klinikë dentare\n💅 Sallon bukurie\n🏗️ Kompani ndërtimi\n📥 Smart Inbox që përgjigjet vetë\n\nTë gjitha në linkun në bio. Imagjinoni biznesin TUAJ aty. 🐙'},
+ {kick:'PËR KAFENE & RESTORANTE',kc:'var(--gold)',h:'Ndryshoni çmimet<br>për 10 sekonda.',
+  sub:'QR meny: klienti skanon, menyja hapet. Ju ndryshoni çmimin nga telefoni — pa shtypje, kurrë më.',
+  cta:'Demo e QR-së → bio',
+  cap:'Ende shtypni meny të reja sa herë ndryshon çmimi? 🧾\n\nQR meny: skano → menyja hapet → çmimet i ndryshoni nga telefoni për 10 sekonda.\n\nNë 3 gjuhë, edhe për turistët. Demo në bio 🐙'},
+ {kick:'PËR KLINIKA & SALLONE',kc:'var(--green)',h:'Terminet e harruara<br>ju hanë paratë.',
+  sub:'Rezervim online + kujtesë automatike 24h para. Pacientët s\'harrojnë më. Kalendari mbushet vetë.',
+  cta:'Demo e rezervimeve → bio',
+  cap:'Çdo karrige bosh nga një termin i harruar = para të humbura përgjithmonë.\n\nSistemi ynë: klienti rezervon online → merr konfirmim → merr kujtesë 24h para. Terminet e humbura bien ndjeshëm.\n\nDemo në bio 🐙'},
+ {kick:'REPUTACIONI JUAJ',kc:'var(--gold)',h:'50+ review në Google.<br>Me autopilot.',
+  sub:'Pas çdo pune, klienti merr automatikisht një ftesë të sjellshme për review. Vlerësimi rritet çdo javë — vetë.',
+  cta:'★★★★★ demo në bio',
+  cap:'Si i mbledhin bizneset e zgjuara qindra review në Google? Jo duke u lutur.\n\nPas çdo vizite, sistemi kërkon me mirësjellje — automatikisht. Më shumë review = më lart në Google Maps = më shumë klientë.\n\nShikojeni si punon → bio 🐙'},
+ {kick:'KËTË MUAJ',kc:'var(--cyan)',h:'3 bizneset e para<br>marrin ofertë speciale.',
+  sub:'Pamje falas e biznesit TUAJ para se të paguani asgjë. Nëse s\'ju pëlqen, s\'detyroheni asgjë.',
+  cta:'DM "SHEMBULL" tani',
+  cap:'Gati të mos humbni më klientë? 🐙\n\n3 bizneset e para këtë muaj marrin çmim special + pamje FALAS të faqes ose sistemit të tyre para se të vendosin.\n\nNa shkruani DM "SHEMBULL" me emrin e biznesit — ju tregojmë si mund të dukeni.'}]},
+mk:{hint:'<b>Како се користи:</b> отворете ја страницава на телефон → изберете јазик → screenshot на секоја карта → објавете со описот подолу. 9 карти = 9 објави.',
+ cl:'ОПИС — копирајте го', copy:'КОПИРАЈ', copied:'КОПИРАНО ✓',
+ cards:[
+ {kick:'ВЕБ-СТРАНИЦИ · СИСТЕМИ · АВТОМАТИЗАЦИЈА',kc:'var(--cyan)',h:'Осум раце<br>за вашиот бизнис.',
+  sub:'Веб-страници, онлајн резервации, автоматски одговори — системи што работат додека спиете. На 3 јазици.',
+  cta:'OKTO — мило ни е 🐙',
+  cap:'Еден мозок. Осум раце. 🐙\nOKTO гради веб-страници и системи што им одговараат на клиентите, земаат резервации и собираат рецензии — автоматски, на 3 јазици, дење и ноќе.\n\nLive демоа → линк во bio\nDM "ПРИМЕР" за бесплатен преглед на ВАШИОТ бизнис.'},
+ {kick:'21:03 ЧАСОТ',kc:'var(--gold)',h:'Клиент штотуку<br>ви напиша.',
+  sub:'Вие спиете. Тој сака да плати. Кој му одговара — вие, или конкуренцијата?',
+  cta:'Гледајте ја приказната → линк во bio',
+  cap:'21:03 е. Вашиот бизнис е затворен. Клиент пишува: „Имате маса за утре?"\n\nБез систем: тишина → резервира на друго место.\nСо систем: одговор за 6 секунди → резервира кај ВАС.\n\nЦелата приказна во bio 🐙'},
+ {kick:'МАТЕМАТИКАТА',kc:'var(--red)',vs:true,
+  h:'Една порака.<br>Два краја.',
+  bad:['😴','− 40 €','Без одговор цела ноќ. Резервираше кај конкуренцијата.'],
+  good:['⚡','+ 40 €','Одговор за 6 секунди. Резервираше кај вас. Вие спиевте.'],
+  cap:'Истата порака. Две сосема различни утра.\n\n40 € дневно × 30 дена = 1.200 €/месец — одат кај тој што одговара прв.\n\nБидете вие тој што одговара прв. И во 3 наутро. 🐙 Линк во bio.'},
+ {kick:'ГОРКАТА ВИСТИНА',kc:'var(--rose)',h:'Facebook страница<br>не е веб-страница.',
+  rows:[['✗','На Facebook клиентите не ве наоѓаат на Google'],
+        ['✗','Без онлајн резервации, без автоматски одговори'],
+        ['✗','Алгоритмот одлучува кој ве гледа'],
+        ['✓','Вашата веб-страница = ваша сопственост. Засекогаш.']],
+  cap:'„Имам Facebook страница, не ми треба веб-страница."\n\nСо почит — вашите идни клиенти бараат на Google токму сега, и не ве гледаат.\n\nВидете како може да изгледа вашиот бизнис → live демоа во bio 🐙'},
+ {kick:'LIVE ДЕМОА',kc:'var(--vio)',h:'Не ни верувајте.<br>Допрете и пробајте.',
+  sub:'Сајт за стоматолог. Салон за убавина. Ресторан. Паметен inbox што одговара сам. Сè live, во вашиот џеб.',
+  cta:'Линк во bio → пробајте сè',
+  cap:'Ние не покажуваме screenshots. Покажуваме LIVE демоа каде можете да допрете, скролате и резервирате.\n\n🦷 Стоматолошка клиника\n💅 Салон за убавина\n🏗️ Градежна фирма\n📥 Smart Inbox што одговара сам\n\nСè во линкот во bio. Замислете го ВАШИОТ бизнис таму. 🐙'},
+ {kick:'ЗА КАФУЛИЊА & РЕСТОРАНИ',kc:'var(--gold)',h:'Променете цени<br>за 10 секунди.',
+  sub:'QR мени: клиентот скенира, менито се отвора. Цената ја менувате од телефон — без печатење, никогаш повеќе.',
+  cta:'QR демо → bio',
+  cap:'Уште печатите нови менија кога се менува цена? 🧾\n\nQR мени: скенирај → менито се отвора → цените ги менувате од телефон за 10 секунди.\n\nНа 3 јазици, и за туристите. Демо во bio 🐙'},
+ {kick:'ЗА КЛИНИКИ & САЛОНИ',kc:'var(--green)',h:'Пропуштените термини<br>ви ги јадат парите.',
+  sub:'Онлајн резервација + автоматски потсетник 24ч пред. Пациентите не забораваат. Календарот се полни сам.',
+  cta:'Демо за резервации → bio',
+  cap:'Секој празен стол од заборавен термин = пари изгубени засекогаш.\n\nНашиот систем: клиентот резервира онлајн → добива потврда → добива потсетник 24ч пред. Пропуштените термини паѓаат драстично.\n\nДемо во bio 🐙'},
+ {kick:'ВАШАТА РЕПУТАЦИЈА',kc:'var(--gold)',h:'50+ Google рецензии.<br>На автопилот.',
+  sub:'По секоја работа, клиентот автоматски добива учтива покана за рецензија. Оценката расте секоја недела — сама.',
+  cta:'★★★★★ демо во bio',
+  cap:'Како паметните бизниси собираат стотици Google рецензии? Не со молење.\n\nПо секоја посета, системот учтиво бара — автоматски. Повеќе рецензии = повисоко на Google Maps = повеќе клиенти.\n\nГледајте како работи → bio 🐙'},
+ {kick:'ОВОЈ МЕСЕЦ',kc:'var(--cyan)',h:'Првите 3 бизниси<br>добиваат специјална понуда.',
+  sub:'Бесплатен преглед на ВАШИОТ бизнис пред да платите било што. Ако не ви се допаѓа, не должите ништо.',
+  cta:'DM "ПРИМЕР" сега',
+  cap:'Спремни да не губите повеќе клиенти? 🐙\n\nПрвите 3 бизниси овој месец добиваат специјална цена + БЕСПЛАТЕН преглед на нивната страница или систем пред да одлучат.\n\nПишете ни DM "ПРИМЕР" со името на бизнисот — ви покажуваме како може да изгледате.'}]}
+};
+
+let LANG='en', IDX=0;
+
+function render(){
+  const t=T[LANG], c=t.cards[IDX], p=document.getElementById('post');
+  let inner=`<div class="brand"><span class="oct">🐙</span>OKTO</div>
+    <span class="num">${String(IDX+1).padStart(2,'0')} / 09</span>
+    <div class="kick" style="color:${c.kc}">${c.kick}</div>
+    <h1>${c.h}</h1>`;
+  if(c.sub) inner+=`<p class="sub">${c.sub}</p>`;
+  if(c.rows) inner+=`<div class="rows">${c.rows.map(r=>`<div class="row"><span class="x" style="color:${r[0]==='✓'?'var(--green)':'var(--red)'}">${r[0]}</span><span>${r[1]}</span></div>`).join('')}</div>`;
+  if(c.vs) inner+=`<div class="vs">
+      <div class="vsbox bad"><span class="em">${c.bad[0]}</span><div class="money">${c.bad[1]}</div><p>${c.bad[2]}</p></div>
+      <div class="vsbox good"><span class="em">${c.good[0]}</span><div class="money">${c.good[1]}</div><p>${c.good[2]}</p></div>
+    </div>`;
+  if(c.cta) inner+=`<span class="cta">${c.cta}</span>`;
+  inner+=`<div class="handle">@okto · demos: link in bio</div>`;
+  p.innerHTML=inner;
+  document.getElementById('cnt').textContent=`${IDX+1} / 9`;
+  document.getElementById('cap').textContent=c.cap;
+  document.getElementById('hint').innerHTML=t.hint;
+  document.getElementById('cl').textContent=t.cl;
+  document.getElementById('cpb').textContent=t.copy;
+}
+function go(d){IDX=(IDX+9+d)%9;render();}
+function copyCap(){
+  navigator.clipboard.writeText(T[LANG].cards[IDX].cap).then(()=>{
+    document.getElementById('cpb').textContent=T[LANG].copied;
+    setTimeout(()=>document.getElementById('cpb').textContent=T[LANG].copy,1500);
+  });
+}
+function setLang(l){
+  LANG=l;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  render();
+}
+render();
+</script>
+</body>
+</html>
