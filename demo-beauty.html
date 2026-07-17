@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maison Belle — Beauty Atelier (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#faf5f0; --char:#241b1b; --rose:#b76e79; --rose-d:#9c5561; --rose-soft:#f3e2e2;
+    --line:#e8dcd4; --mut:#8a7570; --card:#fffbf8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  ::selection{background:var(--rose);color:#fff}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--char);line-height:1.7;
+    font-size:15px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.serif{font-family:'Prata',serif;font-weight:400;line-height:1.15;letter-spacing:.01em}
+  img{max-width:100%;display:block}
+
+  .rv{opacity:0;transform:translateY(28px);transition:all 1s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.24s}
+
+  .lab{font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:var(--rose-d);font-weight:600}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;
+    padding:20px 32px;transition:all .35s}
+  nav.scr{background:rgba(250,245,240,.9);backdrop-filter:blur(14px);padding:13px 32px;border-bottom:1px solid var(--line)}
+  .wordmark{font-family:'Prata',serif;font-size:1.15rem}
+  .wordmark span{color:var(--rose)}
+  .nav-r{display:flex;align-items:center;gap:18px}
+  .nav-links{display:flex;gap:22px;list-style:none}
+  .nav-links a{text-decoration:none;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+  .nav-links a:hover{color:var(--char)}
+  .lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px;background:var(--card)}
+  .lang button{background:transparent;border:none;color:var(--mut);padding:4px 10px;border-radius:99px;
+    font-size:.64rem;font-weight:600;cursor:pointer;font-family:inherit}
+  .lang button.active{background:var(--char);color:var(--cream)}
+  .nav-book{background:var(--rose);color:#fff;text-decoration:none;font-size:.68rem;letter-spacing:.16em;
+    text-transform:uppercase;padding:11px 22px;border-radius:99px;font-weight:600;transition:background .25s}
+  .nav-book:hover{background:var(--rose-d)}
+
+  /* HERO */
+  header{min-height:100vh;max-width:1180px;margin:0 auto;padding:130px 32px 50px;
+    display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+  .eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+  .eyebrow .rule{width:44px;height:1px;background:var(--rose)}
+  header h1{font-size:clamp(2.5rem,5.6vw,4.2rem)}
+  header h1 em{font-style:italic;color:var(--rose)}
+  .hero-sub{color:var(--mut);max-width:400px;margin:24px 0 36px;font-size:.96rem}
+  .cta-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .btn-main{display:inline-flex;align-items:center;gap:10px;background:var(--char);color:var(--cream);
+    text-decoration:none;padding:17px 34px;border-radius:99px;font-size:.75rem;letter-spacing:.16em;
+    text-transform:uppercase;font-weight:600;transition:all .25s}
+  .btn-main:hover{background:var(--rose)}
+  .btn-ghost{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--char);text-decoration:none;
+    border-bottom:1px solid var(--rose);padding-bottom:3px;font-weight:600}
+  .hero-figs{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}
+  .hf{border-radius:120px 120px 18px 18px;overflow:hidden;box-shadow:0 30px 60px rgba(36,27,27,.18)}
+  .hf img{object-fit:cover;transition:transform .8s}
+  .hf:hover img{transform:scale(1.05)}
+  .hf.tall img{aspect-ratio:3/4.6}
+  .hf.short{margin-bottom:44px}
+  .hf.short img{aspect-ratio:3/3.6}
+  .hero-note{position:absolute;display:none}
+
+  /* MARQUEE */
+  .marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;
+    padding:15px 0;background:var(--card)}
+  .marq-track{display:flex;gap:56px;white-space:nowrap;animation:slide 28s linear infinite;width:max-content}
+  .marq span{font-family:'Prata',serif;font-style:italic;font-size:.98rem;color:var(--mut);
+    display:flex;align-items:center;gap:56px}
+  .marq i{width:5px;height:5px;background:var(--rose);border-radius:50%;display:inline-block}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  section{max-width:1180px;margin:0 auto;padding:104px 32px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:54px;gap:20px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(1.9rem,4.2vw,2.9rem)}
+  .sec-head h2 em{font-style:italic;color:var(--rose)}
+  .sec-head p{color:var(--mut);max-width:330px;font-size:.9rem}
+
+  /* MENU with dotted leaders */
+  .menu-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px 60px}
+  .menu-cat{font-family:'Prata',serif;font-size:1.05rem;color:var(--rose-d);margin:26px 0 6px;grid-column:auto}
+  .mrow{display:flex;align-items:baseline;gap:10px;padding:13px 0}
+  .mrow .name b{font-size:.95rem;font-weight:600;font-family:'Inter',sans-serif}
+  .mrow .name small{display:block;color:var(--mut);font-size:.76rem;margin-top:2px}
+  .mrow .dots{flex:1;border-bottom:1px dotted #cbb5ac;transform:translateY(-4px)}
+  .mrow .pr{font-family:'Prata',serif;font-size:1rem;white-space:nowrap}
+
+  /* GALLERY */
+  .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .gal figure{border-radius:18px;overflow:hidden;position:relative}
+  .gal img{aspect-ratio:4/5;object-fit:cover;transition:transform .8s cubic-bezier(.2,.6,.2,1)}
+  .gal figure:hover img{transform:scale(1.06)}
+  .gal figcaption{position:absolute;left:14px;bottom:12px;background:rgba(36,27,27,.7);color:var(--cream);
+    backdrop-filter:blur(6px);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+    padding:7px 14px;border-radius:99px}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat{text-align:center;padding:44px 20px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:none}
+  .stat b{font-family:'Prata',serif;font-size:clamp(2.2rem,4.6vw,3.2rem);display:block;font-weight:400}
+  .stat b i{font-style:italic;color:var(--rose)}
+  .stat span{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+
+  /* QUOTE */
+  .quote-wrap{text-align:center;max-width:740px;margin:0 auto}
+  .quote-mark{font-family:'Prata',serif;font-size:4.4rem;color:var(--rose);line-height:.6;display:block;margin-bottom:24px}
+  .quote{font-family:'Prata',serif;font-style:italic;font-size:clamp(1.25rem,2.8vw,1.7rem);min-height:110px;transition:opacity .5s}
+  .quote.fade{opacity:0}
+  .quote-who{margin-top:20px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+  .q-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
+  .q-dots i{width:7px;height:7px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .3s}
+  .q-dots i.on{background:var(--rose);transform:scale(1.3)}
+
+  /* PROMISES */
+  .proms{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .prom{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px 26px;transition:all .3s}
+  .prom:hover{border-color:var(--rose);transform:translateY(-4px);box-shadow:0 18px 40px rgba(36,27,27,.08)}
+  .prom .pi{width:44px;height:44px;border-radius:50%;background:var(--rose-soft);color:var(--rose-d);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+  .prom b{font-family:'Prata',serif;font-size:1.02rem;display:block;margin-bottom:8px;font-weight:400}
+  .prom p{font-size:.83rem;color:var(--mut)}
+
+  /* BOOKING */
+  .bookpanel{background:var(--char);border-radius:30px;padding:66px 40px;color:var(--cream);position:relative;overflow:hidden}
+  .bookpanel::before{content:"";position:absolute;top:-150px;right:-120px;width:420px;height:420px;border-radius:50%;
+    background:radial-gradient(circle,rgba(183,110,121,.4),transparent 65%)}
+  .bookpanel .lab{color:#e0a7b0}
+  .bookpanel h2{font-size:clamp(1.9rem,4.2vw,2.8rem);margin:12px 0 8px}
+  .bookpanel h2 em{font-style:italic;color:#e0a7b0}
+  .bookpanel .bs{color:rgba(250,245,240,.55);font-size:.9rem;margin-bottom:38px;max-width:420px}
+  .bform{display:grid;grid-template-columns:1fr 1fr;gap:13px;position:relative}
+  .bform input,.bform select{width:100%;background:rgba(250,245,240,.06);border:1px solid rgba(250,245,240,.18);
+    color:var(--cream);padding:16px 18px;border-radius:13px;font-family:inherit;font-size:.9rem}
+  .bform input::placeholder{color:rgba(250,245,240,.38)}
+  .bform input:focus,.bform select:focus{outline:none;border-color:#e0a7b0}
+  .bform select option{color:var(--char)}
+  .bform button{grid-column:1/-1;background:var(--rose);border:none;color:#fff;padding:18px;border-radius:13px;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;
+    cursor:pointer;transition:background .25s}
+  .bform button:hover{background:#c98490}
+  .form-foot{grid-column:1/-1;font-size:.74rem;color:rgba(250,245,240,.42);text-align:center}
+  .toast{grid-column:1/-1;background:rgba(224,167,176,.14);border:1px solid rgba(224,167,176,.45);color:#ecc6cc;
+    border-radius:13px;padding:16px 20px;font-size:.86rem;display:none;animation:tIn .4s ease}
+  .toast.show{display:block}
+  @keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  footer{max-width:1180px;margin:0 auto;padding:46px 32px 110px;display:flex;justify-content:space-between;
+    align-items:center;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:.78rem}
+  footer .wordmark{font-size:1rem}
+
+  .explain{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--char);color:var(--cream);
+    padding:12px 48px 12px 18px;font-size:.78rem;text-align:center;border-top:1px solid var(--rose)}
+  .explain b{color:#e0a7b0}
+  .explain .x{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;
+    border:1px solid rgba(250,245,240,.25);color:rgba(250,245,240,.6);border-radius:50%;width:26px;height:26px;cursor:pointer}
+
+  @media(max-width:920px){
+    header{grid-template-columns:1fr;padding-top:112px;gap:44px}
+    .menu-cols{grid-template-columns:1fr;gap:0}
+    .gal{grid-template-columns:1fr 1fr}
+    .gal figure:first-child{grid-column:1/-1}
+    .stats{grid-template-columns:1fr}
+    .stat{border-right:none;border-bottom:1px solid var(--line)}
+    .proms{grid-template-columns:1fr}
+    .bform{grid-template-columns:1fr}
+    .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wordmark">Maison <span>Belle</span></div>
+  <div class="nav-r">
+    <ul class="nav-links">
+      <li><a href="#menu" id="n1">Menu</a></li>
+      <li><a href="#gallery" id="n2">Gallery</a></li>
+      <li><a href="#why" id="n3">The Promise</a></li>
+    </ul>
+    <div class="lang">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+      <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    </div>
+    <a class="nav-book" href="#book" id="navbook">Reserve</a>
+  </div>
+</nav>
+
+<header>
+  <div>
+    <div class="eyebrow rv in"><span class="rule"></span><span class="lab" id="eyebrow">Hair · Skin · Nails · Beauty</span></div>
+    <h1 class="rv in" id="h1">Beauty, treated<br>as an <em>art form</em></h1>
+    <p class="hero-sub rv in d1" id="hsub">An atelier for hair, skin and nails — where you book in thirty seconds and always leave later than planned, on purpose.</p>
+    <div class="cta-row rv in d2">
+      <a href="#book" class="btn-main" id="hcta">Reserve your visit
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="#menu" class="btn-ghost" id="hcta2">View the menu</a>
+    </div>
+  </div>
+  <div class="hero-figs rv in d2">
+    <div class="hf short"><img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=700&q=78" alt="Salon"></div>
+    <div class="hf tall"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=700&q=78" alt="Hair styling"></div>
+  </div>
+</header>
+
+<div class="marq"><div class="marq-track" id="marq"></div></div>
+
+<section id="menu">
+  <div class="sec-head">
+    <div><span class="lab" id="m_lab">The menu</span><h2 class="rv" id="m_h2">Services & <em>prices</em></h2></div>
+    <p class="rv d1" id="m_p">A simple menu, honest prices, and no upselling in the chair. What you book is what you pay.</p>
+  </div>
+  <div class="menu-cols" id="menu-cols"></div>
+</section>
+
+<section id="gallery" style="padding-top:20px">
+  <div class="sec-head">
+    <div><span class="lab" id="g_lab">The atelier</span><h2 class="rv" id="g_h2">Moments from <em>the chair</em></h2></div>
+    <p class="rv d1" id="g_p">Soft light, warm coffee, and the sound of someone becoming their favourite version of themselves.</p>
+  </div>
+  <div class="gal">
+    <figure class="rv"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=900&q=75" alt=""><figcaption id="gc1">The floor</figcaption></figure>
+    <figure class="rv d1"><img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=800&q=75" alt=""><figcaption id="gc2">Nail bar</figcaption></figure>
+    <figure class="rv d2"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=75" alt=""><figcaption id="gc3">Make-up studio</figcaption></figure>
+  </div>
+</section>
+
+<div class="stats" id="stats">
+  <div class="stat"><b><span data-count="10">0</span><i>+</i></b><span id="t1">Years of craft</span></div>
+  <div class="stat"><b><span data-count="5000">0</span><i>+</i></b><span id="t2">Happy clients</span></div>
+  <div class="stat"><b>4.<span data-count="9">0</span><i>★</i></b><span id="t3">Google rating</span></div>
+</div>
+
+<section>
+  <div class="quote-wrap rv">
+    <span class="quote-mark serif">“</span>
+    <p class="quote" id="quote"></p>
+    <div class="quote-who" id="qwho"></div>
+    <div class="q-dots" id="qdots"></div>
+  </div>
+</section>
+
+<section id="why" style="padding-top:20px">
+  <div class="sec-head">
+    <div><span class="lab" id="w_lab">The promise</span><h2 class="rv" id="w_h2">Why clients <em>stay</em></h2></div>
+  </div>
+  <div class="proms">
+    <div class="prom rv">
+      <div class="pi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <b id="pr1">Book at midnight</b><p id="pr1p">The calendar never sleeps — choose your chair and time in thirty seconds, whenever you remember.</p>
+    </div>
+    <div class="prom rv d1">
+      <div class="pi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <b id="pr2">Never forgotten</b><p id="pr2p">A gentle reminder the day before — so your appointment never slips your mind again.</p>
+    </div>
+    <div class="prom rv d2">
+      <div class="pi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.1L21 9l-4.5 4.4L17.8 20 12 16.7 6.2 20l1.3-6.6L3 9l6.1-.9z"/></svg></div>
+      <b id="pr3">Your formula, remembered</b><p id="pr3p">Your colour, your length, your preferences — saved from visit to visit. You never explain twice.</p>
+    </div>
+  </div>
+</section>
+
+<section id="book" style="padding-top:20px">
+  <div class="bookpanel">
+    <span class="lab" id="b_lab">Reservations</span>
+    <h2 id="b_h2">Reserve your <em>moment</em></h2>
+    <p class="bs" id="b_s">Pick a treatment and a time — confirmation arrives instantly, and we hold the chair for you.</p>
+    <form class="bform" id="bform">
+      <input type="text" id="f_n" placeholder="Your name" required>
+      <input type="tel" id="f_p" placeholder="Phone" required>
+      <select id="f_s"></select>
+      <input type="date" required>
+      <div class="toast" id="toast"></div>
+      <button type="submit" id="f_b">Confirm reservation</button>
+      <span class="form-foot" id="f_note">Instant confirmation · reminder the day before</span>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wordmark">Maison <span>Belle</span></div>
+  <span id="foot">DEMO — this salon is fictional. A concept of what a beauty atelier's website can be.</span>
+</footer>
+
+<div class="explain">
+  <span id="ex">👋 <b>What is this?</b> A DEMO website — an example of a premium site for a beauty salon. Everything works. Imagine YOUR salon here.</span>
+  <button class="x" onclick="this.parentElement.style.display='none'">✕</button>
+</div>
+
+<script>
+const T={
+en:{n1:'Menu',n2:'Gallery',n3:'The Promise',navbook:'Reserve',
+  eyebrow:'Hair · Skin · Nails · Beauty',
+  h1:'Beauty, treated<br>as an <em>art form</em>',
+  hsub:'An atelier for hair, skin and nails — where you book in thirty seconds and always leave later than planned, on purpose.',
+  hcta:'Reserve your visit',hcta2:'View the menu',
+  marq:['Hair & colour','Facial rituals','Manicure','Lash artistry','Bridal make-up','Sugar waxing'],
+  m_lab:'The menu',m_h2:'Services & <em>prices</em>',
+  m_p:'A simple menu, honest prices, and no upselling in the chair. What you book is what you pay.',
+  menu:[
+    ['Hair',[
+      ['Cut & finish','wash, cut, blow-dry',['12 €']],
+      ['Colour / balayage','consultation included',['from 25 €']],
+      ['Styling for occasions','weddings, evenings',['from 15 €']]]],
+    ['Skin & body',[
+      ['Facial ritual','deep cleanse + hydration',['25 €']],
+      ['Sugar waxing','gentle, full or partial',['from 8 €']],
+      ['Massage 50\'','relax or deep tissue',['20 €']]]],
+    ['Nails',[
+      ['Manicure + gel','lasts up to 3 weeks',['18 €']],
+      ['Pedicure spa','with massage',['20 €']],
+      ['Nail art','per design',['from 3 €']]]],
+    ['Face & lashes',[
+      ['Lash extensions','natural or volume',['30 €']],
+      ['Brow shaping + tint','architecture for your face',['10 €']],
+      ['Make-up','evening & bridal',['from 35 €']]]]],
+  g_lab:'The atelier',g_h2:'Moments from <em>the chair</em>',
+  g_p:'Soft light, warm coffee, and the sound of someone becoming their favourite version of themselves.',
+  gc1:'The floor',gc2:'Nail bar',gc3:'Make-up studio',
+  t1:'Years of craft',t2:'Happy clients',t3:'Google rating',
+  quotes:[
+    ['I book at midnight when I finally remember myself — and the reminder saves me every single time.','— A client, three years running'],
+    ['They remembered my exact colour from four months ago. I didn\'t say a word.','— A colour client'],
+    ['I came for nails and stayed for the calm. This place is therapy with polish.','— A regular']],
+  w_lab:'The promise',w_h2:'Why clients <em>stay</em>',
+  pr1:'Book at midnight',pr1p:'The calendar never sleeps — choose your chair and time in thirty seconds, whenever you remember.',
+  pr2:'Never forgotten',pr2p:'A gentle reminder the day before — so your appointment never slips your mind again.',
+  pr3:'Your formula, remembered',pr3p:'Your colour, your length, your preferences — saved from visit to visit. You never explain twice.',
+  b_lab:'Reservations',b_h2:'Reserve your <em>moment</em>',
+  b_s:'Pick a treatment and a time — confirmation arrives instantly, and we hold the chair for you.',
+  f_n:'Your name',f_p:'Phone',f_b:'Confirm reservation',f_note:'Instant confirmation · reminder the day before',
+  toast:'✓ Reserved (demo). On the live site: instant confirmation to the client, the salon calendar updates itself, and a reminder goes out the day before.',
+  foot:'DEMO — this salon is fictional. A concept of what a beauty atelier\'s website can be.',
+  ex:'👋 <b>What is this?</b> A DEMO website — an example of a premium site for a beauty salon. Everything works. Imagine YOUR salon here.'},
+sq:{n1:'Menyja',n2:'Galeria',n3:'Premtimi',navbook:'Rezervo',
+  eyebrow:'Flokë · Lëkurë · Thonj · Bukuri',
+  h1:'Bukuria, e trajtuar<br>si <em>art</em>',
+  hsub:'Atelie për flokë, lëkurë dhe thonj — ku rezervoni për tridhjetë sekonda dhe gjithmonë dilni më vonë se plani, me qëllim.',
+  hcta:'Rezervoni vizitën',hcta2:'Shihni menynë',
+  marq:['Flokë & ngjyrë','Rituale fytyre','Manikyr','Art qerpikësh','Make-up nusesh','Depilim me sheqer'],
+  m_lab:'Menyja',m_h2:'Shërbimet & <em>çmimet</em>',
+  m_p:'Meny e thjeshtë, çmime të ndershme dhe pa shitje shtesë në karrige. Çfarë rezervoni, atë paguani.',
+  menu:[
+    ['Flokët',[
+      ['Prerje & stilim','larje, prerje, tharje',['12 €']],
+      ['Ngjyrë / balayage','konsulta e përfshirë',['nga 25 €']],
+      ['Stilim për raste','dasma, mbrëmje',['nga 15 €']]]],
+    ['Lëkura & trupi',[
+      ['Ritual fytyre','pastrim i thellë + hidratim',['25 €']],
+      ['Depilim me sheqer','i butë, i plotë ose i pjesshëm',['nga 8 €']],
+      ['Masazh 50\'','relaks ose i thellë',['20 €']]]],
+    ['Thonjtë',[
+      ['Manikyr + xhel','zgjat deri 3 javë',['18 €']],
+      ['Pedikyr spa','me masazh',['20 €']],
+      ['Nail art','për dizajn',['nga 3 €']]]],
+    ['Fytyra & qerpikët',[
+      ['Qerpikë','natyral ose volum',['30 €']],
+      ['Vetulla + ngjyrosje','arkitekturë për fytyrën tuaj',['10 €']],
+      ['Make-up','mbrëmje & nuse',['nga 35 €']]]]],
+  g_lab:'Ateljeja',g_h2:'Momente nga <em>karrigia</em>',
+  g_p:'Dritë e butë, kafe e ngrohtë dhe tingulli i dikujt që bëhet versioni i tij i preferuar.',
+  gc1:'Salla',gc2:'Nail bar',gc3:'Studio make-up',
+  t1:'Vjet mjeshtëri',t2:'Kliente të lumtura',t3:'Vlerësimi në Google',
+  quotes:[
+    ['Rezervoj në mesnatë kur më kujtohet vetja — dhe kujtesa më shpëton çdo herë.','— Kliente, tre vjet radhazi'],
+    ['Ma mbajtën mend ngjyrën ekzakte nga katër muaj më parë. S\'thashë asnjë fjalë.','— Kliente ngjyre'],
+    ['Erdha për thonj dhe qëndrova për qetësinë. Ky vend është terapi me manikyr.','— Kliente e rregullt']],
+  w_lab:'Premtimi',w_h2:'Pse klientet <em>qëndrojnë</em>',
+  pr1:'Rezervoni në mesnatë',pr1p:'Kalendari nuk fle kurrë — zgjidhni karrigen dhe orën për tridhjetë sekonda, kurdo që t\'ju kujtohet.',
+  pr2:'Kurrë e harruar',pr2p:'Një kujtesë e butë një ditë para — që termini të mos ju ikë kurrë më nga mendja.',
+  pr3:'Formula juaj, e mbajtur mend','pr3p':'Ngjyra juaj, gjatësia juaj, preferencat tuaja — të ruajtura nga vizita në vizitë. Nuk shpjegoni kurrë dy herë.',
+  b_lab:'Rezervimet',b_h2:'Rezervoni <em>momentin</em> tuaj',
+  b_s:'Zgjidhni trajtimin dhe orën — konfirmimi vjen menjëherë dhe karrigia ju pret.',
+  f_n:'Emri juaj',f_p:'Telefoni',f_b:'Konfirmo rezervimin',f_note:'Konfirmim i menjëhershëm · kujtesë një ditë para',
+  toast:'✓ U rezervua (demo). Në faqen reale: konfirmim i menjëhershëm për klienten, kalendari i sallonit përditësohet vetë dhe kujtesa dërgohet një ditë para.',
+  foot:'DEMO — ky sallon është fiktiv. Koncept se si mund të jetë faqja e një atelieje bukurie.',
+  ex:'👋 <b>Çfarë është kjo?</b> Faqe DEMO — shembull i një faqeje premium për sallon bukurie. Gjithçka funksionon. Imagjinoni sallonin TUAJ këtu.'},
+mk:{n1:'Мени',n2:'Галерија',n3:'Ветувањето',navbook:'Резервирај',
+  eyebrow:'Коса · Кожа · Нокти · Убавина',
+  h1:'Убавината, третирана<br>како <em>уметност</em>',
+  hsub:'Ателје за коса, кожа и нокти — каде резервирате за триесет секунди и секогаш си одите подоцна од планираното, намерно.',
+  hcta:'Резервирајте посета',hcta2:'Видете го менито',
+  marq:['Коса & боја','Ритуали за лице','Маникир','Уметност на трепки','Невестинска шминка','Шеќерна депилација'],
+  m_lab:'Менито',m_h2:'Услуги & <em>цени</em>',
+  m_p:'Едноставно мени, искрени цени и без дополнителни продажби во столот. Што резервирате, тоа плаќате.',
+  menu:[
+    ['Коса',[
+      ['Потстрижување & стилизирање','миење, потстрижување, фен',['12 €']],
+      ['Боја / balayage','консултација вклучена',['од 25 €']],
+      ['Стилизирање за настани','свадби, вечери',['од 15 €']]]],
+    ['Кожа & тело',[
+      ['Ритуал за лице','длабинско чистење + хидратација',['25 €']],
+      ['Шеќерна депилација','нежна, целосна или делумна',['од 8 €']],
+      ['Масажа 50\'','релакс или длабинска',['20 €']]]],
+    ['Нокти',[
+      ['Маникир + гел','трае до 3 недели',['18 €']],
+      ['Спа педикир','со масажа',['20 €']],
+      ['Nail art','по дизајн',['од 3 €']]]],
+    ['Лице & трепки',[
+      ['Трепки','природен или волумен',['30 €']],
+      ['Веѓи + боење','архитектура за вашето лице',['10 €']],
+      ['Шминка','вечерна & невестинска',['од 35 €']]]]],
+  g_lab:'Ателјето',g_h2:'Моменти од <em>столот</em>',
+  g_p:'Мека светлина, топло кафе и звукот на некој што станува својата омилена верзија.',
+  gc1:'Салонот',gc2:'Nail bar',gc3:'Студио за шминка',
+  t1:'Години занает',t2:'Среќни клиентки',t3:'Оценка на Google',
+  quotes:[
+    ['Резервирам на полноќ кога конечно ќе се сетам на себе — а потсетникот ме спасува секој пат.','— Клиентка, три години по ред'],
+    ['Ми ја запомнија точната боја од пред четири месеци. Не кажав ни збор.','— Клиентка за боја'],
+    ['Дојдов за нокти, останав за мирот. Ова место е терапија со лак.','— Редовна клиентка']],
+  w_lab:'Ветувањето',w_h2:'Зошто клиентките <em>остануваат</em>',
+  pr1:'Резервирајте на полноќ',pr1p:'Календарот никогаш не спие — изберете стол и време за триесет секунди, кога и да се сетите.',
+  pr2:'Никогаш заборавено',pr2p:'Нежен потсетник ден претходно — за терминот никогаш повеќе да не ви избега.',
+  pr3:'Вашата формула, запаметена',pr3p:'Вашата боја, должина, преференции — зачувани од посета до посета. Никогаш не објаснувате двапати.',
+  b_lab:'Резервации',b_h2:'Резервирајте го вашиот <em>момент</em>',
+  b_s:'Изберете третман и време — потврдата доаѓа веднаш, а столот ве чека.',
+  f_n:'Вашето име',f_p:'Телефон',f_b:'Потврди резервација',f_note:'Веднаш потврда · потсетник ден претходно',
+  toast:'✓ Резервирано (демо). На вистинската страница: веднаш потврда за клиентката, календарот на салонот се ажурира сам, а потсетникот оди ден претходно.',
+  foot:'ДЕМО — овој салон е фиктивен. Концепт како може да изгледа сајт на ателје за убавина.',
+  ex:'👋 <b>Што е ова?</b> ДЕМО страница — пример за премиум сајт за салон за убавина. Сè функционира. Замислете го ВАШИОТ салон тука.'}
+};
+
+let LANG='en', QI=0;
+function build(){
+  const t=T[LANG];
+  const items=t.marq.map(m=>`<span>${m}<i></i></span>`).join('');
+  document.getElementById('marq').innerHTML=items+items;
+  // menu with categories in 2 columns
+  document.getElementById('menu-cols').innerHTML=t.menu.map(cat=>`
+    <div>
+      <div class="menu-cat">${cat[0]}</div>
+      ${cat[1].map(it=>`
+        <div class="mrow">
+          <div class="name"><b>${it[0]}</b><small>${it[1]}</small></div>
+          <div class="dots"></div>
+          <span class="pr">${it[2]}</span>
+        </div>`).join('')}
+    </div>`).join('');
+  document.getElementById('qdots').innerHTML=t.quotes.map((_,i)=>`<i class="${i===0?'on':''}" onclick="showQ(${i})"></i>`).join('');
+  showQ(0,true);
+  const allSvc=[];
+  t.menu.forEach(c=>c[1].forEach(it=>allSvc.push(it[0])));
+  document.getElementById('f_s').innerHTML=allSvc.map(s=>`<option>${s}</option>`).join('');
+  observeAll();
+}
+function showQ(i,instant){
+  QI=i; const t=T[LANG], q=document.getElementById('quote');
+  const apply=()=>{
+    q.textContent=t.quotes[i][0];
+    document.getElementById('qwho').textContent=t.quotes[i][1];
+    document.querySelectorAll('#qdots i').forEach((d,di)=>d.classList.toggle('on',di===i));
+    q.classList.remove('fade');
+  };
+  if(instant){apply();return;}
+  q.classList.add('fade'); setTimeout(apply,400);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  ['n1','n2','n3','navbook','eyebrow','hsub','hcta2','m_lab','m_p','g_lab','g_p','gc1','gc2','gc3',
+   't1','t2','t3','w_lab','pr1','pr1p','pr2','pr2p','pr3','pr3p','b_lab','b_s','f_b','f_note','foot'
+  ].forEach(k=>{const el=document.getElementById(k); if(el) el.textContent=t[k];});
+  document.getElementById('h1').innerHTML=t.h1;
+  document.getElementById('m_h2').innerHTML=t.m_h2;
+  document.getElementById('g_h2').innerHTML=t.g_h2;
+  document.getElementById('w_h2').innerHTML=t.w_h2;
+  document.getElementById('b_h2').innerHTML=t.b_h2;
+  document.getElementById('ex').innerHTML=t.ex;
+  document.getElementById('hcta').childNodes[0].textContent=t.hcta+' ';
+  document.getElementById('f_n').placeholder=t.f_n;
+  document.getElementById('f_p').placeholder=t.f_p;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang=l;
+  build();
+}
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scr',scrollY>40));
+let io;
+function observeAll(){
+  if(io) io.disconnect();
+  io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.1});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+}
+let counted=false;
+new IntersectionObserver(es=>{
+  if(es[0].isIntersecting && !counted){
+    counted=true;
+    document.querySelectorAll('#stats [data-count]').forEach(el=>{
+      const to=+el.dataset.count, start=performance.now(), dur=1600;
+      (function step(ts){
+        const p=Math.min((ts-start)/dur,1);
+        el.textContent=Math.round(to*(p*(2-p))).toLocaleString('de-DE');
+        if(p<1)requestAnimationFrame(step);
+      })(start);
+    });
+  }
+},{threshold:.4}).observe(document.getElementById('stats'));
+setInterval(()=>showQ((QI+1)%3),6000);
+document.getElementById('bform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const toast=document.getElementById('toast');
+  toast.textContent=T[LANG].toast;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),6000);
+});
+setLang('en');
+</script>
+</body>
+</html>

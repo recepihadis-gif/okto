@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — Business Control Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0f19;--card:#131a2b;--card2:#0f1524;--line:#22304d;--text:#e9eef8;--muted:#7e8ba5;
+        --blue:#4f8cff;--green:#2dd4a0;--gold:#f5b942;--purple:#a78bfa}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+  .shell{max-width:1160px;margin:0 auto}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .dot{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--purple));
+    display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .brand b{font-size:1rem;display:block}
+  .brand small{color:var(--muted);font-size:.72rem}
+  .top-r{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .demo-tag{font-size:.68rem;color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:99px}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid var(--line);color:var(--muted);padding:5px 11px;
+    border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+  .playbtn{background:var(--blue);color:#fff;border:none;padding:13px 28px;border-radius:12px;
+    font-weight:800;font-size:.92rem;cursor:pointer;font-family:inherit}
+  .playbtn:hover{filter:brightness(1.1)}
+
+  /* NARRATOR — the big plain-words line */
+  .guide{background:linear-gradient(135deg,#1d2032,#252038);border:1px solid rgba(245,185,66,.45);
+    border-left:6px solid var(--gold);border-radius:16px;padding:18px 22px;margin-bottom:16px;
+    font-size:1.15rem;font-weight:800;line-height:1.5;min-height:64px;display:flex;align-items:center;
+    transition:opacity .3s}
+  .guide.flash{animation:gflash .6s ease}
+  @keyframes gflash{0%{background:rgba(245,185,66,.25)}100%{}}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;transition:border-color .3s}
+  .kpi.hot{border-color:var(--gold)}
+  .kpi .lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;display:flex;justify-content:space-between}
+  .kpi .val{font-size:1.8rem;font-weight:800;margin:8px 0 2px}
+  .kpi .dlt{font-size:.72rem;font-weight:600;color:var(--green)}
+  .accent-b .val{color:var(--blue)} .accent-g .val{color:var(--green)}
+  .accent-gold .val{color:var(--gold)} .accent-p .val{color:var(--purple)}
+
+  .main{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+  .panel h3{font-size:.85rem;margin-bottom:4px}
+  .panel .sub{font-size:.7rem;color:var(--muted);margin-bottom:14px;display:block}
+
+  .chart{display:flex;align-items:flex-end;gap:8px;height:150px;padding-top:6px}
+  .bar{flex:1;background:linear-gradient(180deg,var(--blue),rgba(79,140,255,.25));border-radius:6px 6px 0 0;
+    position:relative;min-height:6px;transition:height 1s cubic-bezier(.2,.8,.2,1)}
+  .bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:.62rem;color:var(--muted)}
+  .chart-wrap{padding-bottom:26px}
+
+  .feed{display:flex;flex-direction:column;gap:10px;max-height:330px;overflow:hidden}
+  .ev{display:flex;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+    opacity:0;transform:translateX(16px);transition:all .5s ease;align-items:center}
+  .ev.in{opacity:1;transform:none}
+  .ev .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-size:.95rem;flex-shrink:0}
+  .ic.b{background:rgba(79,140,255,.15)} .ic.g{background:rgba(45,212,160,.15)}
+  .ic.gd{background:rgba(245,185,66,.15)} .ic.p{background:rgba(167,139,250,.15)}
+  .ev b{font-size:.8rem;display:block}
+  .ev p{font-size:.72rem;color:var(--muted)}
+  .ev .t{margin-left:auto;font-size:.65rem;color:var(--muted);white-space:nowrap}
+
+  .bottom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px}
+  .book-row{display:flex;justify-content:space-between;font-size:.78rem;padding:9px 0;border-bottom:1px dashed var(--line);align-items:center}
+  .book-row:last-child{border:none}
+  .book-row .st{font-size:.64rem;font-weight:700;padding:3px 9px;border-radius:99px}
+  .st.ok{background:rgba(45,212,160,.15);color:var(--green)}
+  .st.pend{background:rgba(245,185,66,.15);color:var(--gold)}
+
+  .gauge{text-align:center;padding:6px 0}
+  .gauge .big{font-size:2.4rem;font-weight:800;color:var(--green)}
+  .gauge .big small{font-size:1rem;color:var(--muted)}
+  .gauge p{font-size:.72rem;color:var(--muted)}
+  .gbar{height:8px;background:var(--card2);border-radius:99px;margin:12px 0;overflow:hidden}
+  .gbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));
+    border-radius:99px;transition:width 1.4s ease}
+
+  .stars-line{font-size:.78rem;padding:8px 0;display:flex;justify-content:space-between;align-items:center}
+  .stars-line .s{color:var(--gold)}
+  .grow{color:var(--green);font-weight:700;font-size:.72rem}
+
+  .foot{text-align:center;color:var(--muted);font-size:.7rem;margin-top:20px}
+  @media(max-width:900px){.kpis{grid-template-columns:1fr 1fr}.main,.bottom{grid-template-columns:1fr}
+    .guide{font-size:1rem}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="dot">📊</div>
+      <div><b id="ttl">Your Business — Control Panel</b><small id="tsub">Everything in one place, working alone</small></div>
+    </div>
+    <div class="top-r">
+      <span class="demo-tag">DEMO</span>
+      <div class="lang">
+        <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+        <button id="btn-mk" onclick="setLang('mk')">MK</button>
+      </div>
+      <button class="playbtn" id="play" onclick="run()">▶ Watch one working day</button>
+    </div>
+  </div>
+
+  <!-- THE NARRATOR -->
+  <div class="guide" id="guide">👇 Press the blue button — then just read THIS line. It tells you what is happening, in simple words.</div>
+
+  <div class="kpis">
+    <div class="kpi accent-b" id="kp1"><div class="lbl"><span id="l1">Bookings today</span><span>📅</span></div><div class="val" id="k1">0</div><div class="dlt" id="k1d">—</div></div>
+    <div class="kpi accent-g" id="kp2"><div class="lbl"><span id="l2">Questions answered alone</span><span>⚡</span></div><div class="val" id="k2">0</div><div class="dlt" id="k2d">—</div></div>
+    <div class="kpi accent-gold" id="kp3"><div class="lbl"><span id="l3">New Google reviews</span><span>🌟</span></div><div class="val" id="k3">0</div><div class="dlt" id="k3d">—</div></div>
+    <div class="kpi accent-p" id="kp4"><div class="lbl"><span id="l4">Money earned today</span><span>💶</span></div><div class="val" id="k4">€0</div><div class="dlt" id="k4d">—</div></div>
+  </div>
+
+  <div class="main">
+    <div class="panel chart-wrap">
+      <h3 id="ch3">Bookings this week</h3>
+      <span class="sub" id="csub">Each bar = one day. Higher bar = more customers.</span>
+      <div class="chart" id="chart"></div>
+    </div>
+    <div class="panel">
+      <h3 id="fh3">What is happening right now</h3>
+      <span class="sub" id="fsub">The system works — you just watch</span>
+      <div class="feed" id="feed"></div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="panel">
+      <h3 id="bh3">Today's appointments</h3>
+      <span class="sub" id="bsub">Booked by customers themselves, online</span>
+      <div id="books"><div class="book-row"><span>—</span><span class="st pend" id="wait0">waiting</span></div></div>
+    </div>
+    <div class="panel">
+      <h3 id="sh3">How fast customers get an answer</h3>
+      <span class="sub" id="ssub">Without a system: 3–6 hours. With the system:</span>
+      <div class="gauge">
+        <div class="big" id="speed">—</div>
+        <div class="gbar"><i id="gfill"></i></div>
+        <p id="sp">A fast answer = the customer doesn't go to your competitor.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h3 id="gh3">Your Google profile</h3>
+      <span class="sub" id="gsub">More reviews = more new customers find you</span>
+      <div class="stars-line"><span class="s">★★★★★ <b id="rate">4.6</b></span><span class="grow" id="rateg"></span></div>
+      <div class="stars-line"><span id="gl1">Total reviews</span><b id="revs">47</b></div>
+      <div class="stars-line"><span id="gl2">People who saw you this week</span><b id="views">312</b></div>
+      <div class="stars-line"><span id="gl3">Calls from Google</span><b id="calls">21</b></div>
+    </div>
+  </div>
+
+  <div class="foot" id="foot">⚠ DEMO — the business is not real. This shows how all systems (booking, auto-answer, reviews) work together for YOUR business.</div>
+</div>
+
+<script>
+const T={
+en:{ttl:'Your Business — Control Panel', tsub:'Everything in one place, working alone',
+  play:'▶ Watch one working day', replay:'↻ Watch again', playing:'⏳ One day is running...',
+  guideIdle:'👇 Press the blue button — then just read THIS line. It tells you what is happening, in simple words.',
+  guideStart:'🌅 The day begins. You do NOTHING — just watch what happens by itself...',
+  guideEnd:'🌙 Day finished: 12 bookings, 27 questions answered, 4 new reviews, €860 — and you did NOTHING. THAT is the system.',
+  l1:'Bookings today', l2:'Questions answered alone', l3:'New Google reviews', l4:'Money earned today',
+  k1d:'+3 more than yesterday', k2d:'answer in 6 seconds', k3d:'all 5 stars', k4d:'+18% this week',
+  ch3:'Bookings this week', csub:'Each bar = one day. Higher bar = more customers.',
+  fh3:'What is happening right now', fsub:'The system works — you just watch',
+  bh3:"Today's appointments", bsub:'Booked by customers themselves, online', wait0:'waiting',
+  sh3:'How fast customers get an answer', ssub:'Without a system: 3–6 hours. With the system:',
+  sp:"A fast answer = the customer doesn't go to your competitor.",
+  gh3:'Your Google profile', gsub:'More reviews = more new customers find you',
+  gl1:'Total reviews', gl2:'People who saw you this week', gl3:'Calls from Google',
+  rateg:'▲ +0.1 this month', sec:'sec', confirmed:'confirmed', reminder:'reminder set',
+  foot:'⚠ DEMO — the business is not real. This shows how all systems (booking, auto-answer, reviews) work together for YOUR business.',
+  days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  events:[
+    ['b','📅','New booking — Ariana','Thursday 16:00 · booked it herself','21:47','📅 A customer just BOOKED — all by himself, at night. You did nothing.'],
+    ['g','⚡','Question answered','"Table for 4 tomorrow?" → 6 seconds','21:52','⚡ A question was just ANSWERED — in 6 seconds, automatically.'],
+    ['gd','🌟','New 5★ review','"Fantastic service!"','22:04','🌟 A happy customer left 5 STARS — the system politely asked him.'],
+    ['b','📅','New booking — Bekim','Friday 11:30 · from Instagram','22:15','📅 Another BOOKING — this one came from your Instagram link.'],
+    ['g','⚡','Reminder sent','Ariana reminded: tomorrow 16:00','08:00','⏰ The customer got a REMINDER — she will not forget her appointment.'],
+    ['p','🧾','Invoice created','#031 · €240 · sent as PDF','09:12','🧾 An INVOICE was made and sent — by itself. No paper, no mistakes.'],
+    ['g','⚡','Question answered','"What are your prices?" → 5 sec','10:38','⚡ Another question ANSWERED alone — while you were working.'],
+    ['gd','🌟','New 5★ review','"The best in town."','11:02','🌟 Another 5-STAR review. Your Google profile is growing alone.'],
+    ['b','📅','New booking — Elena','Saturday 13:00','12:47','📅 Third BOOKING today — she booked while you were busy.']],
+  bookings:[['Ariana — 16:00','ok'],['Bekim — 11:30','ok'],['Elena — 13:00','pend']]},
+sq:{ttl:'Biznesi Juaj — Paneli Kryesor', tsub:'Gjithçka në një vend, punon vetë',
+  play:'▶ Shiko një ditë pune', replay:'↻ Shiko përsëri', playing:'⏳ Dita po kalon...',
+  guideIdle:'👇 Shtypni butonin blu — pastaj lexoni vetëm KËTË rresht. Ju tregon çfarë po ndodh, me fjalë të thjeshta.',
+  guideStart:'🌅 Dita fillon. Ju NUK bëni ASGJË — vetëm shikoni çfarë ndodh vetë...',
+  guideEnd:'🌙 Dita mbaroi: 12 rezervime, 27 pyetje të përgjigjura, 4 review të reja, €860 — dhe ju NUK bëtë ASGJË. KY është sistemi.',
+  l1:'Rezervime sot', l2:'Pyetje të përgjigjura vetë', l3:'Review të reja në Google', l4:'Para të fituara sot',
+  k1d:'+3 më shumë se dje', k2d:'përgjigje për 6 sekonda', k3d:'të gjitha 5 yje', k4d:'+18% këtë javë',
+  ch3:'Rezervimet këtë javë', csub:'Çdo shtyllë = një ditë. Më e lartë = më shumë klientë.',
+  fh3:'Çfarë po ndodh tani', fsub:'Sistemi punon — ju vetëm shikoni',
+  bh3:'Terminet e sotme', bsub:'Të rezervuara nga vetë klientët, online', wait0:'në pritje',
+  sh3:'Sa shpejt klientët marrin përgjigje', ssub:'Pa sistem: 3–6 orë. Me sistemin:',
+  sp:'Përgjigje e shpejtë = klienti nuk shkon te konkurrenca.',
+  gh3:'Profili juaj në Google', gsub:'Më shumë review = më shumë klientë ju gjejnë',
+  gl1:'Review gjithsej', gl2:'Sa ju panë këtë javë', gl3:'Telefonata nga Google',
+  rateg:'▲ +0.1 këtë muaj', sec:'sek', confirmed:'konfirmuar', reminder:'kujtesa u vu',
+  foot:'⚠ DEMO — biznesi nuk është real. Tregon si punojnë të gjitha sistemet së bashku për biznesin TUAJ.',
+  days:['Hën','Mar','Mër','Enj','Pre','Sht','Die'],
+  events:[
+    ['b','📅','Rezervim i ri — Ariana','E enjte 16:00 · rezervoi vetë','21:47','📅 Një klient sapo REZERVOI — krejt vetë, natën. Ju s\'bëtë asgjë.'],
+    ['g','⚡','Pyetje u përgjigj','"Tavolinë për 4 nesër?" → 6 sek','21:52','⚡ Një pyetje sapo mori PËRGJIGJE — për 6 sekonda, automatikisht.'],
+    ['gd','🌟','Review i ri 5★','"Shërbim fantastik!"','22:04','🌟 Një klient i kënaqur la 5 YJE — sistemi ia kërkoi me mirësjellje.'],
+    ['b','📅','Rezervim i ri — Bekim','E premte 11:30 · nga Instagram','22:15','📅 Edhe një REZERVIM — ky erdhi nga linku juaj i Instagram-it.'],
+    ['g','⚡','Kujtesa u dërgua','Ariana u kujtua: nesër 16:00','08:00','⏰ Klientja mori KUJTESË — nuk do ta harrojë terminin.'],
+    ['p','🧾','Fatura u krijua','#031 · €240 · u dërgua PDF','09:12','🧾 Një FATURË u bë dhe u dërgua — vetë. Pa letra, pa gabime.'],
+    ['g','⚡','Pyetje u përgjigj','"Sa janë çmimet?" → 5 sek','10:38','⚡ Edhe një pyetje u PËRGJIGJ vetë — ndërsa ju punonit.'],
+    ['gd','🌟','Review i ri 5★','"Më i miri në qytet."','11:02','🌟 Edhe një review 5 YJE. Profili juaj në Google rritet vetë.'],
+    ['b','📅','Rezervim i ri — Elena','E shtunë 13:00','12:47','📅 Rezervimi i tretë sot — ajo rezervoi ndërsa ju ishit të zënë.']],
+  bookings:[['Ariana — 16:00','ok'],['Bekim — 11:30','ok'],['Elena — 13:00','pend']]},
+mk:{ttl:'Вашиот Бизнис — Контролен Панел', tsub:'Сè на едно место, работи само',
+  play:'▶ Гледај еден работен ден', replay:'↻ Гледај повторно', playing:'⏳ Денот тече...',
+  guideIdle:'👇 Стиснете го синото копче — па читајте само ОВОЈ ред. Ви кажува што се случува, со едноставни зборови.',
+  guideStart:'🌅 Денот почнува. Вие НЕ правите НИШТО — само гледајте што се случува само...',
+  guideEnd:'🌙 Денот заврши: 12 резервации, 27 одговорени прашања, 4 нови рецензии, €860 — а вие НЕ направивте НИШТО. ТОА е системот.',
+  l1:'Резервации денес', l2:'Прашања одговорени сами', l3:'Нови Google рецензии', l4:'Заработени пари денес',
+  k1d:'+3 повеќе од вчера', k2d:'одговор за 6 секунди', k3d:'сите 5 ѕвезди', k4d:'+18% оваа недела',
+  ch3:'Резервации оваа недела', csub:'Секоја лента = еден ден. Повисока = повеќе клиенти.',
+  fh3:'Што се случува сега', fsub:'Системот работи — вие само гледате',
+  bh3:'Денешни термини', bsub:'Резервирани од самите клиенти, онлајн', wait0:'се чека',
+  sh3:'Колку брзо клиентите добиваат одговор', ssub:'Без систем: 3–6 часа. Со системот:',
+  sp:'Брз одговор = клиентот не оди кај конкуренцијата.',
+  gh3:'Вашиот Google профил', gsub:'Повеќе рецензии = повеќе клиенти ве наоѓаат',
+  gl1:'Вкупно рецензии', gl2:'Колку ве видоа оваа недела', gl3:'Повици од Google',
+  rateg:'▲ +0.1 овој месец', sec:'сек', confirmed:'потврдено', reminder:'потсетник',
+  foot:'⚠ ДЕМО — бизнисот не е реален. Покажува како сите системи работат заедно за ВАШИОТ бизнис.',
+  days:['Пон','Вто','Сре','Чет','Пет','Саб','Нед'],
+  events:[
+    ['b','📅','Нова резервација — Ариана','Четврток 16:00 · сама резервираше','21:47','📅 Клиент штотуку РЕЗЕРВИРАШЕ — сам, навечер. Вие не направивте ништо.'],
+    ['g','⚡','Прашање одговорено','„Маса за 4 утре?" → 6 сек','21:52','⚡ Прашање штотуку доби ОДГОВОР — за 6 секунди, автоматски.'],
+    ['gd','🌟','Нова 5★ рецензија','„Фантастична услуга!"','22:04','🌟 Задоволен клиент остави 5 ЅВЕЗДИ — системот учтиво го замоли.'],
+    ['b','📅','Нова резервација — Беким','Петок 11:30 · од Instagram','22:15','📅 Уште една РЕЗЕРВАЦИЈА — оваа дојде од вашиот Instagram линк.'],
+    ['g','⚡','Потсетник испратен','Ариана потсетена: утре 16:00','08:00','⏰ Клиентката доби ПОТСЕТНИК — нема да го заборави терминот.'],
+    ['p','🧾','Фактура креирана','#031 · €240 · испратена PDF','09:12','🧾 ФАКТУРА направена и испратена — сама. Без хартија, без грешки.'],
+    ['g','⚡','Прашање одговорено','„Кои се цените?" → 5 сек','10:38','⚡ Уште едно прашање ОДГОВОРЕНО само — додека вие работевте.'],
+    ['gd','🌟','Нова 5★ рецензија','„Најдобри во градот."','11:02','🌟 Уште една рецензија 5 ЅВЕЗДИ. Вашиот Google профил расте сам.'],
+    ['b','📅','Нова резервација — Елена','Сабота 13:00','12:47','📅 Трета резервација денес — таа резервираше додека бевте зафатени.']],
+  bookings:[['Ариана — 16:00','ok'],['Беким — 11:30','ok'],['Елена — 13:00','pend']]}
+};
+
+const WEEK=[34,48,41,62,78,95,0];
+let LANG='en', running=false;
+
+function drawChart(){
+  const chart=document.getElementById('chart'); chart.innerHTML='';
+  WEEK.forEach((v,i)=>{
+    const b=document.createElement('div');
+    b.className='bar';
+    b.innerHTML=`<span>${T[LANG].days[i]}</span>`;
+    b.dataset.v=v; b.style.height='4%';
+    chart.appendChild(b);
+  });
+}
+function guide(msg){
+  const g=document.getElementById('guide');
+  g.textContent=msg;
+  g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');
+}
+function count(el,to,pre='',dur=1200){
+  const start=performance.now(), from=parseInt(el.textContent.replace(/\D/g,''))||0;
+  function step(t){
+    const p=Math.min((t-start)/dur,1);
+    el.textContent=pre+Math.round(from+(to-from)*p);
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function run(){
+  if(running)return; running=true;
+  const t=T[LANG];
+  document.getElementById('play').textContent=t.playing;
+  document.getElementById('feed').innerHTML='';
+  document.getElementById('books').innerHTML='';
+  guide(t.guideStart);
+  document.querySelectorAll('.bar').forEach((b,i)=>{
+    setTimeout(()=>{b.style.height=Math.max(b.dataset.v,4)+'%';},i*120);
+  });
+  setTimeout(()=>{count(document.getElementById('k1'),12);document.getElementById('k1d').textContent=t.k1d;},400);
+  setTimeout(()=>{count(document.getElementById('k2'),27);document.getElementById('k2d').textContent=t.k2d;},700);
+  setTimeout(()=>{count(document.getElementById('k3'),4);document.getElementById('k3d').textContent=t.k3d;},1000);
+  setTimeout(()=>{count(document.getElementById('k4'),860,'€');document.getElementById('k4d').textContent=t.k4d;},1300);
+  const feed=document.getElementById('feed');
+  t.events.forEach((ev,i)=>{
+    setTimeout(()=>{
+      const d=document.createElement('div');
+      d.className='ev';
+      d.innerHTML=`<div class="ic ${ev[0]}">${ev[1]}</div><div><b>${ev[2]}</b><p>${ev[3]}</p></div><span class="t">${ev[4]}</span>`;
+      feed.prepend(d);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('in')));
+      if(feed.children.length>6)feed.lastChild.remove();
+      guide(ev[5]); // narrator explains in plain words
+    },1400+i*1900);
+  });
+  t.bookings.forEach((bk,i)=>{
+    setTimeout(()=>{
+      const d=document.createElement('div');
+      d.className='book-row';
+      const lbl=bk[1]==='ok'?t.confirmed:t.reminder;
+      d.innerHTML=`<b>${bk[0]}</b><span class="st ${bk[1]}">${lbl}</span>`;
+      document.getElementById('books').appendChild(d);
+    },2200+i*2400);
+  });
+  setTimeout(()=>{
+    document.getElementById('speed').innerHTML='6<small>'+t.sec+'</small>';
+    document.getElementById('gfill').style.width='96%';
+  },3000);
+  setTimeout(()=>{
+    document.getElementById('rate').textContent='4.7';
+    document.getElementById('rateg').textContent=t.rateg;
+    count(document.getElementById('revs'),51);
+    count(document.getElementById('views'),348);
+    count(document.getElementById('calls'),26);
+  },7000);
+  const endAt=1400+t.events.length*1900+1200;
+  setTimeout(()=>{
+    guide(t.guideEnd);
+    document.getElementById('play').textContent=t.replay;
+    running=false;
+  },endAt);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  ['ttl','tsub','l1','l2','l3','l4','ch3','csub','fh3','fsub',
+   'bh3','bsub','sh3','ssub','sp','gh3','gsub','gl1','gl2','gl3','foot'
+  ].forEach(k=>{const el=document.getElementById(k); if(el) el.textContent=t[k];});
+  const w=document.getElementById('wait0'); if(w) w.textContent=t.wait0;
+  document.getElementById('play').textContent=running?t.playing:t.play;
+  if(!running) guide(t.guideIdle);
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang=l;
+  drawChart();
+}
+setLang('en');
+// Auto-start the working day — the page explains itself without any click
+setTimeout(()=>{if(!running) run();},1500);
+</script>
+</body>
+</html>

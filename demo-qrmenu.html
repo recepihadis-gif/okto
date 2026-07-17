@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — Menyja me QR kod</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f1420;--card:#1a2233;--accent:#f5b942;--text:#eef2f8;--muted:#8b96ab;--green:#25d366}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:28px 16px}
+  .top{display:flex;justify-content:space-between;width:100%;max-width:900px;margin-bottom:8px;align-items:center}
+  .demo-tag{font-size:.72rem;color:var(--muted);border:1px solid #2c3850;padding:4px 10px;border-radius:99px;letter-spacing:1px}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid #2c3850;color:var(--muted);padding:4px 10px;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--accent);border-color:var(--accent);color:#1a1200}
+  h1{font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;text-align:center;margin:10px 0 4px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);text-align:center;font-size:.95rem;margin-bottom:26px;max-width:560px}
+
+  .stage{display:flex;gap:44px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+
+  /* QR side */
+  .qr-side{text-align:center;max-width:240px}
+  .qr{width:170px;height:170px;background:#fff;border-radius:16px;margin:0 auto 14px;padding:14px;
+      display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);gap:2px}
+  .qr i{background:#111}
+  .qr i.w{background:#fff}
+  .qr-side p{color:var(--muted);font-size:.85rem}
+  .arrow{font-size:2rem;color:var(--accent);margin:14px 0}
+
+  /* Phone */
+  .phone{width:310px;background:#fffdf8;border-radius:30px;overflow:hidden;color:#3d362f;
+    box-shadow:0 30px 60px rgba(0,0,0,.5);border:1px solid #2c3850}
+  .m-head{background:#1a1512;color:#fff;text-align:center;padding:22px 16px 16px}
+  .m-head h2{font-family:'Playfair Display',serif;font-size:1.25rem}
+  .m-head h2 b{color:var(--accent)}
+  .m-head small{color:#9c9184;font-size:.72rem;letter-spacing:2px;text-transform:uppercase}
+  .cats{display:flex;gap:8px;padding:12px;overflow-x:auto;background:#f3ede3}
+  .cats button{border:none;background:#fff;padding:7px 14px;border-radius:99px;font-size:.78rem;font-weight:600;
+    cursor:pointer;color:#6b6156;white-space:nowrap;font-family:inherit}
+  .cats button.active{background:#c8963e;color:#fff}
+  .items{padding:6px 14px 18px;min-height:280px}
+  .item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed #e5ddd2}
+  .item b{font-size:.9rem;display:block}
+  .item small{color:#8a7f72;font-size:.75rem}
+  .item .p{color:#a87b2d;font-weight:700;white-space:nowrap;margin-left:12px;transition:all .3s}
+  .item .p.flash{background:#ffe9b8;border-radius:6px;padding:2px 6px;transform:scale(1.12)}
+
+  /* Admin side */
+  .admin{width:300px;background:var(--card);border:1px solid #2c3850;border-radius:20px;padding:20px}
+  .admin h3{font-size:.95rem;margin-bottom:4px}
+  .admin .role{font-size:.72rem;color:var(--muted);margin-bottom:16px}
+  .arow{display:flex;justify-content:space-between;align-items:center;background:#0f1420;border:1px solid #2c3850;
+    border-radius:12px;padding:10px 12px;margin-bottom:10px}
+  .arow span{font-size:.85rem}
+  .arow input{width:70px;background:#1a2233;border:1px solid #2c3850;color:var(--text);border-radius:8px;
+    padding:6px 8px;font-family:inherit;font-size:.85rem;text-align:right}
+  .admin button.save{width:100%;background:var(--green);color:#06301b;border:none;padding:12px;border-radius:12px;
+    font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;margin-top:6px}
+  .saved{color:var(--green);font-size:.8rem;text-align:center;margin-top:10px;opacity:0;transition:opacity .3s}
+  .saved.show{opacity:1}
+  .caption{margin-top:24px;color:var(--muted);font-size:.8rem;text-align:center;max-width:520px}
+  @media(max-width:720px){.stage{gap:26px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO / KONCEPT</span>
+  <div class="lang">
+    <button id="btn-sq" class="active" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<h1 id="title">Menyja me <span>QR kod</span> — ndrysho çmimet për 10 sekonda</h1>
+<p class="sub" id="subtitle">Klienti skanon → menyja hapet. Ju ndryshoni çmimin nga telefoni — pa shtypur menu të reja kurrë më.</p>
+
+<div class="stage">
+  <div class="qr-side">
+    <div class="qr" id="qrbox"></div>
+    <p id="qrtext">Klienti e skanon këtë në tavolinë…</p>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="phone">
+    <div class="m-head">
+      <small id="mtag">Menyja Digjitale</small>
+      <h2 id="mname">Kafeneja <b>Juaj</b></h2>
+    </div>
+    <div class="cats" id="cats"></div>
+    <div class="items" id="items"></div>
+  </div>
+
+  <div class="admin">
+    <h3 id="atitle">⚙️ Paneli i pronarit</h3>
+    <div class="role" id="asub">Ndryshoni çmimin dhe shtypni "Ruaj"</div>
+    <div id="arows"></div>
+    <button class="save" id="saveBtn" onclick="savePrices()">💾 Ruaj ndryshimet</button>
+    <div class="saved" id="savedMsg">✅ U ruajt — menyja u përditësua menjëherë!</div>
+  </div>
+</div>
+
+<p class="caption" id="caption">Regjistroni ekranin: ndryshoni një çmim në panel → shihni si ndryshon në meny live. Kjo është videoja për Instagram.</p>
+
+<script>
+// QR pattern (decorative)
+const qr=document.getElementById('qrbox');
+const pat="111111101010111111100000101110100000101110101010101110101110100110101110101110101010101110100000101100100000111111101010111111000000000110000000001011101110101110111".split('');
+for(let i=0;i<81;i++){const d=document.createElement('i');if(pat[i%pat.length]==='0')d.classList.add('w');qr.appendChild(d);}
+
+const MENU={
+  sq:{cats:['Kafe','Pije','Ëmbëlsira'],items:[
+    [['Makiato','me qumësht të freskët',80],['Espresso','100% arabica',60],['Kafe turke','tradicionale',50],['Cappuccino','me kanellë',90]],
+    [['Limonadë shtëpie','me nenexhik',120],['Çaj mali','nga Bistra',70],['Lëng portokalli','i shtrydhur',150]],
+    [['Trileqe','e shtëpisë',140],['Bakllava','me arra',150],['Kek çokollate','i ngrohtë',160]]]},
+  mk:{cats:['Кафе','Пијалоци','Десерти'],items:[
+    [['Макијато','со свежо млеко',80],['Еспресо','100% арабика',60],['Турско кафе','традиционално',50],['Капучино','со цимет',90]],
+    [['Домашна лимонада','со нане',120],['Планински чај','од Бистра',70],['Сок од портокал','цеден',150]],
+    [['Трилече','домашно',140],['Баклава','со ореви',150],['Чоколаден колач','топол',160]]]},
+  en:{cats:['Coffee','Drinks','Desserts'],items:[
+    [['Macchiato','fresh milk',80],['Espresso','100% arabica',60],['Turkish coffee','traditional',50],['Cappuccino','with cinnamon',90]],
+    [['Homemade lemonade','with mint',120],['Mountain tea','from Bistra',70],['Orange juice','freshly squeezed',150]],
+    [['Trileqe','homemade',140],['Baklava','with walnuts',150],['Chocolate cake','warm',160]]]}
+};
+const T={
+  sq:{title:'Menyja me <span>QR kod</span> — ndrysho çmimet për 10 sekonda',
+      subtitle:'Klienti skanon → menyja hapet. Ju ndryshoni çmimin nga telefoni — pa shtypur menu të reja kurrë më.',
+      qrtext:'Klienti e skanon këtë në tavolinë…', mtag:'Menyja Digjitale', mname:'Kafeneja <b>Juaj</b>',
+      atitle:'⚙️ Paneli i pronarit', asub:'Ndryshoni çmimin dhe shtypni "Ruaj"', save:'💾 Ruaj ndryshimet',
+      saved:'✅ U ruajt — menyja u përditësua menjëherë!',
+      caption:'Regjistroni ekranin: ndryshoni një çmim në panel → shihni si ndryshon në meny live. Kjo është videoja për Instagram.'},
+  mk:{title:'Мени со <span>QR код</span> — промени цени за 10 секунди',
+      subtitle:'Клиентот скенира → менито се отвора. Вие ја менувате цената од телефон — без печатење нови менија.',
+      qrtext:'Клиентот го скенира ова на масата…', mtag:'Дигитално Мени', mname:'Вашето <b>Кафуле</b>',
+      atitle:'⚙️ Панел на сопственикот', asub:'Променете цена и стиснете „Зачувај"', save:'💾 Зачувај промени',
+      saved:'✅ Зачувано — менито е ажурирано веднаш!',
+      caption:'Снимајте го екранот: променете цена во панелот → гледајте како се менува во менито live.'},
+  en:{title:'<span>QR code</span> menu — change prices in 10 seconds',
+      subtitle:'Customer scans → menu opens. You change a price from your phone — never print menus again.',
+      qrtext:'Customer scans this at the table…', mtag:'Digital Menu', mname:'Your <b>Café</b>',
+      atitle:'⚙️ Owner panel', asub:'Change a price and hit "Save"', save:'💾 Save changes',
+      saved:'✅ Saved — menu updated instantly!',
+      caption:'Screen-record it: change a price in the panel → watch it update live in the menu.'}
+};
+
+let LANG='sq', CAT=0, prices=[];
+function renderCats(){
+  const c=document.getElementById('cats'); c.innerHTML='';
+  MENU[LANG].cats.forEach((name,i)=>{
+    const b=document.createElement('button'); b.textContent=name;
+    if(i===CAT)b.classList.add('active');
+    b.onclick=()=>{CAT=i;renderCats();renderItems();renderAdmin();};
+    c.appendChild(b);
+  });
+}
+function renderItems(flashIdx=-1){
+  const w=document.getElementById('items'); w.innerHTML='';
+  MENU[LANG].items[CAT].forEach((it,i)=>{
+    const d=document.createElement('div'); d.className='item';
+    d.innerHTML=`<div><b>${it[0]}</b><small>${it[1]}</small></div><span class="p ${i===flashIdx?'flash':''}">${it[2]} den</span>`;
+    w.appendChild(d);
+  });
+}
+function renderAdmin(){
+  const w=document.getElementById('arows'); w.innerHTML='';
+  MENU[LANG].items[CAT].forEach((it,i)=>{
+    const d=document.createElement('div'); d.className='arow';
+    d.innerHTML=`<span>${it[0]}</span><input type="number" id="pr${i}" value="${it[2]}">`;
+    w.appendChild(d);
+  });
+}
+function savePrices(){
+  let changed=-1;
+  MENU[LANG].items[CAT].forEach((it,i)=>{
+    const v=parseInt(document.getElementById('pr'+i).value)||it[2];
+    if(v!==it[2])changed=i;
+    // apply to all languages so switching keeps prices
+    ['sq','mk','en'].forEach(l=>MENU[l].items[CAT][i][2]=v);
+  });
+  renderItems(changed);
+  const m=document.getElementById('savedMsg'); m.classList.add('show');
+  setTimeout(()=>m.classList.remove('show'),2500);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  document.getElementById('title').innerHTML=t.title;
+  document.getElementById('subtitle').textContent=t.subtitle;
+  document.getElementById('qrtext').textContent=t.qrtext;
+  document.getElementById('mtag').textContent=t.mtag;
+  document.getElementById('mname').innerHTML=t.mname;
+  document.getElementById('atitle').textContent=t.atitle;
+  document.getElementById('asub').textContent=t.asub;
+  document.getElementById('saveBtn').textContent=t.save;
+  document.getElementById('savedMsg').textContent=t.saved;
+  document.getElementById('caption').textContent=t.caption;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  renderCats();renderItems();renderAdmin();
+}
+setLang('en');
+</script>
+</body>
+</html>

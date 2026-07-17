@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORTIS — Construction & Engineering (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --steel:#14171c; --steel-2:#1d2129; --paper:#f2f3f5; --orange:#f26a1b; --orange-d:#d4550e;
+    --line:#2b303a; --line-l:#dcdfe4; --mut:#8b93a1; --mut-d:#5d6673;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  ::selection{background:var(--orange);color:#fff}
+  body{font-family:'Inter',sans-serif;background:var(--steel);color:#fff;line-height:1.7;
+    font-size:15px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.disp{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;
+    line-height:1.02;letter-spacing:.01em}
+  img{max-width:100%;display:block}
+
+  .rv{opacity:0;transform:translateY(30px);transition:all .9s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.24s}
+
+  .lab{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);font-weight:700}
+
+  /* safety stripe */
+  .stripe{height:8px;background:repeating-linear-gradient(-45deg,var(--orange) 0 14px,var(--steel) 14px 28px)}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;
+    padding:18px 32px;transition:all .35s}
+  nav.scr{background:rgba(20,23,28,.92);backdrop-filter:blur(14px);padding:12px 32px;border-bottom:1px solid var(--line)}
+  .wordmark{font-family:'Anton',sans-serif;font-size:1.25rem;letter-spacing:.06em}
+  .wordmark span{color:var(--orange)}
+  .nav-r{display:flex;align-items:center;gap:18px}
+  .nav-links{display:flex;gap:20px;list-style:none}
+  .nav-links a{text-decoration:none;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  .nav-links a:hover{color:#fff}
+  .lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:4px;padding:2px;background:var(--steel-2)}
+  .lang button{background:transparent;border:none;color:var(--mut);padding:4px 10px;border-radius:3px;
+    font-size:.66rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .lang button.active{background:var(--orange);color:#fff}
+  .nav-book{background:var(--orange);color:#fff;text-decoration:none;font-size:.7rem;letter-spacing:.14em;
+    text-transform:uppercase;padding:12px 22px;font-weight:700;transition:background .25s;
+    clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+  .nav-book:hover{background:var(--orange-d)}
+
+  /* HERO */
+  header{min-height:100vh;position:relative;display:flex;align-items:flex-end;
+    background:linear-gradient(180deg,rgba(20,23,28,.55),rgba(20,23,28,.92) 78%),
+    url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1800&q=76') center/cover}
+  .hero-in{max-width:1200px;margin:0 auto;padding:0 32px 90px;width:100%}
+  header h1{font-size:clamp(3.2rem,10vw,7.6rem);margin:18px 0 22px}
+  header h1 span{color:var(--orange)}
+  .hero-sub{color:var(--mut);max-width:460px;font-size:1rem;margin-bottom:36px}
+  .cta-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .btn-main{display:inline-flex;align-items:center;gap:12px;background:var(--orange);color:#fff;text-decoration:none;
+    padding:18px 38px;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+    transition:background .25s;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+  .btn-main:hover{background:var(--orange-d)}
+  .btn-ghost{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#fff;text-decoration:none;
+    border-bottom:2px solid var(--orange);padding-bottom:4px;font-weight:700}
+  .hero-stats{position:absolute;top:110px;right:32px;display:flex;flex-direction:column;gap:2px}
+  .hstat{background:rgba(20,23,28,.82);backdrop-filter:blur(8px);border-left:3px solid var(--orange);
+    padding:14px 22px;min-width:170px}
+  .hstat b{font-family:'Anton',sans-serif;font-size:1.6rem;display:block}
+  .hstat span{font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+
+  .ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--steel-2);
+    overflow:hidden;padding:14px 0}
+  .ticker-track{display:flex;gap:48px;white-space:nowrap;width:max-content;animation:slide 22s linear infinite}
+  .ticker span{font-family:'Anton',sans-serif;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--mut);display:flex;align-items:center;gap:48px}
+  .ticker i{width:10px;height:10px;background:var(--orange);display:inline-block;
+    clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  section{max-width:1200px;margin:0 auto;padding:104px 32px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:54px;gap:20px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(2.2rem,5.4vw,3.8rem)}
+  .sec-head h2 span{color:var(--orange)}
+  .sec-head p{color:var(--mut);max-width:340px;font-size:.9rem}
+
+  /* SERVICES rows */
+  .svc-row{display:grid;grid-template-columns:90px 1fr 1fr auto;gap:26px;align-items:center;
+    padding:32px 8px;border-top:1px solid var(--line);transition:all .3s}
+  .svc-row:last-child{border-bottom:1px solid var(--line)}
+  .svc-row:hover{background:var(--steel-2);padding-left:22px}
+  .svc-num{font-family:'Anton',sans-serif;font-size:1.15rem;color:var(--orange)}
+  .svc-row h3{font-size:1.5rem}
+  .svc-row p{color:var(--mut);font-size:.86rem}
+  .svc-price{font-family:'Anton',sans-serif;font-size:1.15rem;white-space:nowrap;color:#fff}
+  .svc-price small{display:block;font-family:'Inter',sans-serif;font-size:.66rem;color:var(--mut);
+    letter-spacing:.1em;text-transform:uppercase;text-align:right;font-weight:600}
+
+  /* PROJECTS */
+  .projects{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .proj{position:relative;overflow:hidden;background:var(--steel-2)}
+  .proj img{aspect-ratio:16/10;object-fit:cover;transition:transform .8s cubic-bezier(.2,.6,.2,1);opacity:.92}
+  .proj:hover img{transform:scale(1.06)}
+  .proj .pov{position:absolute;inset:auto 0 0 0;padding:44px 24px 20px;
+    background:linear-gradient(transparent,rgba(20,23,28,.94));display:flex;justify-content:space-between;align-items:flex-end;gap:14px}
+  .proj .pov b{font-family:'Anton',sans-serif;font-size:1.25rem;text-transform:uppercase;display:block;letter-spacing:.03em}
+  .proj .pov small{color:var(--mut);font-size:.76rem}
+  .proj .tag{background:var(--orange);color:#fff;font-size:.64rem;font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;padding:6px 12px;white-space:nowrap;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+
+  /* PROCESS */
+  .proc{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line)}
+  .pstep{background:var(--steel-2);padding:40px 30px;position:relative}
+  .pstep .pn{font-family:'Anton',sans-serif;font-size:4rem;color:transparent;
+    -webkit-text-stroke:1.5px var(--orange);line-height:1;margin-bottom:18px}
+  .pstep b{font-family:'Anton',sans-serif;font-size:1.15rem;text-transform:uppercase;display:block;
+    margin-bottom:10px;letter-spacing:.03em}
+  .pstep p{font-size:.85rem;color:var(--mut)}
+
+  /* GUARANTEE BAR */
+  .guarantee{display:flex;gap:14px;flex-wrap:wrap}
+  .gitem{flex:1;min-width:220px;border:1px solid var(--line);padding:24px 22px;display:flex;gap:14px;align-items:center}
+  .gitem svg{color:var(--orange);flex-shrink:0}
+  .gitem b{font-size:.9rem;display:block}
+  .gitem span{font-size:.76rem;color:var(--mut)}
+
+  /* QUOTE FORM */
+  .quotepanel{background:var(--paper);color:var(--steel);padding:70px 40px;position:relative;overflow:hidden}
+  .quotepanel .lab{color:var(--orange-d)}
+  .quotepanel h2{font-size:clamp(2rem,5vw,3.4rem);margin:12px 0 8px}
+  .quotepanel h2 span{color:var(--orange)}
+  .quotepanel .bs{color:var(--mut-d);font-size:.9rem;margin-bottom:38px;max-width:460px}
+  .bform{display:grid;grid-template-columns:1fr 1fr;gap:13px;max-width:760px}
+  .bform input,.bform select{width:100%;background:#fff;border:1.5px solid var(--line-l);
+    color:var(--steel);padding:16px 18px;font-family:inherit;font-size:.9rem}
+  .bform input:focus,.bform select:focus{outline:none;border-color:var(--orange)}
+  .bform .full{grid-column:1/-1}
+  .bform button{grid-column:1/-1;background:var(--steel);border:none;color:#fff;padding:19px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;
+    cursor:pointer;transition:background .25s}
+  .bform button:hover{background:var(--orange)}
+  .form-foot{grid-column:1/-1;font-size:.74rem;color:var(--mut-d)}
+  .toast{grid-column:1/-1;background:#e8f5ec;border:1px solid #9fd4ae;color:#1e6b38;
+    padding:16px 20px;font-size:.86rem;display:none;animation:tIn .4s ease}
+  .toast.show{display:block}
+  @keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  footer{max-width:1200px;margin:0 auto;padding:46px 32px 110px;display:flex;justify-content:space-between;
+    align-items:center;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:.78rem}
+
+  .explain{position:fixed;bottom:0;left:0;right:0;z-index:300;background:#000;color:#fff;
+    padding:12px 48px 12px 18px;font-size:.78rem;text-align:center;border-top:2px solid var(--orange)}
+  .explain b{color:var(--orange)}
+  .explain .x{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;
+    border:1px solid #444;color:#999;border-radius:50%;width:26px;height:26px;cursor:pointer}
+
+  @media(max-width:920px){
+    .hero-stats{display:none}
+    .svc-row{grid-template-columns:44px 1fr auto;gap:14px}
+    .svc-row p{display:none}
+    .projects{grid-template-columns:1fr}
+    .proc{grid-template-columns:1fr}
+    .bform{grid-template-columns:1fr}
+    .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wordmark">FORT<span>IS</span></div>
+  <div class="nav-r">
+    <ul class="nav-links">
+      <li><a href="#services" id="n1">Services</a></li>
+      <li><a href="#projects" id="n2">Projects</a></li>
+      <li><a href="#process" id="n3">Process</a></li>
+    </ul>
+    <div class="lang">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+      <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    </div>
+    <a class="nav-book" href="#quote" id="navbook">Get estimate</a>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-in">
+    <span class="lab rv in" id="eyebrow">Construction · Renovation · Facades</span>
+    <h1 class="rv in" id="h1">Built right.<br><span>Built once.</span></h1>
+    <p class="hero-sub rv in d1" id="hsub">Full builds, renovations, roofs and facades — fixed deadline and fixed price, both in writing. The paperwork protects you, the work speaks for us.</p>
+    <div class="cta-row rv in d2">
+      <a href="#quote" class="btn-main" id="hcta">Free estimate in 24h
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="#projects" class="btn-ghost" id="hcta2">See the work</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><b><span data-count="20">0</span>+</b><span id="hs1">Years on site</span></div>
+    <div class="hstat"><b><span data-count="350">0</span>+</b><span id="hs2">Projects delivered</span></div>
+    <div class="hstat"><b>100%</b><span id="hs3">Written contracts</span></div>
+  </div>
+</header>
+<div class="stripe"></div>
+
+<div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+
+<section id="services">
+  <div class="sec-head">
+    <div><span class="lab" id="s_lab">What we build</span><h2 class="rv" id="s_h2">From bathroom<br>to <span>whole building</span></h2></div>
+    <p class="rv d1" id="s_p">Every price below is a starting point put in writing after a free visit and measurement — never a surprise at the end.</p>
+  </div>
+  <div id="svcs"></div>
+</section>
+
+<section id="projects" style="padding-top:20px">
+  <div class="sec-head">
+    <div><span class="lab" id="pj_lab">References</span><h2 class="rv" id="pj_h2">The work <span>speaks</span></h2></div>
+    <p class="rv d1" id="pj_p">A few of the 350+ delivered projects. Ask and we'll take you to see one in person.</p>
+  </div>
+  <div class="projects" id="projgrid"></div>
+</section>
+
+<section id="process" style="padding-top:20px">
+  <div class="sec-head">
+    <div><span class="lab" id="pc_lab">Process</span><h2 class="rv" id="pc_h2">No surprises, <span>by design</span></h2></div>
+  </div>
+  <div class="proc rv">
+    <div class="pstep"><div class="pn">01</div><b id="p1">Send the project</b><p id="p1p">Photos and a short description, right here. We answer within 24 hours — guaranteed.</p></div>
+    <div class="pstep"><div class="pn">02</div><b id="p2">Free visit & written price</b><p id="p2p">We measure, we calculate, and you get the full price and deadline on paper before we lift a tool.</p></div>
+    <div class="pstep"><div class="pn">03</div><b id="p3">We build. You check.</b><p id="p3p">Photo updates at every stage, a fixed deadline in the contract, and a final walkthrough together.</p></div>
+  </div>
+</section>
+
+<section style="padding-top:10px">
+  <div class="guarantee">
+    <div class="gitem rv">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <div><b id="g1">2-year warranty</b><span id="g1s">On every work we deliver, in the contract</span></div>
+    </div>
+    <div class="gitem rv d1">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18M9 15l2 2 4-4"/></svg>
+      <div><b id="g2">Fixed deadline</b><span id="g2s">Written in the contract — and kept</span></div>
+    </div>
+    <div class="gitem rv d2">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v5h5M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M9 14h6M9 17h4"/></svg>
+      <div><b id="g3">Everything on paper</b><span id="g3s">Price, deadline, materials — no verbal promises</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="quote" style="padding-bottom:60px">
+  <div class="quotepanel">
+    <span class="lab" id="q_lab">Free estimate</span>
+    <h2 id="q_h2">Tell us what <span>you're building</span></h2>
+    <p class="bs" id="q_s">Describe the project in one sentence — we answer with a visit date and a written price within 24 hours.</p>
+    <form class="bform" id="bform">
+      <input type="text" id="f_n" placeholder="Your name" required>
+      <input type="tel" id="f_p" placeholder="Phone" required>
+      <select id="f_s"></select>
+      <input type="text" id="f_m" placeholder="Short description (e.g. 60m² apartment, full renovation)">
+      <div class="toast" id="toast"></div>
+      <button type="submit" id="f_b">Send request</button>
+      <span class="form-foot" id="f_note">Free and with no obligation · answer within 24h — guaranteed.</span>
+    </form>
+  </div>
+</section>
+
+<div class="stripe"></div>
+<footer>
+  <div class="wordmark" style="font-size:1rem">FORT<span>IS</span></div>
+  <span id="foot">DEMO — this company is fictional. A concept for a construction company website.</span>
+</footer>
+
+<div class="explain">
+  <span id="ex">👋 <b>What is this?</b> A DEMO website — an example of a premium site for a construction company. Everything works. Imagine YOUR company here.</span>
+  <button class="x" onclick="this.parentElement.style.display='none'">✕</button>
+</div>
+
+<script>
+const PHOTOS=[
+ 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1000&q=74',
+ 'https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=1000&q=74',
+ 'https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=1000&q=74',
+ 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1000&q=74'];
+
+const T={
+en:{n1:'Services',n2:'Projects',n3:'Process',navbook:'Get estimate',
+  eyebrow:'Construction · Renovation · Facades',
+  h1:'Built right.<br><span>Built once.</span>',
+  hsub:'Full builds, renovations, roofs and facades — fixed deadline and fixed price, both in writing. The paperwork protects you, the work speaks for us.',
+  hcta:'Free estimate in 24h',hcta2:'See the work',
+  hs1:'Years on site',hs2:'Projects delivered',hs3:'Written contracts',
+  ticker:['Full builds','Renovations','Facades & insulation','Roofs','Bathrooms','Concrete works'],
+  s_lab:'What we build',s_h2:'From bathroom<br>to <span>whole building</span>',
+  s_p:'Every price below is a starting point put in writing after a free visit and measurement — never a surprise at the end.',
+  svcs:[
+    ['01','Apartment renovation','Complete renovation with one crew, one contract, one fixed deadline.','from 120 €/m²','starting price'],
+    ['02','Facades & insulation','Energy-efficient facades that cut heating bills from the first winter.','from 25 €/m²','starting price'],
+    ['03','Roofs','Repairs and new roofs — steel, tile or panel, with warranty.','on request','after free visit'],
+    ['04','Bathrooms turnkey','Design, demolition, plumbing, tiles — you pick, we deliver.','from 1.500 €','starting price'],
+    ['05','New construction','Houses and commercial buildings, from foundation to keys.','on request','after project review']],
+  pj_lab:'References',pj_h2:'The work <span>speaks</span>',
+  pj_p:"A few of the 350+ delivered projects. Ask and we'll take you to see one in person.",
+  projects:[
+    ['Residential building','32 apartments · 6 floors','2025'],
+    ['Private house, turnkey','240 m² with facade & yard','2026'],
+    ['Commercial hall','1.200 m² steel construction','2024'],
+    ['School renovation','Public tender project','2025']],
+  pc_lab:'Process',pc_h2:'No surprises, <span>by design</span>',
+  p1:'Send the project',p1p:'Photos and a short description, right here. We answer within 24 hours — guaranteed.',
+  p2:'Free visit & written price',p2p:'We measure, we calculate, and you get the full price and deadline on paper before we lift a tool.',
+  p3:'We build. You check.',p3p:'Photo updates at every stage, a fixed deadline in the contract, and a final walkthrough together.',
+  g1:'2-year warranty',g1s:'On every work we deliver, in the contract',
+  g2:'Fixed deadline',g2s:'Written in the contract — and kept',
+  g3:'Everything on paper',g3s:'Price, deadline, materials — no verbal promises',
+  q_lab:'Free estimate',q_h2:"Tell us what <span>you're building</span>",
+  q_s:'Describe the project in one sentence — we answer with a visit date and a written price within 24 hours.',
+  f_n:'Your name',f_p:'Phone',f_m:'Short description (e.g. 60m² apartment, full renovation)',f_b:'Send request',
+  f_note:'Free and with no obligation · answer within 24h — guaranteed.',
+  toast:'✓ Request received (demo). On the live site: you get instant confirmation, and the company gets your request on their phone — with a 24h answer clock ticking.',
+  foot:'DEMO — this company is fictional. A concept for a construction company website.',
+  ex:'👋 <b>What is this?</b> A DEMO website — an example of a premium site for a construction company. Everything works. Imagine YOUR company here.'},
+sq:{n1:'Shërbimet',n2:'Projektet',n3:'Procesi',navbook:'Merr ofertë',
+  eyebrow:'Ndërtim · Renovim · Fasada',
+  h1:'Ndërtuar saktë.<br><span>Ndërtuar një herë.</span>',
+  hsub:'Ndërtime të plota, renovime, çati dhe fasada — afat fiks dhe çmim fiks, të dyja me shkrim. Letrat ju mbrojnë ju, puna flet për ne.',
+  hcta:'Ofertë falas për 24h',hcta2:'Shiko punët',
+  hs1:'Vjet në terren',hs2:'Projekte të dorëzuara',hs3:'Kontrata me shkrim',
+  ticker:['Ndërtime të plota','Renovime','Fasada & izolim','Çati','Banjo','Punime betoni'],
+  s_lab:'Çfarë ndërtojmë',s_h2:'Nga banjo<br>te <span>ndërtesa e tërë</span>',
+  s_p:'Çdo çmim më poshtë është pikënisje që vihet me shkrim pas vizitës falas dhe matjes — kurrë surprizë në fund.',
+  svcs:[
+    ['01','Renovim banese','Renovim komplet me një ekip, një kontratë, një afat fiks.','nga 120 €/m²','çmim fillestar'],
+    ['02','Fasada & izolim','Fasada me efikasitet energjie që ulin faturat që nga dimri i parë.','nga 25 €/m²','çmim fillestar'],
+    ['03','Çati','Riparime dhe çati të reja — llamarinë, tjegull ose panel, me garanci.','me marrëveshje','pas vizitës falas'],
+    ['04','Banjo me çelës në dorë','Dizajn, prishje, hidraulikë, pllaka — ju zgjidhni, ne dorëzojmë.','nga 1.500 €','çmim fillestar'],
+    ['05','Ndërtim i ri','Shtëpi dhe objekte komerciale, nga themeli te çelësat.','me marrëveshje','pas shqyrtimit']],
+  pj_lab:'Referencat',pj_h2:'Puna <span>flet</span>',
+  pj_p:'Disa nga 350+ projektet e dorëzuara. Kërkoni dhe ju çojmë t\'i shihni nga afër.',
+  projects:[
+    ['Ndërtesë banimi','32 banesa · 6 kate','2025'],
+    ['Shtëpi private, çelës në dorë','240 m² me fasadë & oborr','2026'],
+    ['Hallë komerciale','1.200 m² konstruksion çeliku','2024'],
+    ['Renovim shkolle','Projekt me tender publik','2025']],
+  pc_lab:'Procesi',pc_h2:'Pa surpriza, <span>me dizajn</span>',
+  p1:'Dërgoni projektin',p1p:'Foto dhe përshkrim i shkurtër, direkt këtu. Përgjigjemi brenda 24 orësh — e garantuar.',
+  p2:'Vizitë falas & çmim me shkrim',p2p:'Masim, llogarisim dhe merrni çmimin e plotë dhe afatin në letër para se të ngremë vegël.',
+  p3:'Ne ndërtojmë. Ju kontrolloni.',p3p:'Foto në çdo fazë, afat fiks në kontratë dhe kontroll përfundimtar së bashku.',
+  g1:'Garanci 2-vjeçare',g1s:'Për çdo punë që dorëzojmë, në kontratë',
+  g2:'Afat fiks',g2s:'I shkruar në kontratë — dhe i respektuar',
+  g3:'Gjithçka në letër',g3s:'Çmimi, afati, materialet — pa premtime me gojë',
+  q_lab:'Ofertë falas',q_h2:'Na tregoni çfarë <span>po ndërtoni</span>',
+  q_s:'Përshkruani projektin me një fjali — përgjigjemi me datë vizite dhe çmim me shkrim brenda 24 orësh.',
+  f_n:'Emri juaj',f_p:'Telefoni',f_m:'Përshkrim i shkurtër (p.sh. banesë 60m², renovim komplet)',f_b:'Dërgo kërkesën',
+  f_note:'Falas dhe pa obligim · përgjigje brenda 24h — e garantuar.',
+  toast:'✓ Kërkesa u pranua (demo). Në faqen reale: ju merrni konfirmim menjëherë, kompania e merr kërkesën në telefon — dhe ora e 24 orëve fillon.',
+  foot:'DEMO — kjo kompani është fiktive. Koncept për faqen e një kompanie ndërtimi.',
+  ex:'👋 <b>Çfarë është kjo?</b> Faqe DEMO — shembull i një faqeje premium për kompani ndërtimi. Gjithçka funksionon. Imagjinoni kompaninë TUAJ këtu.'},
+mk:{n1:'Услуги',n2:'Проекти',n3:'Процес',navbook:'Земи понуда',
+  eyebrow:'Градба · Реновирање · Фасади',
+  h1:'Изградено правилно.<br><span>Изградено еднаш.</span>',
+  hsub:'Целосни градби, реновирања, покриви и фасади — фиксен рок и фиксна цена, двете написмено. Хартијата ве штити вас, работата зборува за нас.',
+  hcta:'Бесплатна понуда за 24ч',hcta2:'Види ја работата',
+  hs1:'Години на терен',hs2:'Испорачани проекти',hs3:'Писмени договори',
+  ticker:['Целосни градби','Реновирања','Фасади & изолација','Покриви','Бањи','Бетонски работи'],
+  s_lab:'Што градиме',s_h2:'Од бања<br>до <span>цела зграда</span>',
+  s_p:'Секоја цена подолу е почетна точка што се става написмено по бесплатна посета и мерење — никогаш изненадување на крајот.',
+  svcs:[
+    ['01','Реновирање стан','Комплетно реновирање со една екипа, еден договор, еден фиксен рок.','од 120 €/м²','почетна цена'],
+    ['02','Фасади & изолација','Енергетски ефикасни фасади што ги намалуваат сметките од првата зима.','од 25 €/м²','почетна цена'],
+    ['03','Покриви','Поправки и нови покриви — лим, ќерамида или панел, со гаранција.','по договор','по бесплатна посета'],
+    ['04','Бањи клуч на рака','Дизајн, кршење, водовод, плочки — вие бирате, ние испорачуваме.','од 1.500 €','почетна цена'],
+    ['05','Нова градба','Куќи и комерцијални објекти, од темел до клучеви.','по договор','по преглед на проектот']],
+  pj_lab:'Референци',pj_h2:'Работата <span>зборува</span>',
+  pj_p:'Дел од 350+ испорачани проекти. Побарајте и ќе ве однесеме да видите одблиску.',
+  projects:[
+    ['Станбена зграда','32 станови · 6 ката','2025'],
+    ['Приватна куќа, клуч на рака','240 м² со фасада & двор','2026'],
+    ['Комерцијална хала','1.200 м² челична конструкција','2024'],
+    ['Реновирање училиште','Проект со јавен тендер','2025']],
+  pc_lab:'Процес',pc_h2:'Без изненадувања, <span>со дизајн</span>',
+  p1:'Испратете го проектот',p1p:'Фотографии и краток опис, директно тука. Одговараме за 24 часа — гарантирано.',
+  p2:'Бесплатна посета & писмена цена',p2p:'Мериме, пресметуваме и ја добивате целосната цена и рокот на хартија пред да подигнеме алат.',
+  p3:'Ние градиме. Вие проверувате.',p3p:'Фото извештаи во секоја фаза, фиксен рок во договорот и заеднички финален преглед.',
+  g1:'2 години гаранција',g1s:'За секоја работа што ја испорачуваме, во договорот',
+  g2:'Фиксен рок',g2s:'Напишан во договорот — и почитуван',
+  g3:'Сè на хартија',g3s:'Цена, рок, материјали — без усни ветувања',
+  q_lab:'Бесплатна понуда',q_h2:'Кажете ни што <span>градите</span>',
+  q_s:'Опишете го проектот со една реченица — одговараме со датум за посета и писмена цена за 24 часа.',
+  f_n:'Вашето име',f_p:'Телефон',f_m:'Краток опис (пр. стан 60м², целосно реновирање)',f_b:'Испрати барање',
+  f_note:'Бесплатно и без обврска · одговор за 24ч — гарантирано.',
+  toast:'✓ Барањето е примено (демо). На вистинската страница: добивате потврда веднаш, фирмата го добива барањето на телефон — и часовникот од 24ч почнува.',
+  foot:'ДЕМО — оваа фирма е фиктивна. Концепт за сајт на градежна компанија.',
+  ex:'👋 <b>Што е ова?</b> ДЕМО страница — пример за премиум сајт за градежна фирма. Сè функционира. Замислете ја ВАШАТА фирма тука.'}
+};
+
+let LANG='en';
+function build(){
+  const t=T[LANG];
+  const items=t.ticker.map(m=>`<span>${m}<i></i></span>`).join('');
+  document.getElementById('ticker').innerHTML=items+items;
+  document.getElementById('svcs').innerHTML=t.svcs.map(s=>`
+    <div class="svc-row rv">
+      <span class="svc-num">${s[0]}</span>
+      <h3>${s[1]}</h3>
+      <p>${s[2]}</p>
+      <div class="svc-price">${s[3]}<small>${s[4]}</small></div>
+    </div>`).join('');
+  document.getElementById('projgrid').innerHTML=t.projects.map((p,i)=>`
+    <div class="proj rv ${i%2?'d1':''}">
+      <img src="${PHOTOS[i]}" alt="">
+      <div class="pov"><div><b>${p[0]}</b><small>${p[1]}</small></div><span class="tag">${p[2]}</span></div>
+    </div>`).join('');
+  document.getElementById('f_s').innerHTML=t.svcs.map(s=>`<option>${s[1]}</option>`).join('');
+  observeAll();
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  ['n1','n2','n3','navbook','eyebrow','hsub','hcta2','hs1','hs2','hs3','s_lab','s_p',
+   'pj_lab','pj_p','pc_lab','p1','p1p','p2','p2p','p3','p3p','g1','g1s','g2','g2s','g3','g3s',
+   'q_lab','q_s','f_b','f_note','foot'
+  ].forEach(k=>{const el=document.getElementById(k); if(el) el.textContent=t[k];});
+  document.getElementById('h1').innerHTML=t.h1;
+  document.getElementById('s_h2').innerHTML=t.s_h2;
+  document.getElementById('pj_h2').innerHTML=t.pj_h2;
+  document.getElementById('pc_h2').innerHTML=t.pc_h2;
+  document.getElementById('q_h2').innerHTML=t.q_h2;
+  document.getElementById('ex').innerHTML=t.ex;
+  document.getElementById('hcta').childNodes[0].textContent=t.hcta+' ';
+  document.getElementById('f_n').placeholder=t.f_n;
+  document.getElementById('f_p').placeholder=t.f_p;
+  document.getElementById('f_m').placeholder=t.f_m;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang=l;
+  build();
+}
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scr',scrollY>40));
+let io;
+function observeAll(){
+  if(io) io.disconnect();
+  io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.1});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+}
+// hero stats count-up on load
+document.querySelectorAll('.hero-stats [data-count]').forEach(el=>{
+  const to=+el.dataset.count, start=performance.now(), dur=1800;
+  (function step(ts){
+    const p=Math.min((ts-start)/dur,1);
+    el.textContent=Math.round(to*(p*(2-p)));
+    if(p<1)requestAnimationFrame(step);
+  })(start);
+});
+document.getElementById('bform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const toast=document.getElementById('toast');
+  toast.textContent=T[LANG].toast;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),6000);
+});
+setLang('en');
+</script>
+</body>
+</html>

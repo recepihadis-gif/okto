@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — Rezervime online me kujtesë automatike</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4f7fb;--card:#ffffff;--blue:#2f6fed;--blue-d:#1f56c4;--text:#20304c;--muted:#7787a0;--green:#1db980;--gold:#f5b942}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:28px 16px}
+  .top{display:flex;justify-content:space-between;width:100%;max-width:920px;margin-bottom:8px;align-items:center}
+  .demo-tag{font-size:.72rem;color:var(--muted);border:1px solid #d8e0ec;padding:4px 10px;border-radius:99px;letter-spacing:1px;background:#fff}
+  .lang{display:flex;gap:4px}
+  .lang button{background:#fff;border:1px solid #d8e0ec;color:var(--muted);padding:4px 10px;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+  h1{font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;text-align:center;margin:10px 0 4px}
+  h1 span{color:var(--blue)}
+  .sub{color:var(--muted);text-align:center;font-size:.95rem;margin-bottom:26px;max-width:600px}
+
+  .stage{display:flex;gap:34px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+
+  .panel{background:var(--card);border-radius:20px;padding:24px;width:330px;box-shadow:0 16px 40px rgba(32,48,76,.1)}
+  .panel h3{font-size:1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .step-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+
+  .services{display:grid;gap:8px;margin-bottom:16px}
+  .svc{border:1.5px solid #e2e8f2;border-radius:12px;padding:11px 14px;display:flex;justify-content:space-between;
+    cursor:pointer;font-size:.88rem;transition:all .15s}
+  .svc:hover{border-color:var(--blue)}
+  .svc.sel{border-color:var(--blue);background:#eef4ff}
+  .svc b{font-weight:600}
+  .svc span{color:var(--muted);font-size:.8rem}
+
+  .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+  .slot{border:1.5px solid #e2e8f2;border-radius:10px;padding:9px 0;text-align:center;font-size:.82rem;
+    cursor:pointer;font-weight:600;transition:all .15s}
+  .slot:hover{border-color:var(--blue)}
+  .slot.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .slot.off{opacity:.35;text-decoration:line-through;pointer-events:none}
+
+  input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f2;border-radius:12px;font-family:inherit;
+    font-size:.9rem;margin-bottom:10px}
+  input:focus{outline:none;border-color:var(--blue)}
+  .book-btn{width:100%;background:var(--blue);color:#fff;border:none;padding:14px;border-radius:12px;
+    font-weight:700;font-size:.95rem;cursor:pointer;font-family:inherit;transition:background .2s}
+  .book-btn:hover{background:var(--blue-d)}
+
+  /* timeline panel */
+  .timeline{display:flex;flex-direction:column;gap:0}
+  .tl{display:flex;gap:14px;opacity:.25;transition:opacity .5s}
+  .tl.on{opacity:1}
+  .tl .rail{display:flex;flex-direction:column;align-items:center}
+  .tl .dotd{width:34px;height:34px;border-radius:50%;background:#eef4ff;display:flex;align-items:center;
+    justify-content:center;font-size:1rem;border:2px solid var(--blue);flex-shrink:0}
+  .tl .line{width:2px;flex:1;background:#d8e0ec;min-height:26px}
+  .tl:last-child .line{display:none}
+  .tl .txt{padding-bottom:20px}
+  .tl b{font-size:.88rem;display:block}
+  .tl p{font-size:.78rem;color:var(--muted);margin-top:2px}
+  .tl .when{font-size:.68rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+  .msgcard{background:#f0fbf6;border:1px solid #bfe9d8;border-radius:12px;padding:10px 12px;margin-top:6px;
+    font-size:.78rem;color:#12684a;display:none}
+  .msgcard.show{display:block;animation:pop .4s ease}
+  @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+
+  .stat-row{display:flex;gap:12px;margin-top:18px}
+  .stat{flex:1;background:#eef4ff;border-radius:12px;padding:12px;text-align:center}
+  .stat b{font-size:1.3rem;color:var(--blue);display:block}
+  .stat span{font-size:.68rem;color:var(--muted)}
+  .caption{margin-top:24px;color:var(--muted);font-size:.8rem;text-align:center;max-width:520px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO / KONCEPT</span>
+  <div class="lang">
+    <button id="btn-sq" class="active" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<h1 id="title">Rezervime online + <span>kujtesë automatike</span></h1>
+<p class="sub" id="subtitle">Pacienti rezervon vetë. Sistemi konfirmon, kujton 24h para dhe ul terminet e humbura. (Për stomatologë, sallone, palestra…)</p>
+
+<div class="stage">
+  <!-- BOOKING PANEL -->
+  <div class="panel">
+    <div class="step-lbl" id="s1lbl">Hapi 1 — Klienti zgjedh</div>
+    <h3 id="s1title">📅 Rezervo termin</h3>
+    <div class="services" id="services"></div>
+    <div class="slots" id="slots"></div>
+    <input type="text" id="f_name" placeholder="Emri juaj">
+    <input type="tel" id="f_phone" placeholder="Numri i telefonit">
+    <button class="book-btn" id="bookBtn" onclick="book()">Rezervo terminin</button>
+  </div>
+
+  <!-- WHAT SYSTEM DOES -->
+  <div class="panel">
+    <div class="step-lbl" id="s2lbl">Hapi 2 — Sistemi punon vetë</div>
+    <h3 id="s2title">⚙️ Çfarë ndodh automatikisht</h3>
+    <div class="timeline">
+      <div class="tl" id="tl1">
+        <div class="rail"><div class="dotd">✅</div><div class="line"></div></div>
+        <div class="txt"><span class="when" id="w1">menjëherë</span><b id="t1">Konfirmimi te klienti</b>
+          <p id="p1">SMS/Viber me datën dhe orën</p>
+          <div class="msgcard" id="m1">📩 "Përshëndetje Ariana! Termini juaj: e enjte 16:00 ✅"</div>
+        </div>
+      </div>
+      <div class="tl" id="tl2">
+        <div class="rail"><div class="dotd">🔔</div><div class="line"></div></div>
+        <div class="txt"><span class="when" id="w2">menjëherë</span><b id="t2">Njoftimi te pronari</b>
+          <p id="p2">Termini i ri futet në kalendarin e tij</p>
+          <div class="msgcard" id="m2">🗓️ "Termin i ri: Ariana — e enjte 16:00 (pastrim dhëmbësh)"</div>
+        </div>
+      </div>
+      <div class="tl" id="tl3">
+        <div class="rail"><div class="dotd">⏰</div><div class="line"></div></div>
+        <div class="txt"><span class="when" id="w3">24 orë para</span><b id="t3">Kujtesa automatike</b>
+          <p id="p3">Klienti nuk harron më terminin</p>
+          <div class="msgcard" id="m3">⏰ "Kujtesë: nesër në 16:00 ju presim! Nëse s'mundeni, shtypni 2."</div>
+        </div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b>-70%</b><span id="st1">termine të humbura</span></div>
+      <div class="stat"><b>24/7</b><span id="st2">rezervime edhe natën</span></div>
+    </div>
+  </div>
+</div>
+
+<p class="caption" id="caption">Regjistroni ekranin: bëni një rezervim → shihni si aktivizohet çdo hap automatikisht.</p>
+
+<script>
+const T={
+  sq:{title:'Rezervime online + <span>kujtesë automatike</span>',
+    subtitle:'Pacienti rezervon vetë. Sistemi konfirmon, kujton 24h para dhe ul terminet e humbura. (Për stomatologë, sallone, palestra…)',
+    s1lbl:'Hapi 1 — Klienti zgjedh', s1title:'📅 Rezervo termin',
+    svcs:[['Pastrim dhëmbësh','30 min'],['Kontroll + konsultë','20 min'],['Mbushje','45 min']],
+    ph_name:'Emri juaj', ph_phone:'Numri i telefonit', book:'Rezervo terminin',
+    s2lbl:'Hapi 2 — Sistemi punon vetë', s2title:'⚙️ Çfarë ndodh automatikisht',
+    w1:'menjëherë', t1:'Konfirmimi te klienti', p1:'SMS/Viber me datën dhe orën',
+    m1:'📩 "Përshëndetje Ariana! Termini juaj: e enjte 16:00 ✅"',
+    w2:'menjëherë', t2:'Njoftimi te pronari', p2:'Termini i ri futet në kalendarin e tij',
+    m2:'🗓️ "Termin i ri: Ariana — e enjte 16:00 (pastrim dhëmbësh)"',
+    w3:'24 orë para', t3:'Kujtesa automatike', p3:'Klienti nuk harron më terminin',
+    m3:'⏰ "Kujtesë: nesër në 16:00 ju presim! Nëse s\'mundeni, shtypni 2."',
+    st1:'termine të humbura', st2:'rezervime edhe natën',
+    caption:'Regjistroni ekranin: bëni një rezervim → shihni si aktivizohet çdo hap automatikisht.',
+    alertFill:'Zgjidhni shërbimin, orën dhe plotësoni të dhënat 🙂'},
+  mk:{title:'Онлајн термини + <span>автоматски потсетник</span>',
+    subtitle:'Пациентот сам резервира. Системот потврдува, потсетува 24ч претходно и ги намалува пропуштените термини. (За стоматолози, салони, теретани…)',
+    s1lbl:'Чекор 1 — Клиентот избира', s1title:'📅 Резервирај термин',
+    svcs:[['Чистење заби','30 мин'],['Преглед + консултација','20 мин'],['Пломба','45 мин']],
+    ph_name:'Вашето име', ph_phone:'Телефонски број', book:'Резервирај',
+    s2lbl:'Чекор 2 — Системот работи сам', s2title:'⚙️ Што се случува автоматски',
+    w1:'веднаш', t1:'Потврда до клиентот', p1:'SMS/Viber со датум и час',
+    m1:'📩 „Здраво Ариана! Вашиот термин: четврток 16:00 ✅"',
+    w2:'веднаш', t2:'Известување до сопственикот', p2:'Новиот термин влегува во неговиот календар',
+    m2:'🗓️ „Нов термин: Ариана — четврток 16:00 (чистење заби)"',
+    w3:'24 часа пред', t3:'Автоматски потсетник', p3:'Клиентот повеќе не заборава',
+    m3:'⏰ „Потсетник: утре во 16:00 ве очекуваме! Ако не можете, стиснете 2."',
+    st1:'пропуштени термини', st2:'резервации и ноќе',
+    caption:'Снимајте го екранот: направете резервација → гледајте како секој чекор се активира автоматски.',
+    alertFill:'Изберете услуга, час и пополнете ги податоците 🙂'},
+  en:{title:'Online booking + <span>automatic reminders</span>',
+    subtitle:'The patient books alone. The system confirms, reminds 24h before, and cuts no-shows. (For dentists, salons, gyms…)',
+    s1lbl:'Step 1 — Customer picks', s1title:'📅 Book appointment',
+    svcs:[['Teeth cleaning','30 min'],['Check-up + consult','20 min'],['Filling','45 min']],
+    ph_name:'Your name', ph_phone:'Phone number', book:'Book appointment',
+    s2lbl:'Step 2 — System works alone', s2title:'⚙️ What happens automatically',
+    w1:'instantly', t1:'Confirmation to customer', p1:'SMS/Viber with date and time',
+    m1:'📩 "Hi Ariana! Your appointment: Thursday 16:00 ✅"',
+    w2:'instantly', t2:'Owner notified', p2:'New appointment lands in their calendar',
+    m2:'🗓️ "New: Ariana — Thursday 16:00 (teeth cleaning)"',
+    w3:'24h before', t3:'Automatic reminder', p3:'Customer never forgets',
+    m3:'⏰ "Reminder: tomorrow at 16:00! Can\'t make it? Press 2."',
+    st1:'fewer no-shows', st2:'bookings even at night',
+    caption:'Screen-record it: make a booking → watch each step activate automatically.',
+    alertFill:'Pick a service, a time, and fill in your details 🙂'}
+};
+
+let LANG='sq', SVC=-1, SLOT=-1;
+const slotTimes=['09:00','10:30','12:00','13:30','15:00','16:00','17:30','19:00'];
+const offSlots=[1,4];
+
+function renderServices(){
+  const w=document.getElementById('services'); w.innerHTML='';
+  T[LANG].svcs.forEach((s,i)=>{
+    const d=document.createElement('div'); d.className='svc'+(i===SVC?' sel':'');
+    d.innerHTML=`<b>${s[0]}</b><span>${s[1]}</span>`;
+    d.onclick=()=>{SVC=i;renderServices();};
+    w.appendChild(d);
+  });
+}
+function renderSlots(){
+  const w=document.getElementById('slots'); w.innerHTML='';
+  slotTimes.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.className='slot'+(offSlots.includes(i)?' off':'')+(i===SLOT?' sel':'');
+    d.textContent=t;
+    d.onclick=()=>{SLOT=i;renderSlots();};
+    w.appendChild(d);
+  });
+}
+function book(){
+  if(SVC<0||SLOT<0||!document.getElementById('f_name').value||!document.getElementById('f_phone').value){
+    alert(T[LANG].alertFill); return;
+  }
+  ['tl1','tl2','tl3'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  ['m1','m2','m3'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  setTimeout(()=>{document.getElementById('tl1').classList.add('on');document.getElementById('m1').classList.add('show');},400);
+  setTimeout(()=>{document.getElementById('tl2').classList.add('on');document.getElementById('m2').classList.add('show');},1600);
+  setTimeout(()=>{document.getElementById('tl3').classList.add('on');document.getElementById('m3').classList.add('show');},3000);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  document.getElementById('title').innerHTML=t.title;
+  document.getElementById('subtitle').textContent=t.subtitle;
+  ['s1lbl','s1title','s2lbl','s2title','w1','t1','p1','m1','w2','t2','p2','m2','w3','t3','p3','m3','st1','st2','caption'].forEach(k=>{
+    document.getElementById(k).textContent=t[k];
+  });
+  document.getElementById('f_name').placeholder=t.ph_name;
+  document.getElementById('f_phone').placeholder=t.ph_phone;
+  document.getElementById('bookBtn').textContent=t.book;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  renderServices();renderSlots();
+}
+setLang('en');
+</script>
+</body>
+</html>

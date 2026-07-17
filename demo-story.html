@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — The Customer at 9 PM</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1220;--text:#f2f5fb;--muted:#8b96ab;--green:#25d366;--red:#ff6b6b;--gold:#f5b942;--line:#263351}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:14px;overflow-x:hidden}
+
+  .top{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;z-index:10;background:var(--bg)}
+  .demo-tag{font-size:.7rem;color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:99px}
+  .top-r{display:flex;gap:8px}
+  .lang button,.autob{background:transparent;border:1px solid var(--line);color:var(--muted);padding:5px 11px;
+    border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .lang{display:flex;gap:4px}
+  .lang button.active{background:var(--gold);border-color:var(--gold);color:#1a1200}
+  .autob.on{background:var(--green);border-color:var(--green);color:#06301b}
+
+  /* GIANT caption */
+  .cap{margin:64px auto 14px;text-align:center;max-width:560px;min-height:96px;display:flex;
+    flex-direction:column;justify-content:center}
+  .cap h1{font-size:clamp(1.45rem,5.8vw,2.2rem);font-weight:900;line-height:1.25;animation:capIn .45s ease}
+  .cap h1 .g{color:var(--green)} .cap h1 .r{color:var(--red)} .cap h1 .gd{color:var(--gold)}
+  @keyframes capIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* money banner */
+  .bank{min-height:58px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+  .bank div{font-size:clamp(1.9rem,7vw,2.9rem);font-weight:900;animation:pop .45s ease}
+  .bank .lost{color:var(--red)} .bank .won{color:var(--green)}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* PHONE — WhatsApp style */
+  .phone{width:330px;max-width:94vw;background:#0a0f14;border-radius:34px;border:6px solid #1c2431;
+    overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.55)}
+  .wa-head{background:#1f2c34;padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .wa-head .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4f8cff,#a78bfa);
+    display:flex;align-items:center;justify-content:center;font-size:1rem}
+  .wa-head b{font-size:.9rem;display:block;color:#e9eef8}
+  .wa-head small{font-size:.7rem;color:#8fa3ad}
+  .wa-head small.on{color:var(--green)}
+  .chat{background:#0b141a url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" opacity="0.04"><circle cx="10" cy="10" r="2" fill="white"/><circle cx="40" cy="35" r="2" fill="white"/></svg>');
+    min-height:330px;max-height:330px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+  .msg{max-width:82%;padding:9px 12px;border-radius:12px;font-size:.88rem;line-height:1.45;
+    animation:mIn .4s ease;position:relative;color:#e9eef8}
+  @keyframes mIn{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:none}}
+  .msg.in{background:#1f2c34;align-self:flex-start;border-top-left-radius:3px}
+  .msg.out{background:#005c4b;align-self:flex-end;border-top-right-radius:3px}
+  .msg .tm{display:block;font-size:.62rem;color:rgba(233,238,248,.55);text-align:right;margin-top:3px}
+  .msg.out .tm::after{content:' ✓✓';color:#53bdeb}
+  .sysline{align-self:center;background:#182229;color:#8fa3ad;font-size:.68rem;padding:5px 12px;
+    border-radius:8px;animation:mIn .4s ease;text-align:center}
+  .sysline.sleep{font-size:.8rem;letter-spacing:2px}
+  .typing{align-self:flex-end;background:#005c4b;border-radius:12px;padding:11px 14px;display:flex;gap:4px}
+  .typing i{width:6px;height:6px;background:#9fd8cc;border-radius:50%;animation:blink 1s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+  .ctrl{margin:20px 0 8px;display:flex;gap:10px;justify-content:center;align-items:center}
+  .nextbtn{background:var(--gold);color:#1a1200;border:none;padding:16px 44px;border-radius:99px;
+    font-weight:900;font-size:1.08rem;cursor:pointer;font-family:inherit;box-shadow:0 10px 30px rgba(245,185,66,.25);transition:transform .15s}
+  .nextbtn:hover{transform:scale(1.05)}
+  .backbtn{background:transparent;border:1px solid var(--line);color:var(--muted);padding:13px 18px;
+    border-radius:99px;font-size:.85rem;cursor:pointer;font-family:inherit}
+  .dots{display:flex;gap:7px;margin-bottom:8px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:all .3s}
+  .dots i.on{background:var(--gold);transform:scale(1.3)}
+  .fnote{color:var(--muted);font-size:.66rem;opacity:.7;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO</span>
+  <div class="top-r">
+    <button class="autob" id="auto" onclick="toggleAuto()">▶ AUTO</button>
+    <div class="lang">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+      <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    </div>
+  </div>
+</div>
+
+<div class="cap"><h1 id="cap"></h1></div>
+<div class="bank" id="bank"></div>
+
+<div class="phone">
+  <div class="wa-head">
+    <div class="av">🏪</div>
+    <div><b id="bizname">Your Business</b><small id="status">offline</small></div>
+  </div>
+  <div class="chat" id="chat"></div>
+</div>
+
+<div class="ctrl">
+  <button class="backbtn" id="back" onclick="go(-1)">←</button>
+  <button class="nextbtn" id="next" onclick="next()"></button>
+</div>
+<div class="dots" id="dots"></div>
+<div class="fnote" id="fnote">Demo — fictional example</div>
+
+<script>
+const T={
+en:{biz:'Your Business',fnote:'Demo — fictional example',next:'Next →',start:'Start →',restart:'↻ Again',
+  autoOn:'⏸ STOP',autoOff:'▶ AUTO',offline:'offline',online:'online',sleeping:'you are sleeping 😴',auto:'automatic reply ⚡',
+  steps:[
+   {cap:'🕘 It is 9 PM.<br>Your business is <span class="r">closed</span>.',status:'offline',clear:true},
+   {cap:'A customer writes to you 👇',status:'offline',
+    msg:{side:'in',txt:'Hi! Do you have a free table for tomorrow at 8?',tm:'21:03'}},
+   {cap:'<span class="r">WITHOUT a system:</span><br>silence. All night.',status:'sleeping',
+    sys:'z z z 😴',sleep:true},
+   {cap:'Morning. <span class="r">Too late.</span>',status:'offline',
+    msg:{side:'in',txt:'Never mind — I booked at another place. 👋',tm:'09:14'},
+    money:{v:'− 40 €',cls:'lost'}},
+   {cap:'Now the SAME night —<br><span class="g">WITH a system</span> ⚡',status:'auto',clear:true,
+    msg:{side:'in',txt:'Hi! Do you have a free table for tomorrow at 8?',tm:'21:03'}},
+   {cap:'Answer in <span class="g">6 seconds</span>.<br>You are still asleep.',status:'auto',typing:true,
+    msg:{side:'out',txt:'Good evening! 😊 Yes, we have a table. Tap here to book: 👉 book.link',tm:'21:03'}},
+   {cap:'He books <span class="g">with YOU</span> ✅',status:'auto',
+    msg:{side:'in',txt:'Perfect — booked! See you tomorrow 👍',tm:'21:05'},
+    money:{v:'+ 40 €',cls:'won'}},
+   {cap:'One customer a day, one month:<br><span class="gd">40 € × 30 = 1.200 €</span>',status:'auto',
+    money:{v:'1.200 € / month',cls:'won'}},
+   {cap:'The system costs <span class="g">less than<br>one lost month</span>. Want a free example?',status:'online'}
+  ]},
+sq:{biz:'Biznesi Juaj',fnote:'Demo — shembull fiktiv',next:'Vazhdo →',start:'Fillo →',restart:'↻ Përsëri',
+  autoOn:'⏸ NDAL',autoOff:'▶ AUTO',offline:'offline',online:'online',sleeping:'ju po flini 😴',auto:'përgjigje automatike ⚡',
+  steps:[
+   {cap:'🕘 Ora 9 e mbrëmjes.<br>Biznesi juaj është <span class="r">i mbyllur</span>.',status:'offline',clear:true},
+   {cap:'Një klient ju shkruan 👇',status:'offline',
+    msg:{side:'in',txt:'Përshëndetje! A keni tavolinë të lirë për nesër në 8?',tm:'21:03'}},
+   {cap:'<span class="r">PA sistem:</span><br>heshtje. Gjithë natën.',status:'sleeping',
+    sys:'z z z 😴',sleep:true},
+   {cap:'Mëngjes. <span class="r">Tepër vonë.</span>',status:'offline',
+    msg:{side:'in',txt:'S\'ka gjë — rezervova diku tjetër. 👋',tm:'09:14'},
+    money:{v:'− 40 €',cls:'lost'}},
+   {cap:'Tani E NJËJTA natë —<br><span class="g">ME sistem</span> ⚡',status:'auto',clear:true,
+    msg:{side:'in',txt:'Përshëndetje! A keni tavolinë të lirë për nesër në 8?',tm:'21:03'}},
+   {cap:'Përgjigje për <span class="g">6 sekonda</span>.<br>Ju ende flini.',status:'auto',typing:true,
+    msg:{side:'out',txt:'Mirëmbrëma! 😊 Po, kemi tavolinë. Prekni këtu për rezervim: 👉 book.link',tm:'21:03'}},
+   {cap:'Ai rezervon <span class="g">te JU</span> ✅',status:'auto',
+    msg:{side:'in',txt:'Perfekt — u rezervua! Shihemi nesër 👍',tm:'21:05'},
+    money:{v:'+ 40 €',cls:'won'}},
+   {cap:'Një klient në ditë, një muaj:<br><span class="gd">40 € × 30 = 1.200 €</span>',status:'auto',
+    money:{v:'1.200 € / muaj',cls:'won'}},
+   {cap:'Sistemi kushton <span class="g">më pak se<br>një muaj i humbur</span>. Doni shembull falas?',status:'online'}
+  ]},
+mk:{biz:'Вашиот Бизнис',fnote:'Демо — фиктивен пример',next:'Следно →',start:'Почни →',restart:'↻ Повторно',
+  autoOn:'⏸ СТОП',autoOff:'▶ АВТО',offline:'офлајн',online:'онлајн',sleeping:'вие спиете 😴',auto:'автоматски одговор ⚡',
+  steps:[
+   {cap:'🕘 9 навечер.<br>Вашиот бизнис е <span class="r">затворен</span>.',status:'offline',clear:true},
+   {cap:'Клиент ви пишува 👇',status:'offline',
+    msg:{side:'in',txt:'Здраво! Имате слободна маса за утре во 8?',tm:'21:03'}},
+   {cap:'<span class="r">БЕЗ систем:</span><br>тишина. Цела ноќ.',status:'sleeping',
+    sys:'z z z 😴',sleep:true},
+   {cap:'Наутро. <span class="r">Предоцна.</span>',status:'offline',
+    msg:{side:'in',txt:'Нема врска — резервирав на друго место. 👋',tm:'09:14'},
+    money:{v:'− 40 €',cls:'lost'}},
+   {cap:'Сега ИСТАТА ноќ —<br><span class="g">СО систем</span> ⚡',status:'auto',clear:true,
+    msg:{side:'in',txt:'Здраво! Имате слободна маса за утре во 8?',tm:'21:03'}},
+   {cap:'Одговор за <span class="g">6 секунди</span>.<br>Вие сè уште спиете.',status:'auto',typing:true,
+    msg:{side:'out',txt:'Добровечер! 😊 Да, имаме маса. Допрете тука за резервација: 👉 book.link',tm:'21:03'}},
+   {cap:'Тој резервира <span class="g">кај ВАС</span> ✅',status:'auto',
+    msg:{side:'in',txt:'Совршено — резервирано! Се гледаме утре 👍',tm:'21:05'},
+    money:{v:'+ 40 €',cls:'won'}},
+   {cap:'Еден клиент дневно, еден месец:<br><span class="gd">40 € × 30 = 1.200 €</span>',status:'auto',
+    money:{v:'1.200 € / месец',cls:'won'}},
+   {cap:'Системот чини <span class="g">помалку од<br>еден изгубен месец</span>. Сакате бесплатен пример?',status:'online'}
+  ]}
+};
+
+let LANG='en', IDX=-1, AUTO=false, timer=null;
+
+function setStatus(key){
+  const s=document.getElementById('status'), t=T[LANG];
+  s.className = (key==='offline')?'':'on';
+  s.textContent = key==='offline'?t.offline : key==='online'?t.online : key==='sleeping'?t.sleeping : t.auto;
+}
+function showStep(){
+  const t=T[LANG];
+  const chat=document.getElementById('chat');
+  if(IDX<0){ // intro state
+    document.getElementById('cap').innerHTML=t.steps[0].cap;
+    chat.innerHTML=''; document.getElementById('bank').innerHTML='';
+    setStatus('offline');
+  }
+  document.getElementById('next').textContent = IDX<0?t.start:(IDX>=t.steps.length-1?t.restart:t.next);
+  document.getElementById('back').style.visibility = IDX>0?'visible':'hidden';
+  document.getElementById('dots').innerHTML=t.steps.map((_,i)=>`<i class="${i<=IDX?'on':''}"></i>`).join('');
+  document.getElementById('fnote').textContent=t.fnote;
+  document.getElementById('bizname').textContent=t.biz;
+}
+function runStep(st){
+  const chat=document.getElementById('chat'), bank=document.getElementById('bank');
+  document.getElementById('cap').innerHTML=st.cap;
+  bank.innerHTML='';
+  if(st.clear) chat.innerHTML='';
+  setStatus(st.status);
+  if(st.sys){
+    const d=document.createElement('div');
+    d.className='sysline'+(st.sleep?' sleep':'');
+    d.textContent=st.sys; chat.appendChild(d);
+  }
+  const addMsg=()=>{
+    if(!st.msg) return;
+    const m=document.createElement('div');
+    m.className='msg '+st.msg.side;
+    m.innerHTML=`${st.msg.txt}<span class="tm">${st.msg.tm}</span>`;
+    chat.appendChild(m); chat.scrollTop=chat.scrollHeight;
+  };
+  if(st.typing){
+    const ty=document.createElement('div'); ty.className='typing'; ty.innerHTML='<i></i><i></i><i></i>';
+    chat.appendChild(ty); chat.scrollTop=chat.scrollHeight;
+    setTimeout(()=>{ty.remove(); addMsg();},1100);
+  } else addMsg();
+  if(st.money) setTimeout(()=>{bank.innerHTML=`<div class="${st.money.cls}">${st.money.v}</div>`;},st.typing?1500:500);
+  chat.scrollTop=chat.scrollHeight;
+}
+function next(){
+  const t=T[LANG];
+  if(IDX>=t.steps.length-1){restart();return;}
+  IDX++; runStep(t.steps[IDX]); showStep();
+}
+function go(d){
+  if(d<0 && IDX>0){ // rebuild from scratch up to IDX-1
+    const target=IDX-1; restart(false);
+    for(let i=0;i<=target;i++){IDX=i;runStep(T[LANG].steps[i]);}
+    showStep();
+  }
+}
+function restart(render=true){
+  IDX=-1;
+  document.getElementById('chat').innerHTML='';
+  document.getElementById('bank').innerHTML='';
+  if(render){ showStep(); }
+}
+function toggleAuto(){
+  AUTO=!AUTO;
+  const b=document.getElementById('auto');
+  b.classList.toggle('on',AUTO);
+  b.textContent=AUTO?T[LANG].autoOn:T[LANG].autoOff;
+  if(AUTO){
+    restart(); next();
+    timer=setInterval(()=>{
+      if(IDX<T[LANG].steps.length-1) next();
+      else{clearInterval(timer);AUTO=false;b.classList.remove('on');b.textContent=T[LANG].autoOff;}
+    },3800);
+  } else clearInterval(timer);
+}
+function setLang(l){
+  LANG=l;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.getElementById('auto').textContent=AUTO?T[l].autoOn:T[l].autoOff;
+  document.documentElement.lang=l;
+  restart();
+}
+restart();
+// Auto-start like a video — no clicking needed to understand it
+setTimeout(()=>{if(!AUTO && IDX<0) toggleAuto();},900);
+</script>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Inbox — Every Message, Answered (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#090d17; --panel:#10addr1626; --panel:#101626; --panel2:#0c1120; --line:#1f2а40; --line:#1f2a40;
+    --text:#eaeef8; --mut:#7c88a3; --vio:#7c6cff; --cyan:#38d4c3; --green:#31c979; --gold:#f5b942; --red:#ff6b6b;
+    --wa:#25d366; --ig:#e1508d; --fb:#4a7cf5; --web:#38d4c3;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:
+    radial-gradient(900px 500px at 85% -10%,rgba(124,108,255,.14),transparent 60%),
+    radial-gradient(700px 400px at -10% 110%,rgba(56,212,195,.1),transparent 60%),
+    var(--bg);
+    color:var(--text);min-height:100vh;padding:18px;font-size:14px;-webkit-font-smoothing:antialiased}
+  .disp{font-family:'Space Grotesk',sans-serif}
+  .shell{max-width:1240px;margin:0 auto}
+
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--vio),var(--cyan));
+    display:flex;align-items:center;justify-content:center}
+  .brand .mark svg{color:#fff}
+  .brand b{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;display:block}
+  .brand small{color:var(--mut);font-size:.7rem}
+  .top-r{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .live{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--green);font-weight:600;
+    border:1px solid rgba(49,201,121,.3);border-radius:99px;padding:6px 12px}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .demo-tag{font-size:.66rem;color:var(--mut);border:1px solid var(--line);padding:6px 12px;border-radius:99px;letter-spacing:1px}
+  .lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px;background:var(--panel2)}
+  .lang button{background:transparent;border:none;color:var(--mut);padding:4px 10px;border-radius:99px;
+    font-size:.66rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .lang button.active{background:var(--vio);color:#fff}
+  .play{background:linear-gradient(135deg,var(--vio),#5e8bff);color:#fff;border:none;padding:11px 22px;
+    border-radius:12px;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;
+    box-shadow:0 8px 24px rgba(124,108,255,.35)}
+  .play:hover{filter:brightness(1.1)}
+
+  /* narrator */
+  .guide{background:linear-gradient(135deg,rgba(245,185,66,.1),rgba(124,108,255,.08));
+    border:1px solid rgba(245,185,66,.4);border-left:5px solid var(--gold);border-radius:14px;
+    padding:14px 18px;margin-bottom:14px;font-size:1rem;font-weight:700;min-height:52px;display:flex;align-items:center}
+  .guide.flash{animation:gf .5s ease}
+  @keyframes gf{0%{background:rgba(245,185,66,.22)}100%{}}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 18px;
+    display:flex;align-items:center;gap:14px}
+  .kpi .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .kpi .ic.a{background:rgba(56,212,195,.14);color:var(--cyan)}
+  .kpi .ic.b{background:rgba(124,108,255,.14);color:var(--vio)}
+  .kpi .ic.c{background:rgba(245,185,66,.14);color:var(--gold)}
+  .kpi .ic.d{background:rgba(49,201,121,.14);color:var(--green)}
+  .kpi b{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;display:block;line-height:1.1}
+  .kpi span{font-size:.66rem;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}
+
+  /* MAIN GRID */
+  .grid{display:grid;grid-template-columns:290px 1fr 270px;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .p-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .p-head b{font-family:'Space Grotesk',sans-serif;font-size:.85rem}
+  .p-head span{font-size:.64rem;color:var(--mut)}
+
+  /* conversations */
+  .convs{max-height:430px;overflow:hidden}
+  .conv{display:flex;gap:11px;padding:13px 16px;border-bottom:1px solid var(--panel2);cursor:default;
+    transition:background .25s;position:relative}
+  .conv.active{background:var(--panel2)}
+  .conv.flash{animation:cf .8s ease}
+  @keyframes cf{0%{background:rgba(124,108,255,.28)}100%{}}
+  .cav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:.82rem;color:#fff;flex-shrink:0;position:relative}
+  .chbadge{position:absolute;bottom:-3px;right:-3px;width:17px;height:17px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;border:2px solid var(--panel)}
+  .chbadge svg{width:9px;height:9px;color:#fff}
+  .conv .cinfo{flex:1;min-width:0}
+  .conv b{font-size:.82rem;display:block}
+  .conv p{font-size:.72rem;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+  .conv .meta{text-align:right}
+  .conv .tm{font-size:.62rem;color:var(--mut);display:block}
+  .unread{display:inline-flex;min-width:17px;height:17px;border-radius:99px;background:var(--vio);color:#fff;
+    font-size:.62rem;font-weight:700;align-items:center;justify-content:center;padding:0 5px;margin-top:4px}
+  .donechip{display:inline-block;font-size:.58rem;font-weight:700;color:var(--green);margin-top:4px}
+
+  /* chat */
+  .chat-head{display:flex;align-items:center;gap:11px;padding:13px 18px;border-bottom:1px solid var(--line)}
+  .chat-head .cav{width:34px;height:34px}
+  .chat-head b{font-size:.86rem;display:block}
+  .chat-head small{font-size:.66rem;color:var(--mut)}
+  .autochip{margin-left:auto;font-size:.62rem;font-weight:700;color:var(--cyan);
+    border:1px solid rgba(56,212,195,.35);border-radius:99px;padding:5px 11px;display:flex;align-items:center;gap:5px}
+  .autochip i{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 1.6s infinite}
+  .chat{padding:18px;min-height:340px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;
+    background:
+    radial-gradient(400px 200px at 80% 0%,rgba(124,108,255,.05),transparent),
+    var(--panel2)}
+  .msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:.84rem;line-height:1.5;
+    animation:mIn .4s ease}
+  @keyframes mIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  .msg.in{background:#1a2338;align-self:flex-start;border-bottom-left-radius:4px}
+  .msg.out{background:linear-gradient(135deg,#2b6b5f,#1f8a70);align-self:flex-end;border-bottom-right-radius:4px}
+  .msg .tm{display:block;font-size:.6rem;color:rgba(234,238,248,.5);text-align:right;margin-top:3px}
+  .msg.out .tm::after{content:' · auto ⚡';color:#9fe9d8}
+  .typing{align-self:flex-end;background:#1f8a70;border-radius:14px;padding:11px 14px;display:flex;gap:4px}
+  .typing i{width:6px;height:6px;background:#bfeadf;border-radius:50%;animation:blink 1s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+  .sys{align-self:center;font-size:.64rem;color:var(--mut);background:var(--panel);
+    border:1px solid var(--line);border-radius:99px;padding:5px 13px;animation:mIn .4s ease}
+
+  /* customer card */
+  .cust{padding:18px}
+  .cust .cav{width:52px;height:52px;font-size:1.05rem;margin:0 auto 10px}
+  .cust h4{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:.95rem}
+  .cust .via{text-align:center;font-size:.66rem;color:var(--mut);margin-bottom:16px}
+  .crow{display:flex;justify-content:space-between;font-size:.76rem;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .crow span{color:var(--mut)}
+  .crow b{font-weight:600}
+  .crow b.g{color:var(--green)}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+  .tag{font-size:.62rem;font-weight:600;border-radius:99px;padding:5px 11px;border:1px solid var(--line);color:var(--mut)}
+  .tag.hot{border-color:rgba(245,185,66,.5);color:var(--gold)}
+  .nextapt{margin-top:16px;background:rgba(49,201,121,.08);border:1px solid rgba(49,201,121,.3);
+    border-radius:12px;padding:12px;font-size:.74rem;display:none;animation:mIn .4s ease}
+  .nextapt.show{display:block}
+  .nextapt b{color:var(--green);display:block;font-size:.78rem;margin-bottom:2px}
+
+  .foot{text-align:center;color:var(--mut);font-size:.68rem;margin-top:16px}
+
+  /* SPOTLIGHT — dim everything except where to look */
+  .grid .panel{transition:opacity .5s,box-shadow .5s,transform .5s;position:relative}
+  .grid.focus .panel{opacity:.28}
+  .grid.focus .panel.spot{opacity:1;box-shadow:0 0 0 2px var(--gold),0 24px 70px rgba(245,185,66,.18);transform:scale(1.012)}
+  .looktag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);z-index:50;
+    background:var(--gold);color:#1a1200;font-size:.7rem;font-weight:800;letter-spacing:.06em;
+    padding:7px 16px;border-radius:99px;white-space:nowrap;box-shadow:0 10px 26px rgba(245,185,66,.4);
+    display:none;animation:bounce 1.2s infinite}
+  .looktag.show{display:block}
+  @keyframes bounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-6px)}}
+
+  /* CASH POP — big center celebration */
+  .cashpop{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;pointer-events:none}
+  .cashpop.show{display:flex}
+  .cashpop .inner{background:rgba(9,13,23,.9);border:2px solid var(--green);border-radius:24px;
+    padding:34px 50px;text-align:center;backdrop-filter:blur(8px);
+    box-shadow:0 30px 90px rgba(49,201,121,.3);animation:cashIn .5s cubic-bezier(.2,.8,.3,1.2)}
+  .cashpop .big{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,5vw,2.6rem);
+    font-weight:700;color:var(--green)}
+  .cashpop .sub{font-size:.95rem;color:var(--text);margin-top:6px}
+  @keyframes cashIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* INTRO OVERLAY — plain words before anything moves */
+  .ovl{position:fixed;inset:0;z-index:500;background:rgba(6,9,16,.96);backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;padding:24px}
+  .ovl.hide{display:none}
+  .ovl-card{max-width:560px;text-align:center}
+  .ovl-icons{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:26px}
+  .ovl-app{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+  .ovl-app svg{width:22px;height:22px;color:#fff}
+  .ovl-arrow{font-size:1.4rem;color:var(--gold)}
+  .ovl-one{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--vio),var(--cyan));
+    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 34px rgba(124,108,255,.4)}
+  .ovl-one svg{width:26px;height:26px;color:#fff}
+  .ovl h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.5rem,4.5vw,2.2rem);margin-bottom:18px;line-height:1.2}
+  .ovl h2 span{color:var(--gold)}
+  .ovl-line{font-size:1.02rem;color:var(--text);margin-bottom:10px;line-height:1.6}
+  .ovl-line b{color:var(--cyan)}
+  .ovl-sub{font-size:.85rem;color:var(--mut);margin:16px 0 30px}
+  .ovl-btn{background:linear-gradient(135deg,var(--vio),#5e8bff);color:#fff;border:none;padding:18px 44px;
+    border-radius:99px;font-weight:800;font-size:1.05rem;cursor:pointer;font-family:inherit;
+    box-shadow:0 14px 40px rgba(124,108,255,.45);transition:transform .15s}
+  .ovl-btn:hover{transform:scale(1.05)}
+  @media(max-width:1000px){
+    .grid{grid-template-columns:1fr}
+    .convs{max-height:220px}
+    .kpis{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="top">
+    <div class="brand">
+      <div class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.5-.7L3 21l1.8-5.5A8.4 8.4 0 1 1 21 11.5z"/><path d="M8 10h8M8 14h5"/></svg></div>
+      <div><b id="ttl">Smart Inbox</b><small id="tsub">WhatsApp · Instagram · Facebook · Website — one screen</small></div>
+    </div>
+    <div class="top-r">
+      <span class="live"><i></i> LIVE</span>
+      <span class="demo-tag">DEMO</span>
+      <div class="lang">
+        <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+        <button id="btn-mk" onclick="setLang('mk')">MK</button>
+      </div>
+      <button class="play" id="play" onclick="run()">▶ <span id="playtxt">Watch a working day</span></button>
+    </div>
+  </div>
+
+  <div class="guide" id="guide">👇 Press play — messages will arrive from every app, and the system answers each one alone. Just read this line.</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="ic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><div><b id="k1">0</b><span id="k1l">Answered alone</span></div></div>
+    <div class="kpi"><div class="ic b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div><b id="k2">—</b><span id="k2l">Avg. reply time</span></div></div>
+    <div class="kpi"><div class="ic c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg></div><div><b id="k3">0</b><span id="k3l">New bookings</span></div></div>
+    <div class="kpi"><div class="ic d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 6H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6"/></svg></div><div><b id="k4">€0</b><span id="k4l">Value captured</span></div></div>
+  </div>
+
+  <div class="grid" id="grid">
+    <!-- CONVERSATIONS -->
+    <div class="panel" id="pLeft">
+      <div class="p-head"><b id="c_h">Conversations</b><span id="c_s">all channels</span></div>
+      <div class="convs" id="convs"></div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="panel" id="pMid">
+      <div class="chat-head">
+        <div class="cav" id="ch_av" style="background:#7c6cff">A</div>
+        <div><b id="ch_name">—</b><small id="ch_via">—</small></div>
+        <span class="autochip"><i></i><span id="autolbl">AUTO-PILOT ON</span></span>
+      </div>
+      <div class="chat" id="chat"></div>
+    </div>
+
+    <!-- CUSTOMER -->
+    <div class="panel" id="pRight">
+      <div class="p-head"><b id="cu_h">Customer card</b><span id="cu_s">fills itself</span></div>
+      <div class="cust">
+        <div class="cav" id="cu_av" style="background:#7c6cff">A</div>
+        <h4 id="cu_name">—</h4>
+        <div class="via" id="cu_via">—</div>
+        <div class="crow"><span id="r1l">Visits</span><b id="r1">—</b></div>
+        <div class="crow"><span id="r2l">Total value</span><b class="g" id="r2">—</b></div>
+        <div class="crow"><span id="r3l">Last contact</span><b id="r3">—</b></div>
+        <div class="tags" id="tags"></div>
+        <div class="nextapt" id="nextapt"><b id="na_t">✓ Appointment booked</b><span id="na_s">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" id="foot">⚠ DEMO — fictional business. This is the system: every message answered in seconds, every customer remembered, nothing lost.</div>
+</div>
+
+<div class="looktag" id="looktag">👀 LOOK HERE</div>
+<div class="cashpop" id="cashpop"><div class="inner"><div class="big" id="cp_big">✓ BOOKED</div><div class="sub" id="cp_sub">—</div></div></div>
+
+<div class="ovl" id="ovl">
+  <div class="ovl-card">
+    <div class="ovl-icons">
+      <div class="ovl-app" style="background:var(--wa)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 13.5c-.3.8-1.5 1.5-2.1 1.5-.6.1-1.3.1-2.1-.2-3-1.2-5-4.2-5.2-4.4-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.5-.2.8-.1l2.1 1c.3.2.5.3.6.4 0 .2 0 .7-.3 1.5z"/></svg></div>
+      <div class="ovl-app" style="background:var(--ig)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></div>
+      <div class="ovl-app" style="background:var(--fb)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3h3v4h-3c-.6 0-1 .4-1 1v3h4l-.7 4H14v7h-4v-7H7v-4h3V8a5 5 0 0 1 5-5z"/></svg></div>
+      <div class="ovl-app" style="background:var(--web)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18-3-4-3-14.5 0-18z"/></svg></div>
+      <span class="ovl-arrow">→</span>
+      <div class="ovl-one"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.5-.7L3 21l1.8-5.5A8.4 8.4 0 1 1 21 11.5z"/><path d="M8 10h8M8 14h5"/></svg></div>
+    </div>
+    <h2 id="ov_t">Customers write to you in <span>4 different apps</span>.</h2>
+    <p class="ovl-line" id="ov_1">Some messages you see late. Some you never see. <b>Every lost message = a lost customer.</b></p>
+    <p class="ovl-line" id="ov_2">This system puts ALL messages in ONE place — and <b>answers them for you, in seconds, day and night</b>.</p>
+    <p class="ovl-sub" id="ov_3">You are about to watch one working day. You don't need to click anything — just watch and read the yellow line.</p>
+    <button class="ovl-btn" id="ov_btn" onclick="startDemo()">▶ Show me one day</button>
+  </div>
+</div>
+
+<script>
+const CH={
+ wa:{c:'var(--wa)',svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 13.5c-.3.8-1.5 1.5-2.1 1.5-.6.1-1.3.1-2.1-.2-3-1.2-5-4.2-5.2-4.4-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.5-.2.8-.1l2.1 1c.3.2.5.3.6.4 0 .2 0 .7-.3 1.5z"/></svg>'},
+ ig:{c:'var(--ig)',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>'},
+ fb:{c:'var(--fb)',svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3h3v4h-3c-.6 0-1 .4-1 1v3h4l-.7 4H14v7h-4v-7H7v-4h3V8a5 5 0 0 1 5-5z"/></svg>'},
+ web:{c:'var(--web)',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18-3-4-3-14.5 0-18z"/></svg>'}
+};
+const AVC={A:'#7c6cff',B:'#38d4c3',E:'#f5b942',L:'#ff6b6b'};
+
+const T={
+en:{ttl:'Smart Inbox',tsub:'WhatsApp · Instagram · Facebook · Website — one screen',
+  playtxt:'Watch a working day',playing:'Day running…',replay:'Watch again',
+  guideIdle:'👇 Press play — messages will arrive from every app, and the system answers each one alone. Just read this line.',
+  guideStart:'🌅 The day begins. Four apps, one inbox. You do nothing — watch.',
+  guideEnd:'🌙 Day over: 9 messages answered alone, 3 bookings, €425 captured — and the owner was working the whole time. THAT is the system.',
+  k1l:'Answered alone',k2l:'Avg. reply time',k3l:'New bookings',k4l:'Value captured',
+  c_h:'Conversations',c_s:'all channels',cu_h:'Customer card',cu_s:'fills itself',
+  autolbl:'AUTO-PILOT ON',
+  r1l:'Visits',r2l:'Total value',r3l:'Last contact',
+  na_t:'✓ Appointment booked',foot:'⚠ DEMO — fictional business. This is the system: every message answered in seconds, every customer remembered, nothing lost.',
+  ov_t:'Customers write to you in <span>4 different apps</span>.',
+  ov_1:'Some messages you see late. Some you never see. <b>Every lost message = a lost customer.</b>',
+  ov_2:'This system puts ALL messages in ONE place — and <b>answers them for you, in seconds, day and night</b>.',
+  ov_3:"You are about to watch one working day. You don't need to click anything — just watch and read the yellow line.",
+  ov_btn:'▶ Show me one day',
+  look_new:'👀 NEW MESSAGE ARRIVES',look_ans:'👀 WATCH — IT ANSWERS ALONE',look_saved:'👀 BOOKED & SAVED HERE',
+  cp_big:'✓ BOOKED — MONEY CAUGHT',
+  now:'now',
+  convs:[
+    {id:0,av:'A',name:'Ariana M.',via:'wa',vialbl:'WhatsApp',preview:'Do you have a free slot…',visits:'6 visits',value:'€310',last:'today',tags:['Regular','Prefers Sat'],
+     inMsg:'Tung! A keni termin të lirë të enjten rreth orës 4?',outMsg:'Tung Ariana! 😊 Po — e enjtja 16:00 është e lirë. Konfirmo këtu: book.link/enj16',
+     confirm:'Perfekt, u konfirmua! 🎉',apt:'Thursday · 16:00',
+     guide1:'📲 WhatsApp: Ariana writes in ALBANIAN — the system checks the calendar ALONE…',
+     guide2:'⚡ Answered in HER language, in 6 seconds, with a real free slot. Booked.'},
+    {id:1,av:'B',name:'Besnik R.',via:'ig',vialbl:'Instagram',preview:'How much is a fade…',visits:'2 visits',value:'€35',last:'today',tags:['New-ish'],
+     inMsg:'Tung! Sa kushton fade + mjekra?',outMsg:'Tung Besnik! Fade + mjekër 12€, ~40 min. Karrige të lira sot në 14:00 dhe 18:30 — 👉 book.link',
+     confirm:'18:30 është perfekt 💈',apt:'Today · 18:30',
+     guide1:'📸 Instagram: a customer writes in ALBANIAN this time…',
+     guide2:'⚡ The system detected his language and answered in ALBANIAN — automatically. Every customer, their own language.'},
+    {id:2,av:'E',name:'Elena S.',via:'fb',vialbl:'Facebook',preview:'Do you work Saturdays…',visits:'1st contact',value:'€0 → new',last:'today',tags:['New customer'],
+     inMsg:'Здраво, дали работите во сабота?',outMsg:'Здраво Елена! Да — саботите 09:00–17:00. Изберете време тука: book.link 📅',
+     confirm:'Одлично, резервирав сабота 11:00!',apt:'Saturday · 11:00',
+     guide1:'💬 Facebook: a brand-new customer writes in MACEDONIAN…',
+     guide2:'⚡ Detected the language, answered in MACEDONIAN + booking link. A stranger became a customer in 40 seconds.'},
+    {id:3,av:'L',name:'Luan K.',via:'web',vialbl:'Website form',preview:'Sent at 23:40…',visits:'3 visits',value:'€80',last:'23:40',tags:['Night owl'],
+     inMsg:'(23:40) Може ли термин утре наутро?',outMsg:'Здраво Луан! Да — утре 09:30 е слободно, го чувам за тебе 2 часа. Потврди тука: book.link ✅',
+     confirm:'Потврдено. Фала за брзиот одговор на полноќ!',apt:'Tomorrow · 09:30',
+     guide1:'🌙 23:40, from the website, in Macedonian. The owner is asleep…',
+     guide2:'⚡ The system answers at midnight, in his language, and holds the slot. The owner finds a confirmed booking at breakfast.'}]},
+sq:{ttl:'Smart Inbox',tsub:'WhatsApp · Instagram · Facebook · Ueb-faqja — një ekran',
+  playtxt:'Shiko një ditë pune',playing:'Dita po kalon…',replay:'Shiko përsëri',
+  guideIdle:'👇 Shtypni play — mesazhet vijnë nga çdo aplikacion dhe sistemi i përgjigjet secilit vetë. Lexoni vetëm këtë rresht.',
+  guideStart:'🌅 Dita fillon. Katër aplikacione, një inbox. Ju s\'bëni asgjë — shikoni.',
+  guideEnd:'🌙 Dita mbaroi: 9 mesazhe të përgjigjura vetë, 3 rezervime, €425 të kapura — dhe pronari punonte gjithë kohën. KY është sistemi.',
+  k1l:'Përgjigjur vetë',k2l:'Koha mes. e përgjigjes',k3l:'Rezervime të reja',k4l:'Vlerë e kapur',
+  c_h:'Bisedat',c_s:'të gjitha kanalet',cu_h:'Karta e klientit',cu_s:'plotësohet vetë',
+  autolbl:'AUTO-PILOT NDEZUR',
+  r1l:'Vizita',r2l:'Vlera totale',r3l:'Kontakti i fundit',
+  na_t:'✓ Termini u rezervua',foot:'⚠ DEMO — biznes fiktiv. Ky është sistemi: çdo mesazh i përgjigjur për sekonda, çdo klient i mbajtur mend, asgjë e humbur.',
+  ov_t:'Klientët ju shkruajnë në <span>4 aplikacione të ndryshme</span>.',
+  ov_1:'Disa mesazhe i shihni vonë. Disa s\'i shihni kurrë. <b>Çdo mesazh i humbur = një klient i humbur.</b>',
+  ov_2:'Ky sistem i vendos TË GJITHA mesazhet në NJË vend — dhe <b>u përgjigjet për ju, për sekonda, ditë e natë</b>.',
+  ov_3:'Tani do të shihni një ditë pune. S\'keni nevojë të klikoni asgjë — vetëm shikoni dhe lexoni rreshtin e verdhë.',
+  ov_btn:'▶ Më trego një ditë',
+  look_new:'👀 VJEN MESAZH I RI',look_ans:'👀 SHIKO — PËRGJIGJET VETË',look_saved:'👀 U REZERVUA & U RUAJT KËTU',
+  cp_big:'✓ U REZERVUA — PARAJA U KAP',
+  now:'tani',
+  convs:[
+    {id:0,av:'A',name:'Ariana M.',via:'wa',vialbl:'WhatsApp',preview:'A keni termin të lirë…',visits:'6 vizita',value:'€310',last:'sot',tags:['E rregullt','Preferon të shtunën'],
+     inMsg:'Përshëndetje! A keni termin të lirë të enjten rreth orës 4?',outMsg:'Përshëndetje Ariana! 😊 Po — e enjtja 16:00 është e lirë. Prekni për konfirmim: book.link/enj16',
+     confirm:'Perfekt, u konfirmua! 🎉',apt:'E enjte · 16:00',
+     guide1:'📲 WhatsApp: Ariana kërkon termin — sistemi kontrollon kalendarin VETË…',
+     guide2:'⚡ Përgjigje për 6 sekonda me termin real të lirë. Ariana konfirmon. U rezervua.'},
+    {id:1,av:'B',name:'Besnik R.',via:'ig',vialbl:'Instagram',preview:'Sa kushton fade…',visits:'2 vizita',value:'€35',last:'sot',tags:['Gati i ri'],
+     inMsg:'Sa kushton fade + mjekra?',outMsg:'Besnik! Fade + mjekër 12€, ~40 min. Karrige të lira sot në 14:00 dhe 18:30 — doni njërën? 👉 book.link',
+     confirm:'18:30 më bën. Më rezervo 💈',apt:'Sot · 18:30',
+     guide1:'📸 Instagram: pyetje çmimi. Pa sistem, kjo pret me orë…',
+     guide2:'⚡ Çmimi + dy termine të lira për 5 sekonda. Rezervon 18:30. Paraja u kap.'},
+    {id:2,av:'E',name:'Elena S.',via:'fb',vialbl:'Facebook',preview:'A punoni të shtunave…',visits:'Kontakt i parë',value:'€0 → i ri',last:'sot',tags:['Klient i ri'],
+     inMsg:'Здраво, дали работите во сабота?',outMsg:'Здраво Елена! Да — саботите 09:00–17:00. Изберете време тука: book.link 📅',
+     confirm:'Одлично, резервирав сабота 11:00!',apt:'E shtunë · 11:00',
+     guide1:'💬 Facebook: kjo kliente shkruan MAQEDONISHT…',
+     guide2:'⚡ Sistemi e njohu gjuhën dhe iu përgjigj MAQEDONISHT — automatikisht. Çdo klient, në gjuhën e vet.'},
+    {id:3,av:'L',name:'Luan K.',via:'web',vialbl:'Formulari i faqes',preview:'Dërguar në 23:40…',visits:'3 vizita',value:'€80',last:'23:40',tags:['I natës'],
+     inMsg:'(23:40) Може ли термин утре наутро?',outMsg:'Здраво Луан! Да — утре 09:30 е слободно, го чувам за тебе 2 часа. Потврди тука: book.link ✅',
+     confirm:'Потврдено. Фала за брзиот одговор на полноќ!',apt:'Nesër · 09:30',
+     guide1:'🌙 23:40, nga ueb-faqja, maqedonisht. Pronari fle…',
+     guide2:'⚡ Sistemi përgjigjet në mesnatë, në gjuhën e TIJ, dhe e mban terminin. Pronari e gjen rezervimin gati në mëngjes.'}]},
+mk:{ttl:'Smart Inbox',tsub:'WhatsApp · Instagram · Facebook · Веб-страница — еден екран',
+  playtxt:'Гледај еден работен ден',playing:'Денот тече…',replay:'Гледај повторно',
+  guideIdle:'👇 Стиснете play — пораки доаѓаат од секоја апликација, а системот одговара на секоја сам. Читајте само овој ред.',
+  guideStart:'🌅 Денот почнува. Четири апликации, еден inbox. Вие не правите ништо — гледајте.',
+  guideEnd:'🌙 Денот заврши: 9 пораки одговорени сами, 3 резервации, €425 фатени — а сопственикот работеше цело време. ТОА е системот.',
+  k1l:'Одговорени сами',k2l:'Просечно време',k3l:'Нови резервации',k4l:'Фатена вредност',
+  c_h:'Разговори',c_s:'сите канали',cu_h:'Карта на клиент',cu_s:'се пополнува сама',
+  autolbl:'АВТО-ПИЛОТ ВКЛУЧЕН',
+  r1l:'Посети',r2l:'Вкупна вредност',r3l:'Последен контакт',
+  na_t:'✓ Термин резервиран',foot:'⚠ ДЕМО — фиктивен бизнис. Ова е системот: секоја порака одговорена за секунди, секој клиент запаметен, ништо изгубено.',
+  ov_t:'Клиентите ви пишуваат во <span>4 различни апликации</span>.',
+  ov_1:'Некои пораки ги гледате доцна. Некои никогаш. <b>Секоја изгубена порака = изгубен клиент.</b>',
+  ov_2:'Овој систем ги става СИТЕ пораки на ЕДНО место — и <b>одговара за вас, за секунди, дење и ноќе</b>.',
+  ov_3:'Сега ќе гледате еден работен ден. Не треба ништо да кликате — само гледајте и читајте го жолтиот ред.',
+  ov_btn:'▶ Покажи ми еден ден',
+  look_new:'👀 СТИГНУВА НОВА ПОРАКА',look_ans:'👀 ГЛЕДАЈ — ОДГОВАРА САМ',look_saved:'👀 РЕЗЕРВИРАНО & ЗАЧУВАНО ТУКА',
+  cp_big:'✓ РЕЗЕРВИРАНО — ПАРИТЕ ФАТЕНИ',
+  now:'сега',
+  convs:[
+    {id:0,av:'A',name:'Ариана М.',via:'wa',vialbl:'WhatsApp',preview:'Имате слободен термин…',visits:'6 посети',value:'€310',last:'денес',tags:['Редовна','Претпочита сабота'],
+     inMsg:'Tung! A keni termin të lirë të enjten rreth orës 4?',outMsg:'Tung Ariana! 😊 Po — e enjtja 16:00 është e lirë. Konfirmo këtu: book.link/enj16',
+     confirm:'Perfekt, u konfirmua! 🎉',apt:'Четврток · 16:00',
+     guide1:'📲 WhatsApp: Ариана пишува на АЛБАНСКИ — системот САМ го проверува календарот…',
+     guide2:'⚡ Одговор на НЕЈЗИНИОТ јазик, за 6 секунди, со реален слободен термин. Резервирано.'},
+    {id:1,av:'B',name:'Бесник Р.',via:'ig',vialbl:'Instagram',preview:'Колку чини fade…',visits:'2 посети',value:'€35',last:'денес',tags:['Речиси нов'],
+     inMsg:'Tung! Sa kushton fade + mjekra?',outMsg:'Tung Besnik! Fade + mjekër 12€, ~40 min. Karrige të lira sot në 14:00 dhe 18:30 — 👉 book.link',
+     confirm:'18:30 është perfekt 💈',apt:'Денес · 18:30',
+     guide1:'📸 Instagram: овој клиент пишува на АЛБАНСКИ…',
+     guide2:'⚡ Системот го препозна јазикот и одговори на АЛБАНСКИ — автоматски. Секој клиент, на својот јазик.'},
+    {id:2,av:'E',name:'Елена С.',via:'fb',vialbl:'Facebook',preview:'Работите ли во сабота…',visits:'Прв контакт',value:'€0 → нова',last:'денес',tags:['Нова клиентка'],
+     inMsg:'Здраво, работите ли во сабота?',outMsg:'Здраво Елена! Да — саботите 09:00–17:00. Изберете време тука: book.link 📅',
+     confirm:'Одлично, резервирав сабота 11:00!',apt:'Сабота · 11:00',
+     guide1:'💬 Facebook: сосема нова клиентка прашува за саботите…',
+     guide2:'⚡ Веднаш одговор + линк за резервација. Непозната стана клиентка за 40 секунди.'},
+    {id:3,av:'L',name:'Луан К.',via:'web',vialbl:'Формулар од сајтот',preview:'Испратено во 23:40…',visits:'3 посети',value:'€80',last:'23:40',tags:['Ноќен тип'],
+     inMsg:'(испратено 23:40) Може ли термин утре наутро?',outMsg:'Луан! Да — утре 09:30 е слободно, го резервирав за тебе 2 часа. Потврди тука: book.link ✅',
+     confirm:'Потврдено. Фала за брзиот одговор на полноќ!',apt:'Утре · 09:30',
+     guide1:'🌙 23:40, од веб-страницата. Сопственикот спие…',
+     guide2:'⚡ Системот одговара на полноќ и го држи терминот. Сопственикот наоѓа потврдена резервација на појадок.'}]}
+};
+
+let LANG='en', running=false;
+
+function chBadge(via){
+  return `<span class="chbadge" style="background:${CH[via].c}">${CH[via].svg.replace('<svg','<svg width="9" height="9"')}</span>`;
+}
+function renderConvs(activeId=-1,unreads={},done={}){
+  const t=T[LANG];
+  document.getElementById('convs').innerHTML=t.convs.map(c=>`
+    <div class="conv ${c.id===activeId?'active':''}" id="conv${c.id}">
+      <div class="cav" style="background:${AVC[c.av]}">${c.av}${chBadge(c.via)}</div>
+      <div class="cinfo"><b>${c.name}</b><p>${c.preview}</p></div>
+      <div class="meta"><span class="tm">${c.last}</span>
+        ${unreads[c.id]?'<span class="unread">1</span>':''}
+        ${done[c.id]?'<span class="donechip">✓ auto</span>':''}
+      </div>
+    </div>`).join('');
+}
+function setCustomer(c){
+  const t=T[LANG];
+  document.getElementById('ch_av').style.background=AVC[c.av];
+  document.getElementById('ch_av').textContent=c.av;
+  document.getElementById('ch_name').textContent=c.name;
+  document.getElementById('ch_via').textContent=c.vialbl;
+  document.getElementById('cu_av').style.background=AVC[c.av];
+  document.getElementById('cu_av').textContent=c.av;
+  document.getElementById('cu_name').textContent=c.name;
+  document.getElementById('cu_via').textContent=c.vialbl;
+  document.getElementById('r1').textContent=c.visits;
+  document.getElementById('r2').textContent=c.value;
+  document.getElementById('r3').textContent=c.last;
+  document.getElementById('tags').innerHTML=c.tags.map((x,i)=>`<span class="tag ${i===0?'hot':''}">${x}</span>`).join('');
+  document.getElementById('nextapt').classList.remove('show');
+}
+function guide(msg){
+  const g=document.getElementById('guide');
+  g.textContent=msg;
+  g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');
+}
+function addMsg(cls,txt,tm){
+  const chat=document.getElementById('chat');
+  const d=document.createElement('div');
+  d.className='msg '+cls;
+  d.innerHTML=`${txt}<span class="tm">${tm}</span>`;
+  chat.appendChild(d); chat.scrollTop=chat.scrollHeight;
+}
+function count(el,to,pre='',suf='',dur=900){
+  const from=parseInt(String(el.textContent).replace(/\D/g,''))||0;
+  const start=performance.now();
+  (function step(ts){
+    const p=Math.min((ts-start)/dur,1);
+    el.textContent=pre+Math.round(from+(to-from)*p)+suf;
+    if(p<1)requestAnimationFrame(step);
+  })(start);
+}
+
+function spotlight(panelId,tagText){
+  const grid=document.getElementById('grid');
+  const tag=document.getElementById('looktag');
+  ['pLeft','pMid','pRight'].forEach(id=>document.getElementById(id).classList.remove('spot'));
+  if(!panelId){grid.classList.remove('focus');tag.classList.remove('show');return;}
+  grid.classList.add('focus');
+  const p=document.getElementById(panelId);
+  p.classList.add('spot');
+  p.appendChild(tag);
+  tag.textContent=tagText;
+  tag.classList.add('show');
+}
+function cashPop(sub){
+  const cp=document.getElementById('cashpop');
+  document.getElementById('cp_big').textContent=T[LANG].cp_big;
+  document.getElementById('cp_sub').textContent=sub;
+  cp.classList.add('show');
+  setTimeout(()=>cp.classList.remove('show'),2100);
+}
+function playConversation(c,delayBase,state){
+  const chat=document.getElementById('chat');
+  const t=T[LANG];
+  // 1. message arrives — look LEFT
+  setTimeout(()=>{
+    state.unreads[c.id]=1; renderConvs(state.active,state.unreads,state.done);
+    document.getElementById('conv'+c.id)?.classList.add('flash');
+    guide(c.guide1);
+    spotlight('pLeft',t.look_new);
+  },delayBase);
+  // 2. open conversation — look MIDDLE
+  setTimeout(()=>{
+    state.active=c.id; delete state.unreads[c.id];
+    renderConvs(state.active,state.unreads,state.done);
+    setCustomer(c); chat.innerHTML='';
+    addMsg('in',c.inMsg,t.now);
+    spotlight('pMid',t.look_ans);
+  },delayBase+1800);
+  // 3. typing then auto-reply
+  setTimeout(()=>{
+    const ty=document.createElement('div'); ty.className='typing'; ty.innerHTML='<i></i><i></i><i></i>';
+    chat.appendChild(ty); chat.scrollTop=chat.scrollHeight;
+    setTimeout(()=>{
+      ty.remove(); addMsg('out',c.outMsg,t.now);
+      guide(c.guide2);
+      state.answered++; count(document.getElementById('k1'),state.answered);
+      document.getElementById('k2').textContent='6s';
+    },1400);
+  },delayBase+3200);
+  // 4. customer confirms — look RIGHT + celebration
+  setTimeout(()=>{
+    addMsg('in',c.confirm,t.now);
+    const na=document.getElementById('nextapt');
+    document.getElementById('na_t').textContent=t.na_t;
+    document.getElementById('na_s').textContent=c.apt;
+    na.classList.add('show');
+    spotlight('pRight',t.look_saved);
+    state.done[c.id]=1; renderConvs(state.active,state.unreads,state.done);
+    state.bookings++; count(document.getElementById('k3'),state.bookings);
+    state.value = [140,152,177,425][Math.min(state.bookIdx,3)]; state.bookIdx++;
+    count(document.getElementById('k4'),state.value,'€');
+  },delayBase+6600);
+  // 5. big center celebration
+  setTimeout(()=>{ cashPop(c.apt); },delayBase+7400);
+  // 6. release spotlight before next conversation
+  setTimeout(()=>{ spotlight(null); },delayBase+9400);
+}
+
+function run(){
+  if(running)return; running=true;
+  const t=T[LANG];
+  document.getElementById('playtxt').textContent=t.playing;
+  document.getElementById('k1').textContent='0';
+  document.getElementById('k2').textContent='—';
+  document.getElementById('k3').textContent='0';
+  document.getElementById('k4').textContent='€0';
+  document.getElementById('chat').innerHTML='';
+  const state={active:-1,unreads:{},done:{},answered:0,bookings:0,value:0,bookIdx:0};
+  renderConvs(-1,{},{});
+  guide(t.guideStart);
+  t.convs.forEach((c,i)=>playConversation(c,1500+i*10000,state));
+  const endAt=1500+t.convs.length*10000+800;
+  setTimeout(()=>{
+    guide(t.guideEnd);
+    // final numbers polish
+    document.getElementById('k1').textContent='9';
+    document.getElementById('k3').textContent='3';
+    document.getElementById('k4').textContent='€425';
+    document.getElementById('playtxt').textContent=t.replay;
+    running=false;
+  },endAt);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  ['ttl','tsub','k1l','k2l','k3l','k4l','c_h','c_s','cu_h','cu_s','autolbl','r1l','r2l','r3l','foot'
+  ].forEach(k=>{const el=document.getElementById(k); if(el) el.textContent=t[k];});
+  document.getElementById('playtxt').textContent=running?t.playing:t.playtxt;
+  if(!running) guide(t.guideIdle);
+  document.getElementById('ov_t').innerHTML=t.ov_t;
+  document.getElementById('ov_1').innerHTML=t.ov_1;
+  document.getElementById('ov_2').innerHTML=t.ov_2;
+  document.getElementById('ov_3').textContent=t.ov_3;
+  document.getElementById('ov_btn').textContent=t.ov_btn;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang=l;
+  renderConvs(); setCustomer(t.convs[0]);
+  document.getElementById('chat').innerHTML='';
+}
+setLang('en');
+function startDemo(){
+  document.getElementById('ovl').classList.add('hide');
+  setTimeout(()=>{if(!running) run();},500);
+}
+</script>
+</body>
+</html>

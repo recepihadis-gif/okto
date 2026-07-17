@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — Mbledhësi automatik i review-ve</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f1420;--card:#1a2233;--text:#eef2f8;--muted:#8b96ab;--green:#25d366;--gold:#f5b942;--blue:#4f8cff}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:28px 16px}
+  .top{display:flex;justify-content:space-between;width:100%;max-width:920px;margin-bottom:8px;align-items:center}
+  .demo-tag{font-size:.72rem;color:var(--muted);border:1px solid #2c3850;padding:4px 10px;border-radius:99px;letter-spacing:1px}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid #2c3850;color:var(--muted);padding:4px 10px;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--gold);border-color:var(--gold);color:#1a1200}
+  h1{font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;text-align:center;margin:10px 0 4px}
+  h1 span{color:var(--gold)}
+  .sub{color:var(--muted);text-align:center;font-size:.95rem;margin-bottom:26px;max-width:600px}
+
+  .stage{display:flex;gap:30px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+  .col{background:var(--card);border:1px solid #2c3850;border-radius:20px;padding:22px;width:280px;display:flex;flex-direction:column}
+  .col h3{font-size:.92rem;margin-bottom:4px}
+  .col .lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px}
+
+  .job{background:#0f1420;border:1px solid #2c3850;border-radius:14px;padding:14px;margin-bottom:12px}
+  .job b{font-size:.88rem;display:block}
+  .job small{color:var(--muted);font-size:.76rem}
+  .done-btn{width:100%;background:var(--blue);color:#fff;border:none;padding:13px;border-radius:12px;
+    font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;margin-top:auto}
+  .done-btn:disabled{opacity:.5;cursor:default}
+
+  .sms{background:#0f1420;border:1px solid #2c3850;border-radius:16px;padding:14px;font-size:.82rem;line-height:1.5;
+    opacity:0;transform:translateY(10px);transition:all .5s}
+  .sms.show{opacity:1;transform:none}
+  .sms .from{font-size:.68rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+  .sms .link{color:var(--blue);text-decoration:underline}
+  .stars-pick{display:flex;gap:6px;font-size:1.5rem;margin-top:12px;opacity:0;transition:opacity .5s}
+  .stars-pick.show{opacity:1}
+  .stars-pick i{cursor:default;filter:grayscale(1);transition:filter .3s}
+  .stars-pick i.lit{filter:none}
+
+  /* google card */
+  .gcard{background:#fff;color:#1f2937;border-radius:16px;padding:18px}
+  .gcard .gname{font-weight:700;font-size:.95rem}
+  .gcard .gtype{color:#6b7280;font-size:.75rem;margin-bottom:8px}
+  .grate{display:flex;align-items:center;gap:8px}
+  .grate b{font-size:1.7rem;transition:all .3s}
+  .grate b.bump{color:#059669;transform:scale(1.15)}
+  .gstars{color:#fbbc04;font-size:1rem;letter-spacing:1px}
+  .gcount{color:#6b7280;font-size:.78rem;margin-top:2px;transition:all .3s}
+  .gcount.bump{color:#059669;font-weight:700}
+  .newrev{margin-top:12px;border-top:1px solid #e5e7eb;padding-top:12px;opacity:0;transform:translateY(8px);transition:all .5s}
+  .newrev.show{opacity:1;transform:none}
+  .newrev .who{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .newrev .avat{width:26px;height:26px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;
+    align-items:center;justify-content:center;font-size:.72rem;font-weight:700}
+  .newrev .who b{font-size:.8rem}
+  .newrev .rstars{color:#fbbc04;font-size:.8rem}
+  .newrev p{font-size:.78rem;color:#374151;margin-top:4px}
+  .newtag{display:inline-block;background:#d1fae5;color:#059669;font-size:.62rem;font-weight:700;
+    padding:2px 8px;border-radius:99px;margin-left:auto}
+
+  .flow-note{margin-top:14px;font-size:.72rem;color:var(--muted);text-align:center}
+  .caption{margin-top:24px;color:var(--muted);font-size:.8rem;text-align:center;max-width:520px}
+  .arrowcol{display:flex;align-items:center;font-size:1.6rem;color:var(--gold)}
+  @media(max-width:960px){.arrowcol{display:none}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO / KONCEPT</span>
+  <div class="lang">
+    <button id="btn-sq" class="active" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<h1 id="title">Si mblidhen <span>50+ review</span> në Google — automatikisht</h1>
+<p class="sub" id="subtitle">Puna mbaron → klienti merr mesazh falënderimi me link → review-t rriten çdo javë pa lëvizur gishtin.</p>
+
+<div class="stage">
+  <!-- STEP 1: business -->
+  <div class="col">
+    <div class="lbl" id="c1lbl">Hapi 1 — Te biznesi</div>
+    <h3 id="c1title">✂️ Puna përfundoi</h3>
+    <div class="job">
+      <b id="jobname">Ariana M.</b>
+      <small id="jobdesc">Prerje + stilim flokësh · 14:30</small>
+    </div>
+    <button class="done-btn" id="doneBtn" onclick="run()">✅ <span id="donetxt">Shëno si të kryer</span></button>
+  </div>
+
+  <div class="arrowcol">→</div>
+
+  <!-- STEP 2: customer phone -->
+  <div class="col">
+    <div class="lbl" id="c2lbl">Hapi 2 — Te klienti (pas 1 ore)</div>
+    <h3 id="c2title">📱 Mesazhi automatik</h3>
+    <div class="sms" id="sms">
+      <div class="from">SMS · Salon</div>
+      <span id="smstext">Faleminderit që na vizituat sot, Ariana! 💇‍♀️ Nëse ishit të kënaqur, na ndihmoni me një review 2-sekondësh:</span>
+      <br><span class="link">g.page/salon/review</span>
+    </div>
+    <div class="stars-pick" id="starsPick"><i>⭐</i><i>⭐</i><i>⭐</i><i>⭐</i><i>⭐</i></div>
+    <div class="flow-note" id="note2">Klienti shtyp linkun → vlerëson me 2 klikime</div>
+  </div>
+
+  <div class="arrowcol">→</div>
+
+  <!-- STEP 3: google -->
+  <div class="col">
+    <div class="lbl" id="c3lbl">Hapi 3 — Në Google</div>
+    <h3 id="c3title">🌟 Profili rritet</h3>
+    <div class="gcard">
+      <div class="gname" id="gname">Salloni Juaj</div>
+      <div class="gtype" id="gtype">Sallon bukurie · Gostivar</div>
+      <div class="grate">
+        <b id="grating">4.6</b>
+        <div>
+          <div class="gstars">★★★★★</div>
+          <div class="gcount" id="gcount">38 review</div>
+        </div>
+      </div>
+      <div class="newrev" id="newrev">
+        <div class="who">
+          <div class="avat">A</div><b>Ariana M.</b><span class="newtag" id="newtag">E RE</span>
+        </div>
+        <div class="rstars">★★★★★</div>
+        <p id="revtext">"Shërbim fantastik, stafi shumë i sjellshëm. E rekomandoj!"</p>
+      </div>
+    </div>
+    <div class="flow-note" id="note3">Më shumë review = më lart në Google Maps = më shumë klientë</div>
+  </div>
+</div>
+
+<p class="caption" id="caption">Regjistroni ekranin: shtypni "Shëno si të kryer" dhe ndiqni zinxhirin deri te review-i i ri.</p>
+
+<script>
+const T={
+  sq:{title:'Si mblidhen <span>50+ review</span> në Google — automatikisht',
+    subtitle:'Puna mbaron → klienti merr mesazh falënderimi me link → review-t rriten çdo javë pa lëvizur gishtin.',
+    c1lbl:'Hapi 1 — Te biznesi', c1title:'✂️ Puna përfundoi', jobname:'Ariana M.', jobdesc:'Prerje + stilim flokësh · 14:30',
+    donetxt:'Shëno si të kryer',
+    c2lbl:'Hapi 2 — Te klienti (pas 1 ore)', c2title:'📱 Mesazhi automatik',
+    smstext:'Faleminderit që na vizituat sot, Ariana! 💇‍♀️ Nëse ishit të kënaqur, na ndihmoni me një review 2-sekondësh:',
+    note2:'Klienti shtyp linkun → vlerëson me 2 klikime',
+    c3lbl:'Hapi 3 — Në Google', c3title:'🌟 Profili rritet', gname:'Salloni Juaj', gtype:'Sallon bukurie · Gostivar',
+    grev:' review', newtag:'E RE', revtext:'"Shërbim fantastik, stafi shumë i sjellshëm. E rekomandoj!"',
+    note3:'Më shumë review = më lart në Google Maps = më shumë klientë',
+    caption:'Regjistroni ekranin: shtypni "Shëno si të kryer" dhe ndiqni zinxhirin deri te review-i i ri.'},
+  mk:{title:'Како се собираат <span>50+ рецензии</span> на Google — автоматски',
+    subtitle:'Работата завршува → клиентот добива порака за благодарност со линк → рецензиите растат секоја недела.',
+    c1lbl:'Чекор 1 — Кај бизнисот', c1title:'✂️ Работата заврши', jobname:'Ариана М.', jobdesc:'Потстрижување + стилизирање · 14:30',
+    donetxt:'Означи како завршено',
+    c2lbl:'Чекор 2 — Кај клиентот (по 1 час)', c2title:'📱 Автоматска порака',
+    smstext:'Ви благодариме за посетата денес, Ариана! 💇‍♀️ Ако бевте задоволни, помогнете ни со рецензија од 2 секунди:',
+    note2:'Клиентот го стиска линкот → оценува со 2 клика',
+    c3lbl:'Чекор 3 — На Google', c3title:'🌟 Профилот расте', gname:'Вашиот Салон', gtype:'Салон за убавина · Гостивар',
+    grev:' рецензии', newtag:'НОВО', revtext:'„Фантастична услуга, многу љубезен персонал. Препорачувам!"',
+    note3:'Повеќе рецензии = повисоко на Google Maps = повеќе клиенти',
+    caption:'Снимајте: стиснете „Означи како завршено" и следете го синџирот до новата рецензија.'},
+  en:{title:'How businesses collect <span>50+ Google reviews</span> — automatically',
+    subtitle:'Job done → customer gets a thank-you message with a link → reviews grow every week, hands-free.',
+    c1lbl:'Step 1 — At the business', c1title:'✂️ Job completed', jobname:'Ariana M.', jobdesc:'Haircut + styling · 14:30',
+    donetxt:'Mark as done',
+    c2lbl:'Step 2 — Customer (1h later)', c2title:'📱 Automatic message',
+    smstext:'Thanks for visiting us today, Ariana! 💇‍♀️ If you were happy, help us with a 2-second review:',
+    note2:'Customer taps the link → rates in 2 clicks',
+    c3lbl:'Step 3 — On Google', c3title:'🌟 Profile grows', gname:'Your Salon', gtype:'Beauty salon · Gostivar',
+    grev:' reviews', newtag:'NEW', revtext:'"Fantastic service, very kind staff. Recommended!"',
+    note3:'More reviews = higher on Google Maps = more customers',
+    caption:'Screen-record it: press "Mark as done" and follow the chain to the new review.'}
+};
+
+let LANG='sq', count=38;
+function run(){
+  const btn=document.getElementById('doneBtn'); btn.disabled=true;
+  document.getElementById('sms').classList.remove('show');
+  document.getElementById('starsPick').classList.remove('show');
+  document.getElementById('newrev').classList.remove('show');
+  document.querySelectorAll('#starsPick i').forEach(s=>s.classList.remove('lit'));
+
+  setTimeout(()=>document.getElementById('sms').classList.add('show'),600);
+  setTimeout(()=>{
+    document.getElementById('starsPick').classList.add('show');
+    const stars=document.querySelectorAll('#starsPick i');
+    stars.forEach((s,i)=>setTimeout(()=>s.classList.add('lit'),i*250));
+  },2200);
+  setTimeout(()=>{
+    document.getElementById('newrev').classList.add('show');
+    count++;
+    const g=document.getElementById('gcount');
+    g.textContent=count+T[LANG].grev; g.classList.add('bump');
+    const r=document.getElementById('grating');
+    r.textContent='4.7'; r.classList.add('bump');
+    setTimeout(()=>{g.classList.remove('bump');r.classList.remove('bump');},1500);
+    btn.disabled=false;
+  },4200);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  document.getElementById('title').innerHTML=t.title;
+  ['subtitle','c1lbl','c1title','jobname','jobdesc','donetxt','c2lbl','c2title','smstext','note2',
+   'c3lbl','c3title','gname','gtype','newtag','revtext','note3','caption'].forEach(k=>{
+    document.getElementById(k).textContent=t[k];
+  });
+  document.getElementById('gcount').textContent=count+t.grev;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+}
+setLang('en');
+</script>
+</body>
+</html>

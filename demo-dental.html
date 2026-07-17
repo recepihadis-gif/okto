@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Arden — Dental Atelier (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#f6f3ee; --char:#1a1713; --bronze:#a3763f; --bronze-l:#c29a63;
+    --line:#e2dbcf; --mut:#7d7466; --card:#fffdf9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  ::selection{background:var(--bronze);color:#fff}
+  body{font-family:'Inter',sans-serif;background:var(--ivory);color:var(--char);line-height:1.7;
+    font-size:15px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;font-weight:400;line-height:1.1}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(30px);transition:opacity 1s cubic-bezier(.2,.6,.2,1),transform 1s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.22s}.rv.d3{transition-delay:.34s}
+
+  /* micro-label */
+  .lab{font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--bronze);font-weight:600}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;
+    padding:20px 34px;transition:all .4s;mix-blend-mode:normal}
+  nav.scr{background:rgba(246,243,238,.88);backdrop-filter:blur(14px);padding:13px 34px;border-bottom:1px solid var(--line)}
+  .wordmark{font-family:'Fraunces',serif;font-size:1.15rem;letter-spacing:.02em}
+  .wordmark i{font-style:italic;color:var(--bronze)}
+  .nav-r{display:flex;align-items:center;gap:22px}
+  .nav-links{display:flex;gap:22px;list-style:none}
+  .nav-links a{text-decoration:none;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);
+    transition:color .2s}
+  .nav-links a:hover{color:var(--char)}
+  .lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px;background:var(--card)}
+  .lang button{background:transparent;border:none;color:var(--mut);padding:4px 10px;border-radius:99px;
+    font-size:.66rem;font-weight:600;cursor:pointer;letter-spacing:.08em;font-family:inherit}
+  .lang button.active{background:var(--char);color:var(--ivory)}
+  .nav-book{background:var(--char);color:var(--ivory);text-decoration:none;font-size:.7rem;letter-spacing:.16em;
+    text-transform:uppercase;padding:11px 22px;border-radius:99px;transition:background .25s}
+  .nav-book:hover{background:var(--bronze)}
+
+  /* HERO */
+  header{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:40px;
+    max-width:1180px;margin:0 auto;padding:120px 34px 40px;position:relative}
+  .eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+  .eyebrow .rule{width:44px;height:1px;background:var(--bronze)}
+  header h1{font-size:clamp(2.9rem,6.4vw,5rem);letter-spacing:-.01em}
+  header h1 em{font-style:italic;color:var(--bronze)}
+  .hero-sub{color:var(--mut);max-width:400px;margin:26px 0 38px;font-size:.98rem}
+  .cta-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .btn-main{display:inline-flex;align-items:center;gap:10px;background:var(--char);color:var(--ivory);
+    text-decoration:none;padding:17px 34px;border-radius:99px;font-size:.78rem;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;transition:all .25s}
+  .btn-main svg{transition:transform .25s}
+  .btn-main:hover{background:var(--bronze)}
+  .btn-main:hover svg{transform:translateX(4px)}
+  .btn-ghost{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--char);text-decoration:none;
+    border-bottom:1px solid var(--bronze);padding-bottom:3px;font-weight:600}
+  .hero-fig{position:relative}
+  .hero-fig .ph{border-radius:200px 200px 24px 24px;overflow:hidden;box-shadow:0 40px 80px rgba(26,23,19,.22)}
+  .hero-fig img{aspect-ratio:3.4/4.4;object-fit:cover;transform:scale(1.04)}
+  .float-card{position:absolute;bottom:26px;left:-38px;background:var(--card);border:1px solid var(--line);
+    border-radius:18px;padding:16px 20px;box-shadow:0 20px 44px rgba(26,23,19,.14);display:flex;gap:13px;align-items:center}
+  .float-card .stars{color:var(--bronze);letter-spacing:2px;font-size:.85rem}
+  .float-card b{display:block;font-size:.9rem}
+  .float-card span{font-size:.7rem;color:var(--mut)}
+
+  /* MARQUEE */
+  .marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;
+    padding:16px 0;background:var(--card)}
+  .marq-track{display:flex;gap:52px;white-space:nowrap;animation:slide 26s linear infinite;width:max-content}
+  .marq span{font-family:'Fraunces',serif;font-size:1rem;color:var(--mut);display:flex;align-items:center;gap:52px}
+  .marq i{width:7px;height:7px;background:var(--bronze);border-radius:50%;display:inline-block}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  section{max-width:1180px;margin:0 auto;padding:110px 34px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:20px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(2rem,4.4vw,3.1rem)}
+  .sec-head h2 em{font-style:italic;color:var(--bronze)}
+  .sec-head p{color:var(--mut);max-width:330px;font-size:.9rem}
+
+  /* SERVICES — numbered editorial rows */
+  .svc-row{display:grid;grid-template-columns:80px 1fr 1.2fr auto;gap:26px;align-items:center;
+    padding:30px 6px;border-top:1px solid var(--line);transition:all .3s;cursor:default}
+  .svc-row:last-child{border-bottom:1px solid var(--line)}
+  .svc-row:hover{background:var(--card);padding-left:20px}
+  .svc-num{font-family:'Fraunces',serif;font-style:italic;color:var(--bronze);font-size:1.05rem}
+  .svc-row h3{font-size:1.35rem}
+  .svc-row p{color:var(--mut);font-size:.86rem}
+  .svc-price{font-family:'Fraunces',serif;font-size:1.15rem;white-space:nowrap}
+  .svc-price small{font-size:.68rem;color:var(--mut);font-family:'Inter',sans-serif;display:block;text-align:right}
+
+  /* ABOUT */
+  .about{display:grid;grid-template-columns:.92fr 1.08fr;gap:70px;align-items:center}
+  .about-fig{position:relative}
+  .about-fig .ph{border-radius:20px;overflow:hidden}
+  .about-fig img{aspect-ratio:4/4.7;object-fit:cover}
+  .about-fig::after{content:"";position:absolute;inset:20px -20px -20px 20px;border:1px solid var(--bronze);
+    border-radius:20px;z-index:-1;opacity:.55}
+  .about h2{font-size:clamp(1.9rem,4vw,2.7rem);margin-bottom:20px}
+  .about h2 em{font-style:italic;color:var(--bronze)}
+  .about .bio{color:var(--mut);margin-bottom:26px;font-size:.94rem}
+  .cred{display:flex;gap:16px;padding:15px 0;border-top:1px solid var(--line);align-items:baseline}
+  .cred .n{font-family:'Fraunces',serif;font-style:italic;color:var(--bronze);font-size:.9rem;min-width:28px}
+  .cred b{font-size:.9rem;font-weight:600}
+  .cred span{color:var(--mut);font-size:.82rem}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat{text-align:center;padding:46px 20px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:none}
+  .stat b{font-family:'Fraunces',serif;font-size:clamp(2.4rem,5vw,3.6rem);display:block;font-weight:300}
+  .stat b i{font-style:italic;color:var(--bronze)}
+  .stat span{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+
+  /* GALLERY */
+  .gal{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px}
+  .gal figure{border-radius:18px;overflow:hidden;position:relative}
+  .gal img{aspect-ratio:4/4.8;object-fit:cover;transition:transform .8s cubic-bezier(.2,.6,.2,1)}
+  .gal figure:hover img{transform:scale(1.06)}
+  .gal figcaption{position:absolute;left:14px;bottom:12px;background:rgba(26,23,19,.72);color:var(--ivory);
+    backdrop-filter:blur(6px);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+    padding:7px 14px;border-radius:99px}
+
+  /* QUOTE */
+  .quote-wrap{text-align:center;max-width:760px;margin:0 auto}
+  .quote-mark{font-family:'Fraunces',serif;font-size:4.6rem;color:var(--bronze);line-height:.6;display:block;margin-bottom:24px}
+  .quote{font-family:'Fraunces',serif;font-size:clamp(1.3rem,3vw,1.85rem);font-style:italic;min-height:120px;
+    transition:opacity .5s}
+  .quote.fade{opacity:0}
+  .quote-who{margin-top:22px;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+  .q-dots{display:flex;gap:8px;justify-content:center;margin-top:26px}
+  .q-dots i{width:7px;height:7px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .3s}
+  .q-dots i.on{background:var(--bronze);transform:scale(1.3)}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto}
+  .faq details{border-top:1px solid var(--line)}
+  .faq details:last-child{border-bottom:1px solid var(--line)}
+  .faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;
+    padding:26px 4px;cursor:pointer;font-family:'Fraunces',serif;font-size:1.2rem}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq .plus{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;display:flex;
+    align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;font-family:'Inter',sans-serif;
+    font-size:1rem;color:var(--mut)}
+  .faq details[open] .plus{transform:rotate(45deg);background:var(--char);color:var(--ivory);border-color:var(--char)}
+  .faq .ans{padding:0 46px 26px 4px;color:var(--mut);font-size:.92rem}
+
+  /* BOOKING */
+  .bookpanel{background:var(--char);border-radius:30px;padding:70px 40px;color:var(--ivory);position:relative;overflow:hidden}
+  .bookpanel::before{content:"";position:absolute;top:-140px;right:-140px;width:400px;height:400px;border-radius:50%;
+    background:radial-gradient(circle,rgba(163,118,63,.35),transparent 65%)}
+  .bookpanel .lab{color:var(--bronze-l)}
+  .bookpanel h2{font-size:clamp(2rem,4.4vw,3rem);margin:14px 0 10px}
+  .bookpanel h2 em{font-style:italic;color:var(--bronze-l)}
+  .bookpanel .bs{color:rgba(246,243,238,.6);font-size:.9rem;margin-bottom:40px;max-width:420px}
+  .bform{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative}
+  .field{position:relative}
+  .field input,.field select{width:100%;background:rgba(246,243,238,.06);border:1px solid rgba(246,243,238,.18);
+    color:var(--ivory);padding:16px 18px;border-radius:14px;font-family:inherit;font-size:.9rem;transition:border .25s}
+  .field input::placeholder{color:rgba(246,243,238,.4)}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--bronze-l)}
+  .field select option{color:var(--char)}
+  .bform button{grid-column:1/-1;background:var(--bronze);border:none;color:#fff;padding:18px;border-radius:14px;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;
+    cursor:pointer;transition:background .25s}
+  .bform button:hover{background:var(--bronze-l)}
+  .form-foot{grid-column:1/-1;font-size:.74rem;color:rgba(246,243,238,.45);text-align:center}
+  .toast{grid-column:1/-1;background:rgba(69,160,110,.16);border:1px solid rgba(110,215,160,.45);color:#9fe3bf;
+    border-radius:14px;padding:16px 20px;font-size:.86rem;display:none;animation:tIn .4s ease}
+  .toast.show{display:block}
+  @keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  footer{max-width:1180px;margin:0 auto;padding:50px 34px 110px;display:flex;justify-content:space-between;
+    align-items:center;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:.78rem}
+  footer .wordmark{font-size:1rem}
+
+  .explain{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--char);color:var(--ivory);
+    padding:12px 48px 12px 18px;font-size:.78rem;text-align:center;border-top:1px solid var(--bronze)}
+  .explain b{color:var(--bronze-l)}
+  .explain .x{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;
+    border:1px solid rgba(246,243,238,.25);color:rgba(246,243,238,.6);border-radius:50%;width:26px;height:26px;cursor:pointer}
+
+  @media(max-width:920px){
+    header{grid-template-columns:1fr;padding-top:110px;gap:50px}
+    .hero-fig{max-width:420px}
+    .float-card{left:10px}
+    .about{grid-template-columns:1fr;gap:46px}
+    .svc-row{grid-template-columns:40px 1fr auto;gap:14px}
+    .svc-row p{display:none}
+    .gal{grid-template-columns:1fr 1fr}
+    .gal figure:first-child{grid-column:1/-1}
+    .stats{grid-template-columns:1fr}
+    .stat{border-right:none;border-bottom:1px solid var(--line)}
+    .bform{grid-template-columns:1fr}
+    .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wordmark">Dr. <i>Arden</i> — Dental Atelier</div>
+  <div class="nav-r">
+    <ul class="nav-links">
+      <li><a href="#services" id="n1">Services</a></li>
+      <li><a href="#doctor" id="n2">The Doctor</a></li>
+      <li><a href="#studio" id="n3">The Studio</a></li>
+      <li><a href="#faq" id="n4">FAQ</a></li>
+    </ul>
+    <div class="lang">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+      <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    </div>
+    <a class="nav-book" href="#book" id="navbook">Reserve</a>
+  </div>
+</nav>
+
+<header>
+  <div>
+    <div class="eyebrow rv in"><span class="rule"></span><span class="lab" id="eyebrow">Modern & gentle dentistry</span></div>
+    <h1 class="rv in" id="h1">Dentistry,<br>quietly <em>perfected</em>.</h1>
+    <p class="hero-sub rv in d1" id="hsub">Every appointment unhurried, every step explained, every smile treated as one of a kind.</p>
+    <div class="cta-row rv in d2">
+      <a href="#book" class="btn-main" id="hcta">Reserve a visit
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#services" class="btn-ghost" id="hcta2">Explore services</a>
+    </div>
+  </div>
+  <div class="hero-fig rv in d2">
+    <div class="ph"><img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&q=78" alt="Doctor portrait"></div>
+    <div class="float-card">
+      <span class="stars">★★★★★</span>
+      <div><b>4.9 / 5</b><span id="revlbl">600+ patient reviews</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="marq"><div class="marq-track" id="marq"></div></div>
+
+<section id="services">
+  <div class="sec-head">
+    <div><span class="lab" id="s_lab">Services</span><h2 class="rv" id="s_h2">Considered <em>care</em></h2></div>
+    <p class="rv d1" id="s_p">Transparent pricing, modern techniques, and one principle: preserve the natural tooth whenever possible.</p>
+  </div>
+  <div id="svcs"></div>
+</section>
+
+<section id="doctor" style="padding-top:40px">
+  <div class="about">
+    <div class="about-fig rv"><div class="ph"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=78" alt="The doctor"></div></div>
+    <div>
+      <span class="lab" id="d_lab">The practitioner</span>
+      <h2 class="rv" id="d_h2">Precision, with a <em>calm hand</em></h2>
+      <p class="bio rv d1" id="d_bio">Dr. Arden is a Doctor of Dental Medicine with a clinical focus on endodontics and aesthetic restorative dentistry. Her approach is minimally invasive: preserve, restore, and only then enhance — with results that look like nothing was ever done.</p>
+      <div class="cred rv d1"><span class="n">i.</span><div><b id="c1">DMD, University Faculty of Dentistry</b><br><span id="c1s">Graduated with honours</span></div></div>
+      <div class="cred rv d2"><span class="n">ii.</span><div><b id="c2">Advanced endodontics training</b><br><span id="c2s">International residencies & clinical attachments</span></div></div>
+      <div class="cred rv d3"><span class="n">iii.</span><div><b id="c3">Aesthetic smile design</b><br><span id="c3s">Natural-looking, minimally invasive restorations</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="stats" id="stats">
+  <div class="stat"><b><span data-count="12">0</span><i>+</i></b><span id="st1">Years in practice</span></div>
+  <div class="stat"><b><span data-count="9000">0</span><i>+</i></b><span id="st2">Smiles treated</span></div>
+  <div class="stat"><b>4.<span data-count="9">0</span><i>★</i></b><span id="st3">Average rating</span></div>
+</div>
+
+<section id="studio">
+  <div class="sec-head">
+    <div><span class="lab" id="g_lab">The studio</span><h2 class="rv" id="g_h2">A space that <em>calms</em></h2></div>
+    <p class="rv d1" id="g_p">Light, quiet, and detail — designed so that even nervous patients exhale when they walk in.</p>
+  </div>
+  <div class="gal">
+    <figure class="rv"><img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=900&q=75" alt=""><figcaption id="gc1">Treatment room</figcaption></figure>
+    <figure class="rv d1"><img src="https://images.unsplash.com/photo-1551076805-e1869033e561?w=800&q=75" alt=""><figcaption id="gc2">Technology</figcaption></figure>
+    <figure class="rv d2"><img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=75" alt=""><figcaption id="gc3">Sterile lab</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <div class="quote-wrap rv">
+    <span class="quote-mark serif">“</span>
+    <p class="quote" id="quote"></p>
+    <div class="quote-who" id="qwho"></div>
+    <div class="q-dots" id="qdots"></div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:30px">
+  <div class="sec-head" style="justify-content:center;text-align:center">
+    <div style="margin:0 auto"><span class="lab" id="f_lab">Before you visit</span><h2 class="rv" id="f_h2">Common <em>questions</em></h2></div>
+  </div>
+  <div class="faq" id="faqbox"></div>
+</section>
+
+<section id="book" style="padding-top:30px">
+  <div class="bookpanel">
+    <span class="lab" id="b_lab">Appointments</span>
+    <h2 id="b_h2">Reserve your <em>visit</em></h2>
+    <p class="bs" id="b_s">Choose a date — we confirm within minutes and send a gentle reminder the day before. Nothing to remember, nothing to chase.</p>
+    <form class="bform" id="bform">
+      <div class="field"><input type="text" id="f_n" placeholder="Full name" required></div>
+      <div class="field"><input type="tel" id="f_p" placeholder="Phone" required></div>
+      <div class="field"><select id="f_s"></select></div>
+      <div class="field"><input type="date" required></div>
+      <div class="toast" id="toast"></div>
+      <button type="submit" id="f_b">Request appointment</button>
+      <span class="form-foot" id="f_note">Confirmation by phone or message · same-day slots for emergencies</span>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wordmark">Dr. <i>Arden</i></div>
+  <span id="foot">DEMO — this practice is fictional. A concept of what a personal dental brand can look like.</span>
+</footer>
+
+<div class="explain">
+  <span id="ex">👋 <b>What is this?</b> A DEMO website — an example of a premium site for a dentist. Everything works. Imagine YOUR name here.</span>
+  <button class="x" onclick="this.parentElement.style.display='none'">✕</button>
+</div>
+
+<script>
+const T={
+en:{n1:'Services',n2:'The Doctor',n3:'The Studio',n4:'FAQ',navbook:'Reserve',
+  eyebrow:'Modern & gentle dentistry',
+  h1:'Dentistry,<br>quietly <em>perfected</em>.',
+  hsub:'Every appointment unhurried, every step explained, every smile treated as one of a kind.',
+  hcta:'Reserve a visit',hcta2:'Explore services',revlbl:'600+ patient reviews',
+  marq:['General dentistry','Endodontics','Aesthetic restorations','Implants','Whitening','Kids dentistry'],
+  s_lab:'Services',s_h2:'Considered <em>care</em>',
+  s_p:'Transparent pricing, modern techniques, and one principle: preserve the natural tooth whenever possible.',
+  svcs:[
+    ['i.','General dentistry','Examinations, cleanings, fillings — calm, unhurried routine care.','from 20 €'],
+    ['ii.','Endodontics','Root canal treatment with modern precision — saving teeth others give up on.','from 60 €'],
+    ['iii.','Aesthetic restorations','Natural-looking veneers and bonding. Nobody will know — everyone will notice.','from 90 €'],
+    ['iv.','Whitening','Safe, in-studio, visibly brighter in one visit.','120 €'],
+    ['v.','Kids dentistry','First visits without tears — patience is part of the treatment.','from 15 €']],
+  perVisit:'per treatment',
+  d_lab:'The practitioner',d_h2:'Precision, with a <em>calm hand</em>',
+  d_bio:'Dr. Arden is a Doctor of Dental Medicine with a clinical focus on endodontics and aesthetic restorative dentistry. Her approach is minimally invasive: preserve, restore, and only then enhance — with results that look like nothing was ever done.',
+  c1:'DMD, University Faculty of Dentistry',c1s:'Graduated with honours',
+  c2:'Advanced endodontics training',c2s:'International residencies & clinical attachments',
+  c3:'Aesthetic smile design',c3s:'Natural-looking, minimally invasive restorations',
+  st1:'Years in practice',st2:'Smiles treated',st3:'Average rating',
+  g_lab:'The studio',g_h2:'A space that <em>calms</em>',
+  g_p:'Light, quiet, and detail — designed so that even nervous patients exhale when they walk in.',
+  gc1:'Treatment room',gc2:'Technology',gc3:'Sterile lab',
+  quotes:[
+    ['I was terrified of dentists for 20 years. One visit here and I genuinely cannot explain where the fear went.','— A patient, root canal treatment'],
+    ['She explained everything before touching anything. First time I felt in control at a dentist.','— A patient, full restoration'],
+    ['My veneers look so natural my own sister didn\'t notice. She just said I look rested.','— A patient, aesthetic work']],
+  f_lab:'Before you visit',f_h2:'Common <em>questions</em>',
+  faq:[
+    ['Does it hurt?','No. Modern anesthesia, gentle technique, and honest communication — you will know exactly what happens before it happens. Most patients say the fear was worse than the visit.'],
+    ['Which languages are spoken?','Albanian, Macedonian and English — be treated in the language you think in.'],
+    ['I have pain today. Can I come?','Yes. Same-day slots are kept free for emergencies every day. Book online and write "urgent", or simply call.'],
+    ['How do prices work?','You get the full price before treatment starts — in writing if you wish. No surprises at the end, ever.']],
+  b_lab:'Appointments',b_h2:'Reserve your <em>visit</em>',
+  b_s:'Choose a date — we confirm within minutes and send a gentle reminder the day before. Nothing to remember, nothing to chase.',
+  f_n:'Full name',f_p:'Phone',f_b:'Request appointment',
+  f_note:'Confirmation by phone or message · same-day slots for emergencies',
+  toast:'✓ Request received (demo). On the live site: instant confirmation to the patient, notification to the doctor, automatic reminder the day before.',
+  foot:'DEMO — this practice is fictional. A concept of what a personal dental brand can look like.',
+  ex:'👋 <b>What is this?</b> A DEMO website — an example of a premium site for a dentist. Everything works. Imagine YOUR name here.'},
+sq:{n1:'Shërbimet',n2:'Mjekja',n3:'Studioja',n4:'Pyetje',navbook:'Rezervo',
+  eyebrow:'Stomatologji moderne & e butë',
+  h1:'Stomatologji,<br>e përsosur në <em>qetësi</em>.',
+  hsub:'Çdo termin pa nxitim, çdo hap i shpjeguar, çdo buzëqeshje e trajtuar si e veçantë.',
+  hcta:'Rezervo vizitë',hcta2:'Shiko shërbimet',revlbl:'600+ vlerësime pacientësh',
+  marq:['Stomatologji e përgjithshme','Endodonci','Restaurime estetike','Implante','Zbardhim','Dentist për fëmijë'],
+  s_lab:'Shërbimet',s_h2:'Kujdes i <em>menduar</em>',
+  s_p:'Çmime transparente, teknika moderne dhe një parim: ruaj dhëmbin natyral sa herë të jetë e mundur.',
+  svcs:[
+    ['i.','Stomatologji e përgjithshme','Kontrolle, pastrime, mbushje — kujdes i qetë, pa nxitim.','nga 20 €'],
+    ['ii.','Endodonci','Trajtim kanalesh me saktësi moderne — shpëtojmë dhëmbë që të tjerët i dorëzojnë.','nga 60 €'],
+    ['iii.','Restaurime estetike','Fasetat me pamje natyrale. Askush s\'do ta dijë — të gjithë do ta vënë re.','nga 90 €'],
+    ['iv.','Zbardhim','I sigurt, në studio, dukshëm më i ndritshëm në një vizitë.','120 €'],
+    ['v.','Dentist për fëmijë','Vizitat e para pa lot — durimi është pjesë e trajtimit.','nga 15 €']],
+  perVisit:'për trajtim',
+  d_lab:'Mjekja',d_h2:'Saktësi, me dorë <em>të qetë</em>',
+  d_bio:'Dr. Arden është Doktoreshë e Mjekësisë Dentare me fokus klinik në endodonci dhe stomatologji estetike restauruese. Qasja e saj është minimalisht invazive: ruaj, restauro, dhe vetëm pastaj përmirëso — me rezultate që duken sikur asgjë s\'është bërë.',
+  c1:'DMD, Fakulteti i Stomatologjisë',c1s:'Diplomuar me nderime',
+  c2:'Trajnim i avancuar në endodonci',c2s:'Rezidenca ndërkombëtare & praktika klinike',
+  c3:'Dizajn estetik i buzëqeshjes',c3s:'Restaurime natyrale, minimalisht invazive',
+  st1:'Vjet përvojë',st2:'Buzëqeshje të trajtuara',st3:'Vlerësimi mesatar',
+  g_lab:'Studioja',g_h2:'Një hapësirë që <em>qetëson</em>',
+  g_p:'Dritë, qetësi dhe detaje — e dizajnuar që edhe pacientët nervozë të marrin frymë lirshëm kur hyjnë.',
+  gc1:'Dhoma e trajtimit',gc2:'Teknologjia',gc3:'Laboratori steril',
+  quotes:[
+    ['Kisha frikë nga dentistët për 20 vjet. Një vizitë këtu dhe s\'di ta shpjegoj ku shkoi frika.','— Pacient, trajtim kanali'],
+    ['Ma shpjegoi gjithçka para se të prekte diçka. Hera e parë që u ndjeva i qetë te dentisti.','— Pacient, restaurim i plotë'],
+    ['Fasetat më duken aq natyrale sa motra ime s\'i vuri re. Vetëm tha që dukem më e çlodhur.','— Paciente, punim estetik']],
+  f_lab:'Para vizitës',f_h2:'Pyetjet e <em>shpeshta</em>',
+  faq:[
+    ['A dhemb?','Jo. Anestezi moderne, teknikë e butë dhe komunikim i sinqertë — do ta dini saktësisht çfarë ndodh para se të ndodhë. Shumica thonë se frika ishte më e keqe se vizita.'],
+    ['Çfarë gjuhësh fliten?','Shqip, maqedonisht dhe anglisht — trajtohuni në gjuhën në të cilën mendoni.'],
+    ['Kam dhimbje sot. A mund të vij?','Po. Çdo ditë mbahen termine të lira për urgjenca. Rezervoni online dhe shkruani "urgjente", ose thjesht telefononi.'],
+    ['Si funksionojnë çmimet?','E merrni çmimin e plotë para se të fillojë trajtimi — me shkrim nëse dëshironi. Pa surpriza në fund, kurrë.']],
+  b_lab:'Terminet',b_h2:'Rezervoni <em>vizitën</em>',
+  b_s:'Zgjidhni datën — konfirmojmë brenda minutash dhe ju kujtojmë një ditë para. Asgjë për të mbajtur mend.',
+  f_n:'Emri i plotë',f_p:'Telefoni',f_b:'Kërko termin',
+  f_note:'Konfirmim me telefon ose mesazh · termine të njëjtën ditë për urgjenca',
+  toast:'✓ Kërkesa u pranua (demo). Në faqen reale: konfirmim i menjëhershëm për pacientin, njoftim për mjekun, kujtesë automatike një ditë para.',
+  foot:'DEMO — kjo praktikë është fiktive. Koncept se si mund të duket një brend personal dentar.',
+  ex:'👋 <b>Çfarë është kjo?</b> Faqe DEMO — shembull i një faqeje premium për dentist. Gjithçka funksionon. Imagjinoni emrin TUAJ këtu.'},
+mk:{n1:'Услуги',n2:'Докторката',n3:'Студиото',n4:'Прашања',navbook:'Резервирај',
+  eyebrow:'Модерна & нежна стоматологија',
+  h1:'Стоматологија,<br>тивко <em>усовршена</em>.',
+  hsub:'Секој термин без брзање, секој чекор објаснет, секоја насмевка третирана како единствена.',
+  hcta:'Резервирај посета',hcta2:'Види услуги',revlbl:'600+ рецензии од пациенти',
+  marq:['Општа стоматологија','Ендодонција','Естетски реставрации','Импланти','Белење','Детска стоматологија'],
+  s_lab:'Услуги',s_h2:'Промислена <em>грижа</em>',
+  s_p:'Транспарентни цени, модерни техники и еден принцип: зачувај го природниот заб секогаш кога е можно.',
+  svcs:[
+    ['i.','Општа стоматологија','Прегледи, чистења, пломби — мирна, неизбрзана грижа.','од 20 €'],
+    ['ii.','Ендодонција','Третман на канали со модерна прецизност — спасуваме заби што другите ги отпишуваат.','од 60 €'],
+    ['iii.','Естетски реставрации','Фасети со природен изглед. Никој нема да знае — сите ќе забележат.','од 90 €'],
+    ['iv.','Белење','Безбедно, во студио, видливо посветло за една посета.','120 €'],
+    ['v.','Детска стоматологија','Први посети без солзи — трпението е дел од третманот.','од 15 €']],
+  perVisit:'по третман',
+  d_lab:'Докторката',d_h2:'Прецизност, со <em>мирна рака</em>',
+  d_bio:'Д-р Арден е доктор по дентална медицина со клинички фокус на ендодонција и естетска реставративна стоматологија. Нејзиниот пристап е минимално инвазивен: зачувај, реставрирај, па дури потоа подобри — со резултати што изгледаат како ништо да не е направено.',
+  c1:'DMD, Универзитетски стоматолошки факултет',c1s:'Дипломирана со почести',
+  c2:'Напредна обука по ендодонција',c2s:'Меѓународни резиденции & клинички пракси',
+  c3:'Естетски дизајн на насмевка',c3s:'Природни, минимално инвазивни реставрации',
+  st1:'Години пракса',st2:'Третирани насмевки',st3:'Просечна оценка',
+  g_lab:'Студиото',g_h2:'Простор што <em>смирува</em>',
+  g_p:'Светлина, тишина и детали — дизајниран така што и нервозните пациенти издишуваат кога влегуваат.',
+  gc1:'Соба за третман',gc2:'Технологија',gc3:'Стерилна лабораторија',
+  quotes:[
+    ['Се плашев од стоматолози 20 години. Една посета тука и искрено не знам каде исчезна стравот.','— Пациент, третман на канал'],
+    ['Ми објасни сè пред да допре било што. Прв пат се почувствував смирено кај стоматолог.','— Пациент, целосна реставрација'],
+    ['Фасетите ми се толку природни што сестра ми не забележа. Само рече дека изгледам одморено.','— Пациентка, естетска работа']],
+  f_lab:'Пред посетата',f_h2:'Чести <em>прашања</em>',
+  faq:[
+    ['Дали боли?','Не. Модерна анестезија, нежна техника и искрена комуникација — ќе знаете точно што се случува пред да се случи. Повеќето велат дека стравот бил полош од посетата.'],
+    ['На кои јазици се зборува?','Албански, македонски и англиски — лекувајте се на јазикот на кој размислувате.'],
+    ['Имам болка денес. Може ли да дојдам?','Да. Секој ден се чуваат слободни термини за итни случаи. Резервирајте онлајн и напишете „итно", или едноставно јавете се.'],
+    ['Како функционираат цените?','Ја добивате целосната цена пред да почне третманот — написмено ако сакате. Без изненадувања на крајот, никогаш.']],
+  b_lab:'Термини',b_h2:'Резервирајте <em>посета</em>',
+  b_s:'Изберете датум — потврдуваме за неколку минути и испраќаме потсетник ден претходно. Ништо за паметење.',
+  f_n:'Име и презиме',f_p:'Телефон',f_b:'Побарај термин',
+  f_note:'Потврда по телефон или порака · термини истиот ден за итни случаи',
+  toast:'✓ Барањето е примено (демо). На вистинската страница: веднаш потврда за пациентот, известување за докторот, автоматски потсетник ден претходно.',
+  foot:'ДЕМО — оваа пракса е фиктивна. Концепт како може да изгледа личен стоматолошки бренд.',
+  ex:'👋 <b>Што е ова?</b> ДЕМО страница — пример за премиум сајт за стоматолог. Сè функционира. Замислете го ВАШЕТО име тука.'}
+};
+
+let LANG='en', QI=0, qTimer=null;
+
+function build(){
+  const t=T[LANG];
+  // marquee (doubled for loop)
+  const items=t.marq.map(m=>`<span>${m}<i></i></span>`).join('');
+  document.getElementById('marq').innerHTML=items+items;
+  // services
+  document.getElementById('svcs').innerHTML=t.svcs.map(s=>`
+    <div class="svc-row rv">
+      <span class="svc-num">${s[0]}</span>
+      <h3>${s[1]}</h3>
+      <p>${s[2]}</p>
+      <div class="svc-price">${s[3]}<small>${t.perVisit}</small></div>
+    </div>`).join('');
+  // faq
+  document.getElementById('faqbox').innerHTML=t.faq.map(f=>`
+    <details><summary>${f[0]}<span class="plus">+</span></summary><div class="ans">${f[1]}</div></details>`).join('');
+  // quotes
+  document.getElementById('qdots').innerHTML=t.quotes.map((_,i)=>`<i class="${i===0?'on':''}" onclick="showQ(${i})"></i>`).join('');
+  showQ(0,true);
+  // select
+  document.getElementById('f_s').innerHTML=t.svcs.map(s=>`<option>${s[1]}</option>`).join('');
+  observeAll();
+}
+function showQ(i,instant){
+  QI=i; const t=T[LANG], q=document.getElementById('quote');
+  const apply=()=>{
+    q.textContent=t.quotes[i][0];
+    document.getElementById('qwho').textContent=t.quotes[i][1];
+    document.querySelectorAll('#qdots i').forEach((d,di)=>d.classList.toggle('on',di===i));
+    q.classList.remove('fade');
+  };
+  if(instant){apply();return;}
+  q.classList.add('fade'); setTimeout(apply,400);
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  ['n1','n2','n3','n4','navbook','eyebrow','hsub','hcta2','revlbl','s_lab','s_p','d_lab','d_bio',
+   'c1','c1s','c2','c2s','c3','c3s','st1','st2','st3','g_lab','g_p','gc1','gc2','gc3',
+   'f_lab','b_lab','b_s','f_b','f_note','foot','toast'
+  ].forEach(k=>{const el=document.getElementById(k); if(el) el.textContent=t[k];});
+  document.getElementById('h1').innerHTML=t.h1;
+  document.getElementById('s_h2').innerHTML=t.s_h2;
+  document.getElementById('d_h2').innerHTML=t.d_h2;
+  document.getElementById('g_h2').innerHTML=t.g_h2;
+  document.getElementById('f_h2').innerHTML=t.f_h2;
+  document.getElementById('b_h2').innerHTML=t.b_h2;
+  document.getElementById('ex').innerHTML=t.ex;
+  document.getElementById('hcta').childNodes[0].textContent=t.hcta+' ';
+  document.getElementById('f_n').placeholder=t.f_n;
+  document.getElementById('f_p').placeholder=t.f_p;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang=l;
+  build();
+}
+// scroll effects
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scr',scrollY>40));
+let io;
+function observeAll(){
+  if(io) io.disconnect();
+  io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.1});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+}
+// count-up stats
+let counted=false;
+new IntersectionObserver(es=>{
+  if(es[0].isIntersecting && !counted){
+    counted=true;
+    document.querySelectorAll('#stats [data-count]').forEach(el=>{
+      const to=+el.dataset.count, start=performance.now(), dur=1600;
+      (function step(ts){
+        const p=Math.min((ts-start)/dur,1);
+        el.textContent=Math.round(to*(p*(2-p))).toLocaleString('de-DE');
+        if(p<1)requestAnimationFrame(step);
+      })(start);
+    });
+  }
+},{threshold:.4}).observe(document.getElementById('stats'));
+// quote rotation
+qTimer=setInterval(()=>showQ((QI+1)%3),6000);
+// form toast
+document.getElementById('bform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const toast=document.getElementById('toast');
+  toast.textContent=T[LANG].toast;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),6000);
+});
+setLang('en');
+</script>
+</body>
+</html>

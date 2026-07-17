@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Restorant — Gostivar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#1a1512; --cream:#faf6f0; --gold:#c8963e; --gold-dark:#a87b2d;
+    --text:#3d362f; --muted:#8a7f72;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;color:var(--text);background:var(--cream);line-height:1.6}
+  h1,h2,h3{font-family:'Playfair Display',serif;color:var(--dark)}
+  img{max-width:100%;display:block}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
+      padding:14px 20px;background:rgba(26,21,18,.92);backdrop-filter:blur(8px)}
+  .logo{font-family:'Playfair Display',serif;font-size:1.15rem;color:#fff;font-weight:700}
+  .logo span{color:var(--gold)}
+  .nav-right{display:flex;align-items:center;gap:18px}
+  .nav-links{display:flex;gap:20px;list-style:none}
+  .nav-links a{color:#e8e0d5;text-decoration:none;font-size:.88rem;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--gold)}
+  .nav-cta{background:var(--gold);color:#fff!important;padding:8px 16px;border-radius:99px}
+  .nav-cta:hover{background:var(--gold-dark)}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid rgba(255,255,255,.3);color:#e8e0d5;padding:4px 9px;
+    border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .lang button.active,.lang button:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+
+  /* HERO */
+  header{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;
+    background:linear-gradient(rgba(20,15,10,.55),rgba(20,15,10,.65)),
+    url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=70') center/cover;}
+  .hero-inner{padding:24px;max-width:720px}
+  .hero-tag{color:var(--gold);letter-spacing:4px;text-transform:uppercase;font-size:.8rem;font-weight:600}
+  header h1{color:#fff;font-size:clamp(2.2rem,7vw,4rem);margin:14px 0 18px;line-height:1.15}
+  header p{color:#e8e0d5;font-size:1.05rem;margin-bottom:32px}
+  .btn{display:inline-block;padding:14px 32px;border-radius:99px;text-decoration:none;font-weight:600;font-size:.95rem;transition:all .2s}
+  .btn-gold{background:var(--gold);color:#fff}
+  .btn-gold:hover{background:var(--gold-dark);transform:translateY(-2px)}
+  .btn-ghost{border:1.5px solid #fff;color:#fff;margin-left:10px}
+  .btn-ghost:hover{background:#fff;color:var(--dark)}
+
+  section{padding:80px 24px;max-width:1080px;margin:0 auto}
+  .sec-tag{color:var(--gold);letter-spacing:3px;text-transform:uppercase;font-size:.75rem;font-weight:600;text-align:center;display:block}
+  section h2{text-align:center;font-size:clamp(1.8rem,4vw,2.6rem);margin:10px 0 40px}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .about-grid img{border-radius:16px;box-shadow:0 20px 40px rgba(26,21,18,.15)}
+  .about-text p{margin-bottom:16px;color:var(--muted)}
+  .stats{display:flex;gap:32px;margin-top:24px}
+  .stat b{font-size:1.6rem;color:var(--gold);font-family:'Playfair Display',serif;display:block}
+  .stat span{font-size:.85rem;color:var(--muted)}
+
+  /* MENU */
+  .menu-wrap{background:var(--dark);border-radius:24px;padding:48px 32px}
+  .menu-wrap h2{color:#fff}
+  .menu-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px 48px}
+  .menu-item{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px dashed rgba(255,255,255,.15)}
+  .menu-item div b{color:#fff;font-weight:600;font-size:1rem}
+  .menu-item div small{display:block;color:#9c9184;font-size:.82rem;margin-top:2px}
+  .price{color:var(--gold);font-weight:600;white-space:nowrap;margin-left:16px}
+
+  /* GALLERY */
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .gallery img{border-radius:14px;aspect-ratio:1/1;object-fit:cover;transition:transform .3s}
+  .gallery img:hover{transform:scale(1.03)}
+
+  /* RESERVE */
+  .reserve{background:#fff;border-radius:24px;padding:48px 32px;box-shadow:0 20px 50px rgba(26,21,18,.08)}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto}
+  input,select{padding:14px 16px;border:1.5px solid #e5ddd2;border-radius:12px;font-family:inherit;font-size:.95rem;background:var(--cream)}
+  input:focus,select:focus{outline:none;border-color:var(--gold)}
+  form button{grid-column:1/-1;background:var(--gold);color:#fff;border:none;padding:15px;border-radius:12px;
+    font-weight:600;font-size:1rem;cursor:pointer;transition:background .2s}
+  form button:hover{background:var(--gold-dark)}
+  .form-note{grid-column:1/-1;text-align:center;font-size:.82rem;color:var(--muted)}
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center}
+  .contact-card{background:#fff;padding:32px 20px;border-radius:16px;box-shadow:0 10px 30px rgba(26,21,18,.06)}
+  .contact-card .ico{font-size:1.8rem}
+  .contact-card b{display:block;margin:10px 0 4px;color:var(--dark)}
+  .contact-card p{font-size:.9rem;color:var(--muted)}
+
+  footer{background:var(--dark);color:#9c9184;text-align:center;padding:32px 24px;font-size:.85rem}
+  footer .logo{font-size:1.05rem}
+  .demo-badge{margin-top:10px;font-size:.75rem;opacity:.6}
+
+  .float-call{position:fixed;bottom:20px;right:20px;background:#25d366;color:#fff;width:56px;height:56px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1.5rem;text-decoration:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:99}
+
+  @media(max-width:820px){
+    .nav-links{display:none}
+    .about-grid,.menu-cols,form{grid-template-columns:1fr}
+    .gallery,.contact-grid{grid-template-columns:1fr 1fr}
+    .btn-ghost{margin-left:0;margin-top:12px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" data-i18n="logo">Restoranti <span>Juaj</span></div>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#rreth" data-i18n="nav_about">Rreth nesh</a></li>
+      <li><a href="#menyja" data-i18n="nav_menu">Menyja</a></li>
+      <li><a href="#galeria" data-i18n="nav_gallery">Galeria</a></li>
+      <li><a href="#kontakt" data-i18n="nav_contact">Kontakt</a></li>
+      <li><a href="#rezervo" class="nav-cta" data-i18n="nav_book">Rezervo</a></li>
+    </ul>
+    <div class="lang">
+      <button id="btn-sq" onclick="setLang('sq')" class="active">SQ</button>
+      <button id="btn-mk" onclick="setLang('mk')">MK</button>
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-inner">
+    <span class="hero-tag" data-i18n="hero_tag">Gostivar · që nga 1998</span>
+    <h1 data-i18n="hero_h1">Shije tradicionale,<br>ambient modern</h1>
+    <p data-i18n="hero_p">Kuzhinë tradicionale dhe evropiane me përbërës të freskët lokalë — në zemër të qytetit.</p>
+    <a href="#rezervo" class="btn btn-gold" data-i18n="hero_btn1">Rezervo tavolinë</a>
+    <a href="#menyja" class="btn btn-ghost" data-i18n="hero_btn2">Shiko menynë</a>
+  </div>
+</header>
+
+<section id="rreth">
+  <span class="sec-tag" data-i18n="about_tag">Historia jonë</span>
+  <h2 data-i18n="about_h2">Më shumë se 25 vjet traditë</h2>
+  <div class="about-grid">
+    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=70" alt="Restaurant">
+    <div class="about-text">
+      <p data-i18n="about_p1">Filluam si një lokal i vogël familjar dhe sot jemi një nga vendet më të dashura të qytetit. Recetat tona kalojnë brez pas brezi.</p>
+      <p data-i18n="about_p2">Çdo pjatë përgatitet me përbërës të freskët nga fermerët lokalë të rrethinës së Gostivarit dhe Mavrovës.</p>
+      <div class="stats">
+        <div class="stat"><b>25+</b><span data-i18n="stat1">vjet përvojë</span></div>
+        <div class="stat"><b>120</b><span data-i18n="stat2">ulëse</span></div>
+        <div class="stat"><b>4.8★</b><span data-i18n="stat3">në Google</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="menu-wrap" id="menyja">
+    <span class="sec-tag" data-i18n="menu_tag">Menyja</span>
+    <h2 style="color:#fff" data-i18n="menu_h2">Specialitetet tona</h2>
+    <div class="menu-cols">
+      <div class="menu-item"><div><b>Tavë Gostivari</b><small data-i18n="d1">Mish viçi, perime të stinës, e pjekur në furrë</small></div><span class="price">380 den</span></div>
+      <div class="menu-item"><div><b data-i18n="n2">Qofte të fërguara</b><small data-i18n="d2">Me pure patatesh dhe sallatë shope</small></div><span class="price">290 den</span></div>
+      <div class="menu-item"><div><b data-i18n="n3">Skara mikse (2 pers.)</b><small data-i18n="d3">Qebapa, suxhuk, fileto pule, bërxollë</small></div><span class="price">750 den</span></div>
+      <div class="menu-item"><div><b data-i18n="n4">Trofta e Mavrovës</b><small data-i18n="d4">Në skarë me limon dhe erëza mali</small></div><span class="price">450 den</span></div>
+      <div class="menu-item"><div><b data-i18n="n5">Pite me spinaq</b><small data-i18n="d5">E bërë në shtëpi, me kos fshati</small></div><span class="price">180 den</span></div>
+      <div class="menu-item"><div><b data-i18n="n6">Sallatë e shtëpisë</b><small data-i18n="d6">Rukola, djathë i bardhë, arra, dressing mjalti</small></div><span class="price">220 den</span></div>
+      <div class="menu-item"><div><b>Bakllava</b><small data-i18n="d7">E shtëpisë, me arra dhe sherbet të ngrohtë</small></div><span class="price">150 den</span></div>
+      <div class="menu-item"><div><b>Trileqe</b><small data-i18n="d8">Ëmbëlsira më e kërkuar e jona</small></div><span class="price">140 den</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="galeria">
+  <span class="sec-tag" data-i18n="gal_tag">Galeria</span>
+  <h2 data-i18n="gal_h2">Një shije para se të vini</h2>
+  <div class="gallery">
+    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70" alt="Grill">
+    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=70" alt="Interior">
+    <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=70" alt="Dish">
+    <img src="https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&q=70" alt="Dessert">
+    <img src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&q=70" alt="Kitchen">
+    <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&q=70" alt="Table">
+  </div>
+</section>
+
+<section id="rezervo">
+  <div class="reserve">
+    <span class="sec-tag" data-i18n="res_tag">Rezervimi</span>
+    <h2 data-i18n="res_h2">Rezervoni tavolinën tuaj</h2>
+    <form id="resForm">
+      <input type="text" id="f_name" placeholder="Emri dhe mbiemri" required>
+      <input type="tel" id="f_phone" placeholder="Numri i telefonit" required>
+      <input type="date" required>
+      <select required>
+        <option value="" disabled selected data-i18n="f_time">Ora</option>
+        <option>13:00</option><option>14:00</option><option>18:00</option>
+        <option>19:00</option><option>20:00</option><option>21:00</option>
+      </select>
+      <select required>
+        <option value="" disabled selected data-i18n="f_pers">Numri i personave</option>
+        <option>2</option><option>4</option><option>6</option><option>8+</option>
+      </select>
+      <input type="text" id="f_note" placeholder="Shënim (opsionale)">
+      <button type="submit" data-i18n="f_btn">Konfirmo rezervimin</button>
+      <span class="form-note" data-i18n="f_note_txt">Konfirmimi ju vjen me SMS/Viber brenda pak minutash.</span>
+    </form>
+  </div>
+</section>
+
+<section id="kontakt">
+  <span class="sec-tag" data-i18n="c_tag">Kontakt</span>
+  <h2 data-i18n="c_h2">Na gjeni lehtë</h2>
+  <div class="contact-grid">
+    <div class="contact-card"><div class="ico">📍</div><b data-i18n="c_addr">Adresa</b><p data-i18n="c_addr_v">Rr. Demo nr. 1<br>Gostivar 1230</p></div>
+    <div class="contact-card"><div class="ico">🕐</div><b data-i18n="c_hours">Orari</b><p data-i18n="c_hours_v">Çdo ditë<br>10:00 – 23:00</p></div>
+    <div class="contact-card"><div class="ico">📞</div><b data-i18n="c_phone">Telefoni</b><p>+389 70 000 000<br>Viber / WhatsApp</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo" data-i18n="logo2">Restoranti <span>Juaj</span></div>
+  <p>© 2026 · Gostivar</p>
+  <p class="demo-badge" data-i18n="demo_badge">⚠ Kjo është faqe DEMO / koncept — biznesi është fiktiv.</p>
+</footer>
+
+<a href="#" class="float-call" id="floatCall" title="WhatsApp">💬</a>
+
+<script>
+const T = {
+  sq: {
+    logo:'Restoranti <span>Juaj</span>', logo2:'Restoranti <span>Juaj</span>',
+    nav_about:'Rreth nesh', nav_menu:'Menyja', nav_gallery:'Galeria', nav_contact:'Kontakt', nav_book:'Rezervo',
+    hero_tag:'Gostivar · që nga 1998',
+    hero_h1:'Shije tradicionale,<br>ambient modern',
+    hero_p:'Kuzhinë tradicionale dhe evropiane me përbërës të freskët lokalë — në zemër të qytetit.',
+    hero_btn1:'Rezervo tavolinë', hero_btn2:'Shiko menynë',
+    about_tag:'Historia jonë', about_h2:'Më shumë se 25 vjet traditë',
+    about_p1:'Filluam si një lokal i vogël familjar dhe sot jemi një nga vendet më të dashura të qytetit. Recetat tona kalojnë brez pas brezi.',
+    about_p2:'Çdo pjatë përgatitet me përbërës të freskët nga fermerët lokalë të rrethinës së Gostivarit dhe Mavrovës.',
+    stat1:'vjet përvojë', stat2:'ulëse', stat3:'në Google',
+    menu_tag:'Menyja', menu_h2:'Specialitetet tona',
+    n2:'Qofte të fërguara', n3:'Skara mikse (2 pers.)', n4:'Trofta e Mavrovës', n5:'Pite me spinaq', n6:'Sallatë e shtëpisë',
+    d1:'Mish viçi, perime të stinës, e pjekur në furrë', d2:'Me pure patatesh dhe sallatë shope',
+    d3:'Qebapa, suxhuk, fileto pule, bërxollë', d4:'Në skarë me limon dhe erëza mali',
+    d5:'E bërë në shtëpi, me kos fshati', d6:'Rukola, djathë i bardhë, arra, dressing mjalti',
+    d7:'E shtëpisë, me arra dhe sherbet të ngrohtë', d8:'Ëmbëlsira më e kërkuar e jona',
+    gal_tag:'Galeria', gal_h2:'Një shije para se të vini',
+    res_tag:'Rezervimi', res_h2:'Rezervoni tavolinën tuaj',
+    ph_name:'Emri dhe mbiemri', ph_phone:'Numri i telefonit', ph_note:'Shënim (opsionale)',
+    f_time:'Ora', f_pers:'Numri i personave', f_btn:'Konfirmo rezervimin',
+    f_note_txt:'Konfirmimi ju vjen me SMS/Viber brenda pak minutash.',
+    c_tag:'Kontakt', c_h2:'Na gjeni lehtë',
+    c_addr:'Adresa', c_addr_v:'Rr. Demo nr. 1<br>Gostivar 1230', c_hours:'Orari', c_hours_v:'Çdo ditë<br>10:00 – 23:00', c_phone:'Telefoni',
+    demo_badge:'⚠ Kjo është faqe DEMO / koncept — biznesi është fiktiv.',
+    alert_form:'DEMO: Rezervimi u dërgua! ✅\nNë faqen reale, pronari merr njoftim direkt në Viber/email.',
+    alert_call:'DEMO: këtu hapet WhatsApp/Viber i biznesit.'
+  },
+  mk: {
+    logo:'Вашиот <span>Ресторан</span>', logo2:'Вашиот <span>Ресторан</span>',
+    nav_about:'За нас', nav_menu:'Мени', nav_gallery:'Галерија', nav_contact:'Контакт', nav_book:'Резервирај',
+    hero_tag:'Гостивар · од 1998',
+    hero_h1:'Традиционални вкусови,<br>модерен амбиент',
+    hero_p:'Традиционална и европска кујна со свежи локални состојки — во срцето на градот.',
+    hero_btn1:'Резервирај маса', hero_btn2:'Види мени',
+    about_tag:'Нашата приказна', about_h2:'Повеќе од 25 години традиција',
+    about_p1:'Почнавме како мал семеен локал, а денес сме едно од најсаканите места во градот. Нашите рецепти се пренесуваат од генерација на генерација.',
+    about_p2:'Секое јадење се подготвува со свежи состојки од локалните фармери од околината на Гостивар и Маврово.',
+    stat1:'години искуство', stat2:'седишта', stat3:'на Google',
+    menu_tag:'Мени', menu_h2:'Наши специјалитети',
+    n2:'Пржени ќофтиња', n3:'Мешана скара (2 лица)', n4:'Мавровска пастрмка', n5:'Пита со спанаќ', n6:'Домашна салата',
+    d1:'Телешко месо, сезонски зеленчук, печено во фурна', d2:'Со пире и шопска салата',
+    d3:'Ќебапи, суџук, пилешко филе, кременадла', d4:'На скара со лимон и планински зачини',
+    d5:'Домашна, со селско кисело млеко', d6:'Рукола, бело сирење, ореви, прелив од мед',
+    d7:'Домашна, со ореви и топол шербет', d8:'Нашиот најбаран десерт',
+    gal_tag:'Галерија', gal_h2:'Вкус пред да дојдете',
+    res_tag:'Резервација', res_h2:'Резервирајте ја вашата маса',
+    ph_name:'Име и презиме', ph_phone:'Телефонски број', ph_note:'Забелешка (опционално)',
+    f_time:'Час', f_pers:'Број на лица', f_btn:'Потврди резервација',
+    f_note_txt:'Потврдата ви пристигнува преку SMS/Viber за неколку минути.',
+    c_tag:'Контакт', c_h2:'Најдете нè лесно',
+    c_addr:'Адреса', c_addr_v:'Ул. Демо бр. 1<br>Гостивар 1230', c_hours:'Работно време', c_hours_v:'Секој ден<br>10:00 – 23:00', c_phone:'Телефон',
+    demo_badge:'⚠ Ова е ДЕМО / концепт страница — бизнисот е фиктивен.',
+    alert_form:'ДЕМО: Резервацијата е испратена! ✅\nНа вистинската страница, сопственикот добива известување на Viber/email.',
+    alert_call:'ДЕМО: тука се отвора WhatsApp/Viber на бизнисот.'
+  },
+  en: {
+    logo:'Your <span>Restaurant</span>', logo2:'Your <span>Restaurant</span>',
+    nav_about:'About', nav_menu:'Menu', nav_gallery:'Gallery', nav_contact:'Contact', nav_book:'Book a table',
+    hero_tag:'Gostivar · since 1998',
+    hero_h1:'Traditional flavors,<br>modern atmosphere',
+    hero_p:'Traditional and European cuisine with fresh local ingredients — in the heart of the city.',
+    hero_btn1:'Book a table', hero_btn2:'See the menu',
+    about_tag:'Our story', about_h2:'More than 25 years of tradition',
+    about_p1:'We started as a small family place and today we are one of the most loved spots in town. Our recipes pass from generation to generation.',
+    about_p2:'Every dish is prepared with fresh ingredients from local farmers around Gostivar and Mavrovo.',
+    stat1:'years of experience', stat2:'seats', stat3:'on Google',
+    menu_tag:'Menu', menu_h2:'Our specialties',
+    n2:'Fried meatballs', n3:'Mixed grill (2 pers.)', n4:'Mavrovo trout', n5:'Spinach pie', n6:'House salad',
+    d1:'Veal, seasonal vegetables, oven-baked', d2:'With mashed potatoes and shopska salad',
+    d3:'Kebapi, sujuk, chicken fillet, pork chop', d4:'Grilled with lemon and mountain herbs',
+    d5:'Homemade, with village yogurt', d6:'Arugula, white cheese, walnuts, honey dressing',
+    d7:'Homemade, with walnuts and warm syrup', d8:'Our most requested dessert',
+    gal_tag:'Gallery', gal_h2:'A taste before you arrive',
+    res_tag:'Reservation', res_h2:'Book your table',
+    ph_name:'Full name', ph_phone:'Phone number', ph_note:'Note (optional)',
+    f_time:'Time', f_pers:'Number of guests', f_btn:'Confirm reservation',
+    f_note_txt:'Confirmation arrives by SMS/Viber within minutes.',
+    c_tag:'Contact', c_h2:'Find us easily',
+    c_addr:'Address', c_addr_v:'Demo St. 1<br>Gostivar 1230', c_hours:'Opening hours', c_hours_v:'Every day<br>10:00 – 23:00', c_phone:'Phone',
+    demo_badge:'⚠ This is a DEMO / concept page — the business is fictional.',
+    alert_form:'DEMO: Reservation sent! ✅\nOn the real site, the owner gets an instant Viber/email notification.',
+    alert_call:'DEMO: this opens the business WhatsApp/Viber.'
+  }
+};
+
+let LANG = 'sq';
+function setLang(l){
+  LANG = l;
+  const t = T[l];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(t[k] !== undefined) el.innerHTML = t[k];
+  });
+  document.getElementById('f_name').placeholder = t.ph_name;
+  document.getElementById('f_phone').placeholder = t.ph_phone;
+  document.getElementById('f_note').placeholder = t.ph_note;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang = l;
+}
+document.getElementById('resForm').addEventListener('submit', e=>{
+  e.preventDefault(); alert(T[LANG].alert_form);
+});
+document.getElementById('floatCall').addEventListener('click', e=>{
+  e.preventDefault(); alert(T[LANG].alert_call);
+});
+setLang('en');
+</script>
+
+</body>
+</html>

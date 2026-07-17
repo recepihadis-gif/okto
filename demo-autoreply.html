@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — Përgjigje automatike në 6 sekonda</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f1420;--card:#1a2233;--accent:#4f8cff;--green:#25d366;--text:#eef2f8;--muted:#8b96ab;--gold:#f5b942}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:28px 16px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:980px;margin-bottom:8px}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid #2c3850;color:var(--muted);padding:4px 10px;border-radius:8px;
+    font-size:.75rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .demo-tag{font-size:.72rem;color:var(--muted);border:1px solid #2c3850;padding:4px 10px;border-radius:99px;letter-spacing:1px}
+
+  h1{font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;text-align:center;margin:10px 0 4px}
+  h1 span{color:var(--gold)}
+  .sub{color:var(--muted);text-align:center;font-size:.95rem;margin-bottom:26px;max-width:560px}
+
+  .stage{display:flex;gap:40px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+
+  .phone{width:300px;background:var(--card);border-radius:28px;border:1px solid #2c3850;overflow:hidden;
+    box-shadow:0 30px 60px rgba(0,0,0,.45)}
+  .phone-head{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2c3850}
+  .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .av-biz{background:#233welcome}
+  .av-biz{background:#2a3a5c}
+  .av-own{background:#3c2a5c}
+  .phone-head b{font-size:.9rem;display:block}
+  .phone-head small{color:var(--green);font-size:.72rem}
+  .phone-head .lbl{margin-left:auto;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;text-align:right}
+
+  .chat{padding:16px;min-height:340px;display:flex;flex-direction:column;gap:10px}
+  .bubble{max-width:85%;padding:10px 14px;border-radius:16px;font-size:.87rem;line-height:1.45;
+    opacity:0;transform:translateY(8px);transition:all .4s ease}
+  .bubble.show{opacity:1;transform:none}
+  .from-cust{background:#2a3a5c;border-bottom-left-radius:4px;align-self:flex-start}
+  .from-biz{background:var(--green);color:#06301b;border-bottom-right-radius:4px;align-self:flex-end;font-weight:500}
+  .bubble .time{display:block;font-size:.68rem;opacity:.65;margin-top:4px}
+  .typing{align-self:flex-end;background:#223046;border-radius:16px;padding:12px 16px;display:none}
+  .typing.show{display:flex;gap:4px}
+  .typing i{width:7px;height:7px;background:var(--muted);border-radius:50%;animation:blink 1s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+  /* owner notification */
+  .notif{margin:14px;background:#0c0f16;border:1px solid #2c3850;border-radius:14px;padding:12px 14px;
+    opacity:0;transform:translateY(-12px);transition:all .5s ease}
+  .notif.show{opacity:1;transform:none}
+  .notif .app{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--muted);margin-bottom:6px}
+  .notif .dot{width:16px;height:16px;border-radius:4px;background:var(--accent);display:inline-block}
+  .notif b{font-size:.85rem}
+  .notif p{font-size:.8rem;color:var(--muted);margin-top:2px}
+  .lockscreen{padding:26px 16px 10px;text-align:center}
+  .lockscreen .clock{font-size:2.4rem;font-weight:800}
+  .lockscreen .date{color:var(--muted);font-size:.8rem}
+
+  .timer{margin-top:22px;text-align:center}
+  .timer b{font-size:2.2rem;color:var(--gold);font-weight:800}
+  .timer div{color:var(--muted);font-size:.85rem}
+
+  .controls{margin-top:26px;display:flex;gap:12px}
+  button.play{background:var(--accent);color:#fff;border:none;padding:14px 34px;border-radius:99px;
+    font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;transition:transform .15s}
+  button.play:hover{transform:translateY(-2px)}
+  .caption{margin-top:18px;color:var(--muted);font-size:.8rem;text-align:center;max-width:480px}
+
+  @media(max-width:700px){.stage{gap:22px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO / KONCEPT</span>
+  <div class="lang">
+    <button id="btn-sq" class="active" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<h1 id="title">Klienti pyet → përgjigje për <span>6 sekonda</span></h1>
+<p class="sub" id="subtitle">Edhe kur jeni të zënë, edhe në mesnatë — sistemi përgjigjet menjëherë dhe ju njofton.</p>
+
+<div class="stage">
+  <!-- CUSTOMER PHONE -->
+  <div class="phone">
+    <div class="phone-head">
+      <div class="avatar av-biz">🍽️</div>
+      <div><b id="bizname">Biznesi Juaj</b><small id="online">online</small></div>
+      <span class="lbl" id="lbl-cust">Klienti<br>sheh</span>
+    </div>
+    <div class="chat" id="chat">
+      <div class="bubble from-cust" id="msg1">…<span class="time">21:47</span></div>
+      <div class="typing" id="typing"><i></i><i></i><i></i></div>
+      <div class="bubble from-biz" id="msg2">…<span class="time">21:47</span></div>
+    </div>
+  </div>
+
+  <!-- OWNER PHONE -->
+  <div class="phone">
+    <div class="phone-head">
+      <div class="avatar av-own">👔</div>
+      <div><b id="ownerlbl">Pronari</b><small id="busy">i zënë me punë</small></div>
+      <span class="lbl" id="lbl-own">Pronari<br>merr</span>
+    </div>
+    <div class="lockscreen">
+      <div class="clock">21:47</div>
+      <div class="date" id="datelbl">e mërkurë, 15 korrik</div>
+    </div>
+    <div class="notif" id="notif1">
+      <div class="app"><span class="dot"></span> VIBER · <span id="now1">tani</span></div>
+      <b id="n1title">📩 Kërkesë e re nga klienti</b>
+      <p id="n1body">Ariana: "A keni tavolinë të lirë nesër në 20:00 për 4 persona?"</p>
+    </div>
+    <div class="notif" id="notif2">
+      <div class="app"><span class="dot" style="background:#25d366"></span> SISTEMI · <span id="now2">tani</span></div>
+      <b id="n2title">✅ Klientit iu përgjigj automatikisht</b>
+      <p id="n2body">Përgjigja u dërgua për 6 sekonda. Detajet i keni në panel.</p>
+    </div>
+    <div class="timer"><b id="counter">0.0s</b><div id="timerlbl">koha e përgjigjes</div></div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="play" id="playBtn" onclick="runDemo()">▶ Nis demonstrimin</button>
+</div>
+<p class="caption" id="caption">Regjistroni ekranin gjatë demonstrimit — kjo është videoja juaj për Instagram/TikTok.</p>
+
+<script>
+const T = {
+  sq:{
+    title:'Klienti pyet → përgjigje për <span>6 sekonda</span>',
+    subtitle:'Edhe kur jeni të zënë, edhe në mesnatë — sistemi përgjigjet menjëherë dhe ju njofton.',
+    bizname:'Biznesi Juaj', online:'online', ownerlbl:'Pronari', busy:'i zënë me punë',
+    lblcust:'Klienti<br>sheh', lblown:'Pronari<br>merr',
+    msg1:'Përshëndetje! A keni tavolinë të lirë nesër në 20:00 për 4 persona?',
+    msg2:'Përshëndetje Ariana! 😊 Faleminderit për mesazhin. Po e kontrollojmë disponueshmërinë dhe ju konfirmojmë brenda pak minutash. Ndërkohë, menynë tonë e gjeni këtu: link.meny',
+    n1title:'📩 Kërkesë e re nga klienti',
+    n1body:'Ariana: "A keni tavolinë të lirë nesër në 20:00 për 4 persona?"',
+    n2title:'✅ Klientit iu përgjigj automatikisht',
+    n2body:'Përgjigja u dërgua për 6 sekonda. Detajet i keni në panel.',
+    timerlbl:'koha e përgjigjes', datelbl:'e mërkurë, 15 korrik', now:'tani',
+    play:'▶ Nis demonstrimin', replay:'↻ Përsërit',
+    caption:'Regjistroni ekranin gjatë demonstrimit — kjo është videoja juaj për Instagram/TikTok.'
+  },
+  mk:{
+    title:'Клиентот прашува → одговор за <span>6 секунди</span>',
+    subtitle:'И кога сте зафатени, и на полноќ — системот одговара веднаш и ве известува.',
+    bizname:'Вашиот Бизнис', online:'онлајн', ownerlbl:'Сопственикот', busy:'зафатен со работа',
+    lblcust:'Клиентот<br>гледа', lblown:'Сопственикот<br>добива',
+    msg1:'Здраво! Дали имате слободна маса утре во 20:00 за 4 лица?',
+    msg2:'Здраво Ариана! 😊 Ви благодариме за пораката. Ја проверуваме достапноста и ќе потврдиме за неколку минути. Во меѓувреме, менито е тука: link.meni',
+    n1title:'📩 Ново барање од клиент',
+    n1body:'Ариана: „Дали имате слободна маса утре во 20:00 за 4 лица?"',
+    n2title:'✅ На клиентот му е одговорено автоматски',
+    n2body:'Одговорот е испратен за 6 секунди. Деталите се во панелот.',
+    timerlbl:'време на одговор', datelbl:'среда, 15 јули', now:'сега',
+    play:'▶ Стартувај демо', replay:'↻ Повтори',
+    caption:'Снимајте го екранот за време на демото — тоа е вашето видео за Instagram/TikTok.'
+  },
+  en:{
+    title:'Customer asks → answered in <span>6 seconds</span>',
+    subtitle:'Even when you are busy, even at midnight — the system replies instantly and notifies you.',
+    bizname:'Your Business', online:'online', ownerlbl:'Owner', busy:'busy working',
+    lblcust:'Customer<br>sees', lblown:'Owner<br>gets',
+    msg1:'Hi! Do you have a free table tomorrow at 8pm for 4 people?',
+    msg2:'Hi Ariana! 😊 Thanks for your message. We are checking availability and will confirm within minutes. Meanwhile, here is our menu: link.menu',
+    n1title:'📩 New customer inquiry',
+    n1body:'Ariana: "Do you have a free table tomorrow at 8pm for 4 people?"',
+    n2title:'✅ Customer answered automatically',
+    n2body:'Reply sent in 6 seconds. Details are in your panel.',
+    timerlbl:'response time', datelbl:'Wednesday, July 15', now:'now',
+    play:'▶ Start demo', replay:'↻ Replay',
+    caption:'Screen-record the demo — that is your Instagram/TikTok video.'
+  }
+};
+
+let LANG='sq', running=false;
+function setLang(l){
+  LANG=l; const t=T[l];
+  document.getElementById('title').innerHTML=t.title;
+  document.getElementById('subtitle').textContent=t.subtitle;
+  document.getElementById('bizname').textContent=t.bizname;
+  document.getElementById('online').textContent=t.online;
+  document.getElementById('ownerlbl').textContent=t.ownerlbl;
+  document.getElementById('busy').textContent=t.busy;
+  document.getElementById('lbl-cust').innerHTML=t.lblcust;
+  document.getElementById('lbl-own').innerHTML=t.lblown;
+  document.getElementById('msg1').innerHTML=t.msg1+'<span class="time">21:47</span>';
+  document.getElementById('msg2').innerHTML=t.msg2+'<span class="time">21:47</span>';
+  document.getElementById('n1title').textContent=t.n1title;
+  document.getElementById('n1body').textContent=t.n1body;
+  document.getElementById('n2title').textContent=t.n2title;
+  document.getElementById('n2body').textContent=t.n2body;
+  document.getElementById('timerlbl').textContent=t.timerlbl;
+  document.getElementById('datelbl').textContent=t.datelbl;
+  document.getElementById('now1').textContent=t.now;
+  document.getElementById('now2').textContent=t.now;
+  document.getElementById('caption').textContent=t.caption;
+  document.getElementById('playBtn').textContent=running?T[l].replay:T[l].play;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  resetDemo();
+}
+function resetDemo(){
+  ['msg1','msg2','notif1','notif2'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('typing').classList.remove('show');
+  document.getElementById('counter').textContent='0.0s';
+}
+function runDemo(){
+  resetDemo(); running=true;
+  document.getElementById('playBtn').textContent=T[LANG].replay;
+  const counter=document.getElementById('counter');
+  let start=null, tick=null;
+
+  setTimeout(()=>{ // customer sends
+    document.getElementById('msg1').classList.add('show');
+    document.getElementById('notif1').classList.add('show');
+    start=performance.now();
+    tick=setInterval(()=>{
+      counter.textContent=((performance.now()-start)/1000).toFixed(1)+'s';
+    },100);
+    setTimeout(()=>document.getElementById('typing').classList.add('show'),900);
+    setTimeout(()=>{ // auto-reply lands at ~6s
+      document.getElementById('typing').classList.remove('show');
+      document.getElementById('msg2').classList.add('show');
+      document.getElementById('notif2').classList.add('show');
+      clearInterval(tick);
+      counter.textContent='6.0s';
+    },6000);
+  },800);
+}
+setLang('en');
+</script>
+</body>
+</html>

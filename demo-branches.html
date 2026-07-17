@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — One Website, Every Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--brand:#2f9edb;--bg:#0d1220;--card:#161e33;--line:#263351;--text:#f2f5fb;--muted:#8b96ab}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+  .top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
+  .demo-tag{font-size:.7rem;color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:99px;letter-spacing:1px}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid var(--line);color:var(--muted);padding:5px 11px;
+    border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+
+  .picker{max-width:900px;margin:6px auto 26px;padding:0 16px;text-align:center}
+  .picker .hint{font-size:1.05rem;font-weight:800;margin-bottom:14px}
+  .picker .hint span{color:var(--brand)}
+  .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .bbtn{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 18px;
+    color:var(--text);cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:700;
+    display:flex;align-items:center;gap:8px;transition:all .2s}
+  .bbtn .em{font-size:1.25rem}
+  .bbtn:hover{transform:translateY(-2px)}
+  .bbtn.active{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 18%,var(--card))}
+
+  .site{max-width:900px;margin:0 auto;padding:0 16px 60px;animation:fade .45s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .hero{background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 30%,#10182c),#131b30);
+    border:1px solid color-mix(in srgb,var(--brand) 45%,var(--line));border-radius:26px;
+    padding:54px 30px;text-align:center;margin-bottom:16px}
+  .hero .em{font-size:4rem;display:block;margin-bottom:14px}
+  .hero h1{font-size:clamp(1.8rem,5.5vw,2.8rem);font-weight:900;margin-bottom:10px}
+  .hero p{color:var(--muted);font-size:1.05rem;max-width:480px;margin:0 auto 28px}
+  .cta{display:inline-block;background:var(--brand);color:#fff;padding:15px 38px;border-radius:99px;
+    text-decoration:none;font-weight:800;font-size:.95rem;transition:transform .15s}
+  .cta:hover{transform:scale(1.05)}
+
+  .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;
+    justify-content:space-between;align-items:center;gap:12px}
+  .svc b{font-size:.95rem;display:block;margin-bottom:4px}
+  .svc p{font-size:.78rem;color:var(--muted)}
+  .svc .pr{color:var(--brand);font-weight:900;font-size:1.05rem;white-space:nowrap}
+
+  .perks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  .perk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
+  .perk .em{font-size:1.4rem;display:block;margin-bottom:6px}
+  .perk span{font-size:.72rem;color:var(--muted);font-weight:600}
+
+  .bookbox{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px 22px}
+  .bookbox h2{font-size:1.25rem;font-weight:900;text-align:center;margin-bottom:4px}
+  .bookbox .bsub{text-align:center;color:var(--muted);font-size:.82rem;margin-bottom:18px}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:560px;margin:0 auto}
+  input,select{padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#0f1524;
+    color:var(--text);font-family:inherit;font-size:.88rem}
+  input:focus,select:focus{outline:none;border-color:var(--brand)}
+  form button{grid-column:1/-1;background:var(--brand);color:#fff;border:none;padding:15px;border-radius:12px;
+    font-weight:800;font-size:.98rem;cursor:pointer;font-family:inherit}
+
+  .foot{text-align:center;color:var(--muted);font-size:.7rem;padding:24px}
+  @media(max-width:640px){.svc-grid,form{grid-template-columns:1fr}.perks{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO</span>
+  <div class="lang">
+    <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+  </div>
+</div>
+
+<div class="picker">
+  <div class="hint" id="hint">👇 <span>Tap a business</span> — the page becomes that website:</div>
+  <div class="btns" id="btns"></div>
+</div>
+
+<div class="site" id="site"></div>
+
+<div class="foot" id="foot">⚠ DEMO — fictional businesses. One page, every branch: YOUR business could look like this.</div>
+
+<script>
+const BRANDS={dental:'#2f9edb',doctor:'#2fae87',beauty:'#d66ba0',hair:'#c99a3f',constr:'#e07840',shop:'#a06bd6'};
+const ICONS={dental:'🦷',doctor:'🩺',beauty:'💅',hair:'💈',constr:'🏗️',shop:'🛍️'};
+const ORDER=['dental','doctor','beauty','hair','constr','shop'];
+
+const T={
+en:{hint:'👇 <span>Tap a business</span> — the page becomes that website:',
+  foot:'⚠ DEMO — fictional businesses. One page, every branch: YOUR business could look like this.',
+  perks:[['📱','Works on every phone'],['🌐','3 languages'],['📅','Online booking'],['⚡','Answers customers alone']],
+  form:{name:'Your name',phone:'Phone number',date:'',btn:'Send request',sub:'You get an answer within minutes — automatically.'},
+  alert:'DEMO ✅ Request sent!\nOn a real website: the customer gets an instant answer and YOU get a notification on your phone.',
+  tabs:{dental:'Dental',doctor:'Doctor',beauty:'Beauty',hair:'Hairdresser',constr:'Construction',shop:'Shop'},
+  br:{
+  dental:{nm:'Bright Smile Dental',tag:'Your smile, in safe hands',sub:'Modern dental care for the whole family. Book your appointment online — no calls, no waiting.',cta:'Book appointment',
+    svc:[['Check-up + consultation','Full oral exam with treatment plan','20 €'],['Teeth cleaning','Professional cleaning & polishing','30 €'],['Whitening','Safe in-office whitening','120 €'],['Filling','Modern white fillings','35 €']],
+    bh:'Book your appointment',bs:'Choose a time — we confirm instantly and remind you 24h before.'},
+  doctor:{nm:'Dr. Elira — Family Medicine',tag:'A doctor who knows your family',sub:'General check-ups, home visits, and honest advice. Book a visit online in 30 seconds.',cta:'Book a visit',
+    svc:[['General check-up','Full examination + blood pressure','15 €'],['Home visit','The doctor comes to you','25 €'],['Lab referrals','Fast referrals & result reading','10 €'],['Online consultation','Video call when you can\'t come','12 €']],
+    bh:'Book your visit',bs:'Pick a time — instant confirmation, reminder before your visit.'},
+  beauty:{nm:'Glow Beauty Center',tag:'You, at your best',sub:'Facials, nails, lashes and make-up — book your treatment online, anytime.',cta:'Book treatment',
+    svc:[['Facial treatment','Deep cleansing + hydration','25 €'],['Manicure + gel','Lasts up to 3 weeks','18 €'],['Lash extensions','Natural or volume look','30 €'],['Make-up','Evening & bridal make-up','35 €']],
+    bh:'Book your treatment',bs:'Choose your time — confirmation comes instantly.'},
+  hair:{nm:'The Barber Room',tag:'Walk in sharp, walk out sharper',sub:'Cuts, fades, beard work. Book your chair online — skip the waiting.',cta:'Book your chair',
+    svc:[['Haircut','Classic or modern, consultation included','8 €'],['Fade + beard','Full service with hot towel','12 €'],['Kids cut','Patient and quick','6 €'],['Color / styling','For special days','20 €']],
+    bh:'Book your chair',bs:'Pick your barber and time — no more waiting in line.'},
+  constr:{nm:'Solid Build Construction',tag:'We build it right, once',sub:'Renovations, roofs, facades and full builds. Send your project — get a free price estimate.',cta:'Get free estimate',
+    svc:[['Apartment renovation','Complete renovation, fixed deadline','from 120 €/m²'],['Facades & insulation','Energy-efficient facades','from 25 €/m²'],['Roofs','Repair and new construction','on request'],['Bathrooms','Design + full work','from 1.500 €']],
+    bh:'Request a free estimate',bs:'Describe your project — we answer with a price within 24h.'},
+  shop:{nm:'Nova Boutique',tag:'New collection, every week',sub:'Fashion you won\'t find everywhere. Order on WhatsApp/Instagram — delivery in the whole country.',cta:'See new arrivals',
+    svc:[['Dresses','New models every week','from 20 €'],['Shoes','Sizes 36–41','from 25 €'],['Bags & accessories','Complete your look','from 10 €'],['Delivery','Whole country, 1–2 days','2 €']],
+    bh:'Ask about a product',bs:'Send us what you like — we answer instantly with size & price.'}}},
+sq:{hint:'👇 <span>Prekni një biznes</span> — faqja bëhet ajo ueb-faqe:',
+  foot:'⚠ DEMO — biznese fiktive. Një faqe, çdo degë: biznesi JUAJ mund të duket kështu.',
+  perks:[['📱','Punon në çdo telefon'],['🌐','3 gjuhë'],['📅','Rezervim online'],['⚡','I përgjigjet klientëve vetë']],
+  form:{name:'Emri juaj',phone:'Numri i telefonit',date:'',btn:'Dërgo kërkesën',sub:'Merrni përgjigje brenda minutash — automatikisht.'},
+  alert:'DEMO ✅ Kërkesa u dërgua!\nNë faqen reale: klienti merr përgjigje menjëherë dhe JU merrni njoftim në telefon.',
+  tabs:{dental:'Stomatolog',doctor:'Mjek',beauty:'Bukuri',hair:'Frizer',constr:'Ndërtim',shop:'Dyqan'},
+  br:{
+  dental:{nm:'Bright Smile Dental',tag:'Buzëqeshja juaj, në duar të sigurta',sub:'Kujdes dentar modern për gjithë familjen. Rezervoni terminin online — pa telefonata, pa pritje.',cta:'Rezervo termin',
+    svc:[['Kontroll + konsultë','Ekzaminim i plotë me plan trajtimi','20 €'],['Pastrim dhëmbësh','Pastrim profesional','30 €'],['Zbardhim','Zbardhim i sigurt në klinikë','120 €'],['Mbushje','Mbushje të bardha moderne','35 €']],
+    bh:'Rezervoni terminin tuaj',bs:'Zgjidhni orën — konfirmojmë menjëherë dhe ju kujtojmë 24h para.'},
+  doctor:{nm:'Dr. Elira — Mjekësi Familjare',tag:'Mjeku që e njeh familjen tuaj',sub:'Kontrolle, vizita në shtëpi dhe këshilla të sinqerta. Rezervoni vizitën online për 30 sekonda.',cta:'Rezervo vizitë',
+    svc:[['Kontroll i përgjithshëm','Ekzaminim i plotë + tension','15 €'],['Vizitë në shtëpi','Mjeku vjen te ju','25 €'],['Udhëzime për analiza','Udhëzime të shpejta + leximi i rezultateve','10 €'],['Konsultë online','Video-thirrje kur s\'mund të vini','12 €']],
+    bh:'Rezervoni vizitën tuaj',bs:'Zgjidhni orën — konfirmim i menjëhershëm, kujtesë para vizitës.'},
+  beauty:{nm:'Glow Beauty Center',tag:'Ju, në më të mirën tuaj',sub:'Trajtime fytyre, thonj, qerpikë dhe make-up — rezervoni online, kurdo.',cta:'Rezervo trajtim',
+    svc:[['Trajtim fytyre','Pastrim i thellë + hidratim','25 €'],['Manikyr + xhel','Zgjat deri 3 javë','18 €'],['Qerpikë','Look natyral ose volum','30 €'],['Make-up','Për mbrëmje dhe nuse','35 €']],
+    bh:'Rezervoni trajtimin tuaj',bs:'Zgjidhni orën — konfirmimi vjen menjëherë.'},
+  hair:{nm:'The Barber Room',tag:'Hyni mirë, dilni më mirë',sub:'Prerje, fade, mjekër. Rezervoni karrigen online — pa pritje në radhë.',cta:'Rezervo karrigen',
+    svc:[['Prerje flokësh','Klasike ose moderne','8 €'],['Fade + mjekër','Shërbim i plotë me peshqir të ngrohtë','12 €'],['Prerje për fëmijë','Me durim dhe shpejt','6 €'],['Ngjyrosje / stilim','Për ditë të veçanta','20 €']],
+    bh:'Rezervoni karrigen tuaj',bs:'Zgjidhni frizerin dhe orën — pa radhë më.'},
+  constr:{nm:'Solid Build Ndërtim',tag:'E ndërtojmë saktë, një herë',sub:'Renovime, çati, fasada dhe ndërtime të plota. Dërgoni projektin — merrni ofertë falas.',cta:'Merr ofertë falas',
+    svc:[['Renovim banese','Renovim komplet, afat fiks','nga 120 €/m²'],['Fasada & izolim','Fasada me efikasitet energjie','nga 25 €/m²'],['Çati','Riparim dhe ndërtim i ri','me marrëveshje'],['Banjo','Dizajn + punim i plotë','nga 1.500 €']],
+    bh:'Kërkoni ofertë falas',bs:'Përshkruani projektin — përgjigjemi me çmim brenda 24h.'},
+  shop:{nm:'Nova Boutique',tag:'Koleksion i ri, çdo javë',sub:'Modë që s\'e gjeni kudo. Porositni në WhatsApp/Instagram — dërgesa në gjithë vendin.',cta:'Shiko të rejat',
+    svc:[['Fustane','Modele të reja çdo javë','nga 20 €'],['Këpucë','Numrat 36–41','nga 25 €'],['Çanta & aksesorë','Kompletoni look-un','nga 10 €'],['Dërgesa','Në gjithë vendin, 1–2 ditë','2 €']],
+    bh:'Pyesni për një produkt',bs:'Na dërgoni çfarë ju pëlqen — përgjigjemi menjëherë me numër e çmim.'}}},
+mk:{hint:'👇 <span>Допрете бизнис</span> — страницата станува таа веб-страница:',
+  foot:'⚠ ДЕМО — фиктивни бизниси. Една страница, секоја дејност: ВАШИОТ бизнис може вака да изгледа.',
+  perks:[['📱','Работи на секој телефон'],['🌐','3 јазици'],['📅','Онлајн резервации'],['⚡','Одговара на клиенти само']],
+  form:{name:'Вашето име',phone:'Телефонски број',date:'',btn:'Испрати барање',sub:'Добивате одговор за неколку минути — автоматски.'},
+  alert:'ДЕМО ✅ Барањето е испратено!\nНа вистинска страница: клиентот добива одговор веднаш, а ВИЕ известување на телефон.',
+  tabs:{dental:'Стоматолог',doctor:'Доктор',beauty:'Убавина',hair:'Фризер',constr:'Градежништво',shop:'Продавница'},
+  br:{
+  dental:{nm:'Bright Smile Dental',tag:'Вашата насмевка, во сигурни раце',sub:'Модерна стоматологија за цело семејство. Резервирајте термин онлајн — без јавување, без чекање.',cta:'Резервирај термин',
+    svc:[['Преглед + консултација','Целосен преглед со план','20 €'],['Чистење заби','Професионално чистење','30 €'],['Белење','Безбедно белење во клиника','120 €'],['Пломба','Модерни бели пломби','35 €']],
+    bh:'Резервирајте го вашиот термин',bs:'Изберете време — потврдуваме веднаш и потсетуваме 24ч пред.'},
+  doctor:{nm:'Д-р Елена — Семејна Медицина',tag:'Доктор што го знае вашето семејство',sub:'Прегледи, домашни посети и искрени совети. Резервирајте посета онлајн за 30 секунди.',cta:'Резервирај посета',
+    svc:[['Општ преглед','Целосен преглед + притисок','15 €'],['Домашна посета','Докторот доаѓа кај вас','25 €'],['Упати за анализи','Брзи упати + читање резултати','10 €'],['Онлајн консултација','Видео-повик кога не можете да дојдете','12 €']],
+    bh:'Резервирајте ја вашата посета',bs:'Изберете време — веднаш потврда, потсетник пред посетата.'},
+  beauty:{nm:'Glow Beauty Center',tag:'Вие, во најдобро издание',sub:'Третмани за лице, нокти, трепки и шминка — резервирајте онлајн, било кога.',cta:'Резервирај третман',
+    svc:[['Третман за лице','Длабинско чистење + хидратација','25 €'],['Маникир + гел','Трае до 3 недели','18 €'],['Трепки','Природен или волумен изглед','30 €'],['Шминка','Вечерна и невестинска','35 €']],
+    bh:'Резервирајте го вашиот третман',bs:'Изберете време — потврдата доаѓа веднаш.'},
+  hair:{nm:'The Barber Room',tag:'Влезете добро, излезете подобро',sub:'Потстрижување, fade, брада. Резервирајте стол онлајн — без чекање во ред.',cta:'Резервирај стол',
+    svc:[['Потстрижување','Класично или модерно','8 €'],['Fade + брада','Целосна услуга со топол пешкир','12 €'],['Детско потстрижување','Трпеливо и брзо','6 €'],['Боење / стилизирање','За посебни денови','20 €']],
+    bh:'Резервирајте го вашиот стол',bs:'Изберете фризер и време — крај на редиците.'},
+  constr:{nm:'Solid Build Градба',tag:'Градиме правилно, еднаш',sub:'Реновирања, покриви, фасади и целосни градби. Испратете проект — добијте бесплатна понуда.',cta:'Бесплатна понуда',
+    svc:[['Реновирање стан','Комплетно реновирање, фиксен рок','од 120 €/м²'],['Фасади & изолација','Енергетски ефикасни фасади','од 25 €/м²'],['Покриви','Поправка и нова градба','по договор'],['Бањи','Дизајн + целосна изработка','од 1.500 €']],
+    bh:'Побарајте бесплатна понуда',bs:'Опишете го проектот — одговараме со цена за 24ч.'},
+  shop:{nm:'Nova Boutique',tag:'Нова колекција, секоја недела',sub:'Мода што не се наоѓа насекаде. Нарачајте на WhatsApp/Instagram — достава низ цела земја.',cta:'Види ново',
+    svc:[['Фустани','Нови модели секоја недела','од 20 €'],['Чевли','Броеви 36–41','од 25 €'],['Чанти & додатоци','Комплетирајте го изгледот','од 10 €'],['Достава','Цела земја, 1–2 дена','2 €']],
+    bh:'Прашајте за производ',bs:'Пратете ни што ви се допаѓа — одговараме веднаш со број и цена.'}}}
+};
+
+let LANG='en', BR='dental';
+
+function renderTabs(){
+  const t=T[LANG], w=document.getElementById('btns'); w.innerHTML='';
+  ORDER.forEach(k=>{
+    const b=document.createElement('button');
+    b.className='bbtn'+(k===BR?' active':'');
+    b.innerHTML=`<span class="em">${ICONS[k]}</span>${t.tabs[k]}`;
+    b.onclick=()=>{BR=k;renderAll();};
+    w.appendChild(b);
+  });
+}
+function renderSite(){
+  const t=T[LANG], d=t.br[BR];
+  document.documentElement.style.setProperty('--brand',BRANDS[BR]);
+  const svc=d.svc.map(s=>`<div class="svc"><div><b>${s[0]}</b><p>${s[1]}</p></div><span class="pr">${s[2]}</span></div>`).join('');
+  const perks=t.perks.map(p=>`<div class="perk"><span class="em">${p[0]}</span><span>${p[1]}</span></div>`).join('');
+  const opts=d.svc.map(s=>`<option>${s[0]}</option>`).join('');
+  document.getElementById('site').innerHTML=`
+    <div class="hero">
+      <span class="em">${ICONS[BR]}</span>
+      <h1>${d.nm}</h1>
+      <p>${d.sub}</p>
+      <a class="cta" href="#bform" onclick="document.getElementById('bform').scrollIntoView({behavior:'smooth'});return false;">${d.cta}</a>
+    </div>
+    <div class="svc-grid">${svc}</div>
+    <div class="perks">${perks}</div>
+    <div class="bookbox" id="bform">
+      <h2>${d.bh}</h2>
+      <div class="bsub">${d.bs}</div>
+      <form onsubmit="event.preventDefault();alert(T[LANG].alert);">
+        <input type="text" placeholder="${t.form.name}" required>
+        <input type="tel" placeholder="${t.form.phone}" required>
+        <select>${opts}</select>
+        <input type="date" required>
+        <button type="submit">${t.form.btn}</button>
+      </form>
+      <div class="bsub" style="margin-top:12px">${t.form.sub}</div>
+    </div>`;
+}
+function renderAll(){
+  renderTabs(); renderSite();
+  document.getElementById('hint').innerHTML=T[LANG].hint;
+  document.getElementById('foot').textContent=T[LANG].foot;
+}
+function setLang(l){
+  LANG=l;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.documentElement.lang=l;
+  renderAll();
+}
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo — Gjenerator faturash</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4f7fb;--blue:#2f6fed;--text:#20304c;--muted:#7787a0;--green:#1db980}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:28px 16px}
+  .top{display:flex;justify-content:space-between;width:100%;max-width:960px;margin-bottom:8px;align-items:center}
+  .demo-tag{font-size:.72rem;color:var(--muted);border:1px solid #d8e0ec;padding:4px 10px;border-radius:99px;letter-spacing:1px;background:#fff}
+  .lang{display:flex;gap:4px}
+  .lang button{background:#fff;border:1px solid #d8e0ec;color:var(--muted);padding:4px 10px;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer}
+  .lang button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+  h1{font-size:clamp(1.3rem,3.5vw,2rem);font-weight:800;text-align:center;margin:10px 0 4px}
+  h1 span{color:var(--blue)}
+  .sub{color:var(--muted);text-align:center;font-size:.95rem;margin-bottom:26px;max-width:560px}
+
+  .stage{display:flex;gap:30px;justify-content:center;align-items:flex-start;flex-wrap:wrap;width:100%;max-width:960px}
+
+  .form-card{background:#fff;border-radius:20px;padding:24px;width:340px;box-shadow:0 16px 40px rgba(32,48,76,.1)}
+  .form-card h3{font-size:1rem;margin-bottom:14px}
+  label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin:10px 0 4px}
+  input{width:100%;padding:10px 12px;border:1.5px solid #e2e8f2;border-radius:10px;font-family:inherit;font-size:.88rem}
+  input:focus{outline:none;border-color:var(--blue)}
+  .item-row{display:grid;grid-template-columns:1fr 56px 74px 24px;gap:6px;margin-bottom:6px;align-items:center}
+  .item-row button{background:none;border:none;color:#e05656;cursor:pointer;font-size:1rem}
+  .addbtn{background:#eef4ff;color:var(--blue);border:none;padding:9px;border-radius:10px;width:100%;
+    font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit;margin-top:4px}
+  .printbtn{background:var(--green);color:#fff;border:none;padding:13px;border-radius:12px;width:100%;
+    font-weight:700;font-size:.92rem;cursor:pointer;font-family:inherit;margin-top:16px}
+
+  /* invoice */
+  .inv{background:#fff;width:480px;border-radius:16px;padding:36px;box-shadow:0 16px 40px rgba(32,48,76,.12)}
+  .inv-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+  .inv-head .biz{font-size:1.15rem;font-weight:800}
+  .inv-head .biz small{display:block;font-weight:400;font-size:.75rem;color:var(--muted);margin-top:2px}
+  .inv-num{text-align:right}
+  .inv-num b{font-size:1.3rem;color:var(--blue)}
+  .inv-num div{font-size:.75rem;color:var(--muted)}
+  .parties{display:flex;justify-content:space-between;margin-bottom:24px;font-size:.82rem}
+  .parties .lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+     border-bottom:2px solid #e2e8f2;padding:8px 4px}
+  th:last-child,td:last-child{text-align:right}
+  td{padding:10px 4px;border-bottom:1px solid #eef2f7}
+  .totals{margin-top:14px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:.88rem}
+  .totals .grand{font-size:1.15rem;font-weight:800;color:var(--blue);border-top:2px solid #e2e8f2;padding-top:8px;margin-top:4px}
+  .inv-foot{margin-top:26px;font-size:.72rem;color:var(--muted);text-align:center}
+  .caption{margin-top:24px;color:var(--muted);font-size:.8rem;text-align:center;max-width:520px}
+
+  @media print{
+    body *{visibility:hidden}
+    .inv,.inv *{visibility:visible}
+    .inv{position:absolute;left:0;top:0;box-shadow:none;width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="demo-tag">DEMO / KONCEPT</span>
+  <div class="lang">
+    <button id="btn-sq" class="active" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<h1 id="title">Fatura gati për <span>30 sekonda</span></h1>
+<p class="sub" id="subtitle">Plotësoni formularin → fatura krijohet vetë → shtypni ose dërgojeni PDF. Pa Word, pa Excel, pa gabime.</p>
+
+<div class="stage">
+  <div class="form-card">
+    <h3 id="ftitle">📝 Të dhënat</h3>
+    <label id="l1">Biznesi juaj</label>
+    <input id="biz" value="Biznesi Juaj DOOEL" oninput="render()">
+    <label id="l2">Klienti</label>
+    <input id="cli" value="Kompania ABC" oninput="render()">
+    <label id="l3">Artikujt</label>
+    <div id="rows"></div>
+    <button class="addbtn" id="addBtn" onclick="addRow()">+ Shto artikull</button>
+    <button class="printbtn" id="printBtn" onclick="window.print()">🖨️ Shtyp / Ruaj PDF</button>
+  </div>
+
+  <div class="inv" id="invoice">
+    <div class="inv-head">
+      <div class="biz"><span id="i_biz">Biznesi Juaj DOOEL</span><small id="i_addr">Gostivar · +389 70 000 000</small></div>
+      <div class="inv-num"><b id="i_lbl">FATURA</b><div id="i_no">Nr. 2026-014</div><div id="i_date"></div></div>
+    </div>
+    <div class="parties">
+      <div><div class="lbl" id="p1lbl">Nga</div><span id="p_from">Biznesi Juaj DOOEL</span></div>
+      <div><div class="lbl" id="p2lbl">Për</div><span id="p_to">Kompania ABC</span></div>
+    </div>
+    <table>
+      <thead><tr><th id="h1">Përshkrimi</th><th id="h2">Sasia</th><th id="h3">Çmimi</th><th id="h4">Totali</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="totals">
+      <div><span id="t_sub">Nëntotali</span>: <b id="v_sub">0 den</b></div>
+      <div><span id="t_vat">TVSH 18%</span>: <b id="v_vat">0 den</b></div>
+      <div class="grand"><span id="t_tot">TOTALI</span>: <span id="v_tot">0 den</span></div>
+    </div>
+    <div class="inv-foot" id="ifoot">Kjo është faturë DEMO — biznesi është fiktiv. Faleminderit!</div>
+  </div>
+</div>
+
+<p class="caption" id="caption">Ndryshoni çfarëdo në formular — fatura përditësohet live. Kjo shitet si sistem back-office.</p>
+
+<script>
+const T={
+  sq:{title:'Fatura gati për <span>30 sekonda</span>',
+    subtitle:'Plotësoni formularin → fatura krijohet vetë → shtypni ose dërgojeni PDF. Pa Word, pa Excel, pa gabime.',
+    ftitle:'📝 Të dhënat', l1:'Biznesi juaj', l2:'Klienti', l3:'Artikujt',
+    add:'+ Shto artikull', print:'🖨️ Shtyp / Ruaj PDF', ilbl:'FATURA',
+    p1lbl:'Nga', p2lbl:'Për', h1:'Përshkrimi', h2:'Sasia', h3:'Çmimi', h4:'Totali',
+    tsub:'Nëntotali', tvat:'TVSH 18%', ttot:'TOTALI',
+    foot:'Kjo është faturë DEMO — biznesi është fiktiv. Faleminderit!',
+    caption:'Ndryshoni çfarëdo në formular — fatura përditësohet live. Kjo shitet si sistem back-office.',
+    items:[['Ueb-faqe (Paketa Bazë)',1,12000],['Mirëmbajtje mujore',1,1500]]},
+  mk:{title:'Фактура готова за <span>30 секунди</span>',
+    subtitle:'Пополнете го формуларот → фактурата се креира сама → печатете или испратете PDF. Без Word, без Excel, без грешки.',
+    ftitle:'📝 Податоци', l1:'Вашиот бизнис', l2:'Клиент', l3:'Ставки',
+    add:'+ Додај ставка', print:'🖨️ Печати / Зачувај PDF', ilbl:'ФАКТУРА',
+    p1lbl:'Од', p2lbl:'За', h1:'Опис', h2:'Кол.', h3:'Цена', h4:'Вкупно',
+    tsub:'Меѓузбир', tvat:'ДДВ 18%', ttot:'ВКУПНО',
+    foot:'Ова е ДЕМО фактура — бизнисот е фиктивен. Ви благодариме!',
+    caption:'Променете било што во формуларот — фактурата се ажурира live.',
+    items:[['Веб-страница (Основен пакет)',1,12000],['Месечно одржување',1,1500]]},
+  en:{title:'Invoice ready in <span>30 seconds</span>',
+    subtitle:'Fill the form → invoice builds itself → print or save as PDF. No Word, no Excel, no mistakes.',
+    ftitle:'📝 Details', l1:'Your business', l2:'Client', l3:'Items',
+    add:'+ Add item', print:'🖨️ Print / Save PDF', ilbl:'INVOICE',
+    p1lbl:'From', p2lbl:'To', h1:'Description', h2:'Qty', h3:'Price', h4:'Total',
+    tsub:'Subtotal', tvat:'VAT 18%', ttot:'TOTAL',
+    foot:'This is a DEMO invoice — the business is fictional. Thank you!',
+    caption:'Change anything in the form — the invoice updates live. Sells as a back-office system.',
+    items:[['Website (Basic package)',1,12000],['Monthly maintenance',1,1500]]}
+};
+
+let LANG='sq', items=[];
+function addRow(desc='',qty=1,price=0){
+  items.push({desc,qty,price});
+  renderRows();render();
+}
+function delRow(i){items.splice(i,1);renderRows();render();}
+function renderRows(){
+  const w=document.getElementById('rows'); w.innerHTML='';
+  items.forEach((it,i)=>{
+    const d=document.createElement('div'); d.className='item-row';
+    d.innerHTML=`<input value="${it.desc}" oninput="items[${i}].desc=this.value;render()">
+      <input type="number" value="${it.qty}" oninput="items[${i}].qty=+this.value;render()">
+      <input type="number" value="${it.price}" oninput="items[${i}].price=+this.value;render()">
+      <button onclick="delRow(${i})">✕</button>`;
+    w.appendChild(d);
+  });
+}
+function render(){
+  const t=T[LANG];
+  document.getElementById('i_biz').textContent=document.getElementById('biz').value;
+  document.getElementById('p_from').textContent=document.getElementById('biz').value;
+  document.getElementById('p_to').textContent=document.getElementById('cli').value;
+  const tb=document.getElementById('tbody'); tb.innerHTML='';
+  let sub=0;
+  items.forEach(it=>{
+    const tot=it.qty*it.price; sub+=tot;
+    tb.innerHTML+=`<tr><td>${it.desc}</td><td>${it.qty}</td><td>${it.price.toLocaleString()} den</td><td>${tot.toLocaleString()} den</td></tr>`;
+  });
+  const vat=Math.round(sub*0.18);
+  document.getElementById('v_sub').textContent=sub.toLocaleString()+' den';
+  document.getElementById('v_vat').textContent=vat.toLocaleString()+' den';
+  document.getElementById('v_tot').textContent=(sub+vat).toLocaleString()+' den';
+}
+function setLang(l){
+  LANG=l; const t=T[l];
+  document.getElementById('title').innerHTML=t.title;
+  document.getElementById('subtitle').textContent=t.subtitle;
+  document.getElementById('ftitle').textContent=t.ftitle;
+  document.getElementById('l1').textContent=t.l1;
+  document.getElementById('l2').textContent=t.l2;
+  document.getElementById('l3').textContent=t.l3;
+  document.getElementById('addBtn').textContent=t.add;
+  document.getElementById('printBtn').textContent=t.print;
+  document.getElementById('i_lbl').textContent=t.ilbl;
+  document.getElementById('p1lbl').textContent=t.p1lbl;
+  document.getElementById('p2lbl').textContent=t.p2lbl;
+  ['h1','h2','h3','h4'].forEach(k=>document.getElementById(k).textContent=t[k]);
+  document.getElementById('t_sub').textContent=t.tsub;
+  document.getElementById('t_vat').textContent=t.tvat;
+  document.getElementById('t_tot').textContent=t.ttot;
+  document.getElementById('ifoot').textContent=t.foot;
+  document.getElementById('caption').textContent=t.caption;
+  items=t.items.map(x=>({desc:x[0],qty:x[1],price:x[2]}));
+  renderRows();render();
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+}
+document.getElementById('i_date').textContent=new Date().toLocaleDateString('en-GB');
+setLang('en');
+</script>
+</body>
+</html>
