@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKTO — Showcase Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0e18;--card:#121a2c;--line:#22304d;--text:#eef2fb;--mut:#8b95ab;
+    --vio:#7c6cff;--cyan:#38d4c3;--gold:#f5b942;--green:#31c979}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:18px}
+
+  .top{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:560px;margin-bottom:10px}
+  .top b{font-family:'Space Grotesk',sans-serif;font-size:1rem}
+  .top b span{color:var(--cyan)}
+  .lang{display:flex;gap:4px}
+  .lang button{background:transparent;border:1px solid var(--line);color:var(--mut);padding:5px 11px;
+    border-radius:8px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .lang button.active{background:var(--vio);border-color:var(--vio);color:#fff}
+  .hint{font-size:.78rem;color:var(--mut);text-align:center;max-width:520px;margin-bottom:16px;line-height:1.5}
+  .hint b{color:var(--gold)}
+
+  /* POST CARD 1:1 */
+  .stage{width:100%;max-width:540px}
+  .post{aspect-ratio:1/1;border-radius:6px;position:relative;overflow:hidden;
+    background:radial-gradient(120% 90% at 85% -10%,rgba(124,108,255,.32),transparent 55%),
+      radial-gradient(100% 80% at -10% 110%,rgba(56,212,195,.2),transparent 55%),#0b1020;
+    display:flex;align-items:center}
+  .post .brand{position:absolute;top:5%;left:7%;display:flex;align-items:center;gap:8px;z-index:5;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(.8rem,3vw,1rem)}
+  .post .live{position:absolute;top:5%;right:7%;z-index:5;display:flex;align-items:center;gap:6px;
+    font-size:clamp(.55rem,2vw,.68rem);font-weight:800;color:var(--green);letter-spacing:.15em;
+    border:1px solid rgba(49,201,121,.4);border-radius:99px;padding:.5em 1em;background:rgba(49,201,121,.08)}
+  .post .live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .post .txt{width:47%;padding:0 0 0 7%;z-index:4}
+  .post .k{font-size:clamp(.56rem,2.1vw,.72rem);letter-spacing:.26em;text-transform:uppercase;
+    font-weight:800;color:var(--cyan);margin-bottom:5%}
+  .post h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.15rem,4.6vw,1.75rem);
+    line-height:1.14;margin-bottom:5%}
+  .post .feat{display:flex;flex-direction:column;gap:2.5%}
+  .post .f{display:flex;gap:8px;font-size:clamp(.62rem,2.4vw,.8rem);color:#c3cbdf;line-height:1.4;align-items:flex-start}
+  .post .f b{color:var(--green);font-weight:900}
+  .post .cta{margin-top:7%;display:inline-block;background:#fff;color:#0b1020;font-weight:800;
+    font-size:clamp(.6rem,2.3vw,.78rem);padding:.85em 1.6em;border-radius:99px}
+  .post .handle{position:absolute;bottom:4.5%;left:7%;font-size:clamp(.55rem,2vw,.7rem);color:var(--mut);font-weight:600;z-index:5}
+
+  /* PHONE mockup with LIVE iframe */
+  .phone-wrap{position:absolute;right:6%;top:14%;width:42%;z-index:3}
+  .phone{width:100%;aspect-ratio:390/780;border-radius:12% / 6%;background:#05070d;
+    border:3px solid #2a3350;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1px #0e1424;
+    overflow:hidden;position:relative}
+  .phone .notch{position:absolute;top:2.2%;left:50%;transform:translateX(-50%);width:34%;height:2.6%;
+    background:#05070d;border-radius:99px;z-index:4;border:1px solid #1a2135}
+  .phone .scr{position:absolute;inset:1.8% 2.4%;border-radius:9% / 4.5%;overflow:hidden;background:#fff}
+  .phone iframe{width:390px;height:780px;border:0;transform-origin:0 0;pointer-events:none}
+
+  /* DESKTOP browser mockup */
+  .desk-wrap{position:absolute;right:4%;top:22%;width:58%;z-index:3}
+  .desk{width:100%;border-radius:10px;overflow:hidden;background:#05070d;border:2px solid #2a3350;
+    box-shadow:0 30px 70px rgba(0,0,0,.6)}
+  .desk .bar{background:#161d30;padding:2.4% 3%;display:flex;align-items:center;gap:6px}
+  .desk .bar i{width:8px;height:8px;border-radius:50%}
+  .desk .bar i:nth-child(1){background:#ff5f57}.desk .bar i:nth-child(2){background:#febc2e}.desk .bar i:nth-child(3){background:#28c840}
+  .desk .url{flex:1;background:#0b1020;border-radius:6px;font-size:clamp(.45rem,1.6vw,.6rem);
+    color:var(--mut);padding:.4em .9em;margin-left:6px;white-space:nowrap;overflow:hidden}
+  .desk .scr{aspect-ratio:1280/760;overflow:hidden;background:#fff;position:relative}
+  .desk iframe{width:1280px;height:760px;border:0;transform-origin:0 0;pointer-events:none}
+
+  .nav{display:flex;gap:10px;align-items:center;justify-content:center;margin:16px 0 10px}
+  .nav button{background:var(--card);border:1px solid var(--line);color:var(--text);width:44px;height:44px;
+    border-radius:50%;font-size:1.1rem;cursor:pointer}
+  .nav .cnt{font-size:.8rem;color:var(--mut);min-width:64px;text-align:center;font-weight:700}
+  .cap{width:100%;max-width:540px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .cap .cl{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;
+    margin-bottom:8px;display:flex;justify-content:space-between}
+  .cap p{font-size:.82rem;color:#c6cee2;line-height:1.6;white-space:pre-line}
+  .copybtn{background:none;border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:3px 10px;
+    font-size:.64rem;font-weight:700;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <b>🐙 OKTO <span>Showcase Studio</span></b>
+  <div class="lang">
+    <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="btn-sq" onclick="setLang('sq')">SQ</button>
+    <button id="btn-mk" onclick="setLang('mk')">MK</button>
+  </div>
+</div>
+<p class="hint" id="hint"><b>These cards show your REAL demos, live, inside the frame.</b> Wait 2-3 sec for each site to load → screenshot → post with the caption below.</p>
+
+<div class="stage"><div class="post" id="post"></div></div>
+
+<div class="nav">
+  <button onclick="go(-1)">←</button>
+  <span class="cnt" id="cnt">1 / 9</span>
+  <button onclick="go(1)">→</button>
+</div>
+
+<div class="cap">
+  <div class="cl"><span id="cl">CAPTION — copy this</span><button class="copybtn" onclick="copyCap()" id="cpb">COPY</button></div>
+  <p id="cap"></p>
+</div>
+
+<script>
+const BASE='https://recepihadis-gif.github.io/okto/';
+const CARDS=[
+ {file:'demo-dental.html',mode:'phone',
+  en:{k:'WEBSITE · DENTAL CLINIC',h:'We built this.<br>Tap it — it\'s real.',f:[['✓','Online booking + reminders'],['✓','3 languages'],['✓','Made to calm nervous patients']],cta:'Live demo → link in bio',
+    cap:'This dental clinic website is LIVE — you can open it, scroll it, book inside it. 🦷\n\nOnline booking, automatic reminders, 3 languages.\n\nYour clinic could look like this. Link in bio → try it yourself. 🐙'},
+  sq:{k:'UEB-FAQE · KLINIKË DENTARE',h:'Këtë e ndërtuam ne.<br>Prekeni — është reale.',f:[['✓','Rezervim online + kujtesa'],['✓','3 gjuhë'],['✓','E bërë të qetësojë pacientët']],cta:'Demo live → linku në bio',
+    cap:'Kjo faqe për klinikë dentare është LIVE — mund ta hapni, ta lëvizni, të rezervoni brenda saj. 🦷\n\nRezervim online, kujtesa automatike, 3 gjuhë.\n\nKlinika juaj mund të duket kështu. Linku në bio → provojeni vetë. 🐙'},
+  mk:{k:'ВЕБ-СТРАНИЦА · СТОМАТОЛОШКА КЛИНИКА',h:'Ова го изградивме ние.<br>Допрете — реално е.',f:[['✓','Онлајн резервации + потсетници'],['✓','3 јазици'],['✓','Дизајн што смирува пациенти']],cta:'Live демо → линк во bio',
+    cap:'Оваа страница за стоматолошка клиника е LIVE — отворете ја, скролајте, резервирајте внатре. 🦷\n\nОнлајн резервации, автоматски потсетници, 3 јазици.\n\nВашата клиника може вака да изгледа. Линк во bio → пробајте сами. 🐙'}},
+ {file:'demo-beauty.html',mode:'phone',
+  en:{k:'WEBSITE · BEAUTY SALON',h:'A salon site<br>that books alone.',f:[['✓','Price menu like a fine restaurant'],['✓','24/7 online booking'],['✓','Reminders — no forgotten visits']],cta:'Live demo → link in bio',
+    cap:'"Maison Belle" — our beauty salon concept, LIVE right now. 💅\n\nElegant price menu, gallery, and booking that works at midnight.\n\nSalon owners: imagine YOUR name up there. Link in bio 🐙'},
+  sq:{k:'UEB-FAQE · SALLON BUKURIE',h:'Faqe salloni<br>që rezervon vetë.',f:[['✓','Meny çmimesh si restorant i mirë'],['✓','Rezervim online 24/7'],['✓','Kujtesa — pa vizita të harruara']],cta:'Demo live → linku në bio',
+    cap:'"Maison Belle" — koncepti ynë për sallon bukurie, LIVE tani. 💅\n\nMeny elegante çmimesh, galeri dhe rezervim që punon në mesnatë.\n\nPronarë sallonesh: imagjinoni emrin TUAJ aty. Linku në bio 🐙'},
+  mk:{k:'ВЕБ-СТРАНИЦА · САЛОН ЗА УБАВИНА',h:'Салонска страница<br>што резервира сама.',f:[['✓','Мени со цени како фин ресторан'],['✓','Онлајн резервации 24/7'],['✓','Потсетници — без заборавени посети']],cta:'Live демо → линк во bio',
+    cap:'"Maison Belle" — нашиот концепт за салон за убавина, LIVE сега. 💅\n\nЕлегантно мени со цени, галерија и резервации што работат на полноќ.\n\nСопственици на салони: замислете го ВАШЕТО име таму. Линк во bio 🐙'}},
+ {file:'demo-inbox.html',mode:'desk',
+  en:{k:'SYSTEM · SMART INBOX',h:'Every message.<br>One screen.<br>Answers itself.',f:[['✓','WhatsApp + Instagram + Facebook + web'],['✓','Replies in 6 seconds, day & night'],['✓','Answers in the customer\'s language']],cta:'Watch it work → bio',
+    cap:'This is not a website. This is a SYSTEM. 📥\n\nEvery customer message — WhatsApp, Instagram, Facebook, website — lands in ONE screen and gets answered in 6 seconds. Automatically. In the customer\'s own language.\n\nWatch a full working day play itself → link in bio 🐙'},
+  sq:{k:'SISTEM · SMART INBOX',h:'Çdo mesazh.<br>Një ekran.<br>Përgjigjet vetë.',f:[['✓','WhatsApp + Instagram + Facebook + web'],['✓','Përgjigje për 6 sekonda, ditë e natë'],['✓','Përgjigjet në gjuhën e klientit']],cta:'Shikoni si punon → bio',
+    cap:'Kjo nuk është ueb-faqe. Ky është SISTEM. 📥\n\nÇdo mesazh klienti — WhatsApp, Instagram, Facebook, faqja — bie në NJË ekran dhe merr përgjigje për 6 sekonda. Automatikisht. Në gjuhën e klientit.\n\nShikoni një ditë të plotë pune → linku në bio 🐙'},
+  mk:{k:'СИСТЕМ · SMART INBOX',h:'Секоја порака.<br>Еден екран.<br>Одговара сам.',f:[['✓','WhatsApp + Instagram + Facebook + веб'],['✓','Одговори за 6 секунди, дење и ноќе'],['✓','Одговара на јазикот на клиентот']],cta:'Гледајте како работи → bio',
+    cap:'Ова не е веб-страница. Ова е СИСТЕМ. 📥\n\nСекоја порака — WhatsApp, Instagram, Facebook, сајт — паѓа на ЕДЕН екран и добива одговор за 6 секунди. Автоматски. На јазикот на клиентот.\n\nГледајте цел работен ден → линк во bio 🐙'}},
+ {file:'demo-construction.html',mode:'desk',
+  en:{k:'WEBSITE · CONSTRUCTION',h:'Built for builders.<br>Hard as concrete.',f:[['✓','Project portfolio with photos'],['✓','Free-estimate form, answer in 24h'],['✓','"Everything in writing" trust design']],cta:'Live demo → bio',
+    cap:'"FORTIS" — our construction company concept. 🏗️\n\nProject references, clear prices per m², and a free-estimate form that answers in 24h.\n\nBuilders: your work deserves a site this solid. Live in bio 🐙'},
+  sq:{k:'UEB-FAQE · NDËRTIM',h:'E ndërtuar për ndërtues.<br>E fortë si betoni.',f:[['✓','Portofol projektesh me foto'],['✓','Formular oferte, përgjigje për 24h'],['✓','Dizajn besimi — "gjithçka me shkrim"']],cta:'Demo live → bio',
+    cap:'"FORTIS" — koncepti ynë për kompani ndërtimi. 🏗️\n\nReferenca projektesh, çmime të qarta për m² dhe formular oferte që përgjigjet për 24h.\n\nNdërtues: puna juaj meriton faqe kaq solide. Live në bio 🐙'},
+  mk:{k:'ВЕБ-СТРАНИЦА · ГРАДЕЖНИШТВО',h:'Изградена за градители.<br>Тврда како бетон.',f:[['✓','Портфолио на проекти со фотографии'],['✓','Формулар за понуда, одговор за 24ч'],['✓','Дизајн на доверба — „сè написмено"']],cta:'Live демо → bio',
+    cap:'"FORTIS" — нашиот концепт за градежна фирма. 🏗️\n\nРеференци на проекти, јасни цени по м² и формулар за понуда што одговара за 24ч.\n\nГрадители: вашата работа заслужува ваков сајт. Live во bio 🐙'}},
+ {file:'demo-clinic.html',mode:'phone',
+  en:{k:'WEBSITE · CLINIC & LAB',h:'Results in 24h,<br>on the patient\'s phone.',f:[['✓','Lab price list, clear & honest'],['✓','Book exams online, no queues'],['✓','Results auto-delivered']],cta:'Live demo → bio',
+    cap:'"MedikaLab" — private clinic & laboratory concept, LIVE. 🏥\n\nPatients book online, walk straight in, and results arrive on their phone in 24h — automatically.\n\nClinics & labs: this is the standard patients expect now. Link in bio 🐙'},
+  sq:{k:'UEB-FAQE · KLINIKË & LABORATOR',h:'Rezultatet për 24h,<br>në telefonin e pacientit.',f:[['✓','Çmimore analizash, e qartë'],['✓','Rezervim ekzaminimesh online, pa radhë'],['✓','Rezultatet dërgohen vetë']],cta:'Demo live → bio',
+    cap:'"MedikaLab" — koncept për klinikë private & laborator, LIVE. 🏥\n\nPacientët rezervojnë online, hyjnë direkt dhe rezultatet u vijnë në telefon për 24h — automatikisht.\n\nKlinika & laboratorë: ky është standardi që pacientët presin tani. Linku në bio 🐙'},
+  mk:{k:'ВЕБ-СТРАНИЦА · КЛИНИКА & ЛАБ',h:'Резултати за 24ч,<br>на телефонот на пациентот.',f:[['✓','Ценовник за анализи, јасен'],['✓','Онлајн закажување, без редици'],['✓','Резултатите се доставуваат сами']],cta:'Live демо → bio',
+    cap:'"MedikaLab" — концепт за приватна клиника & лабораторија, LIVE. 🏥\n\nПациентите резервираат онлајн, влегуваат директно, а резултатите доаѓаат на телефон за 24ч — автоматски.\n\nКлиники & лаборатории: ова е стандардот што пациентите го очекуваат. Линк во bio 🐙'}},
+ {file:'demo-restaurant.html',mode:'phone',
+  en:{k:'WEBSITE · RESTAURANT',h:'Menu, gallery,<br>table booked. Done.',f:[['✓','Menu in 3 languages for tourists'],['✓','Online table reservations'],['✓','WhatsApp button built in']],cta:'Live demo → bio',
+    cap:'A restaurant website that takes reservations while the kitchen is slammed. 🍽️\n\nMenu in 3 languages, gallery, one-tap booking.\n\nRestaurant owners — stop losing tables to unanswered calls. Demo in bio 🐙'},
+  sq:{k:'UEB-FAQE · RESTORANT',h:'Menyja, galeria,<br>tavolina u rezervua.',f:[['✓','Meny në 3 gjuhë për turistët'],['✓','Rezervim tavoline online'],['✓','Butoni WhatsApp i integruar']],cta:'Demo live → bio',
+    cap:'Faqe restoranti që merr rezervime ndërsa kuzhina është përplot. 🍽️\n\nMeny në 3 gjuhë, galeri, rezervim me një prekje.\n\nPronarë restorantesh — mos humbni tavolina nga thirrjet pa përgjigje. Demo në bio 🐙'},
+  mk:{k:'ВЕБ-СТРАНИЦА · РЕСТОРАН',h:'Мени, галерија,<br>маса резервирана.',f:[['✓','Мени на 3 јазици за туристи'],['✓','Онлајн резервација на маса'],['✓','WhatsApp копче вградено']],cta:'Live демо → bio',
+    cap:'Ресторанска страница што зема резервации додека кујната е преполна. 🍽️\n\nМени на 3 јазици, галерија, резервација со еден допир.\n\nСопственици на ресторани — не губете маси поради неодговорени повици. Демо во bio 🐙'}},
+ {file:'demo-villa.html',mode:'phone',
+  en:{k:'WEBSITE · VILLA & TOURISM',h:'Direct bookings.<br>Zero double-bookings.',f:[['✓','Synced with Booking.com & Airbnb'],['✓','Premium design guests trust'],['✓','Instant confirmation']],cta:'Live demo → bio',
+    cap:'A mountain villa website with direct booking — synced with Booking.com and Airbnb so double-bookings are impossible. 🏔️\n\nVilla & apartment owners: direct bookings = no commission.\n\nLive demo in bio 🐙'},
+  sq:{k:'UEB-FAQE · VILLA & TURIZËM',h:'Rezervime direkte.<br>Zero mbivendosje.',f:[['✓','Sinkron me Booking.com & Airbnb'],['✓','Dizajn premium që i besojnë mysafirët'],['✓','Konfirmim i menjëhershëm']],cta:'Demo live → bio',
+    cap:'Faqe ville malore me rezervim direkt — e sinkronizuar me Booking.com dhe Airbnb, mbivendosjet janë të pamundura. 🏔️\n\nPronarë villash & apartamentesh: rezervime direkte = pa komision.\n\nDemo live në bio 🐙'},
+  mk:{k:'ВЕБ-СТРАНИЦА · ВИЛА & ТУРИЗАМ',h:'Директни резервации.<br>Нула двојни резервации.',f:[['✓','Синхронизирано со Booking.com & Airbnb'],['✓','Премиум дизајн на кој гостите веруваат'],['✓','Веднаш потврда']],cta:'Live демо → bio',
+    cap:'Страница за планинска вила со директна резервација — синхронизирана со Booking.com и Airbnb, двојни резервации се невозможни. 🏔️\n\nСопственици на вили: директни резервации = без провизија.\n\nLive демо во bio 🐙'}},
+ {file:'demo-dashboard.html',mode:'desk',
+  en:{k:'SYSTEM · CONTROL PANEL',h:'Your whole business.<br>One glance.',f:[['✓','Bookings, answers, reviews, money'],['✓','A narrator explains everything'],['✓','Watch a full day run itself']],cta:'Press play → bio',
+    cap:'What if you could SEE your business working — every booking, every auto-answer, every review — on one screen? 📊\n\nThis demo plays a full working day by itself. The yellow line explains everything in simple words.\n\nPress play → link in bio 🐙'},
+  sq:{k:'SISTEM · PANELI KRYESOR',h:'Gjithë biznesi juaj.<br>Një shikim.',f:[['✓','Rezervime, përgjigje, review, para'],['✓','Narratori shpjegon gjithçka'],['✓','Shikoni një ditë të plotë vetë']],cta:'Shtypni play → bio',
+    cap:'Po sikur ta SHIHNIT biznesin tuaj duke punuar — çdo rezervim, çdo përgjigje automatike, çdo review — në një ekran? 📊\n\nKjo demo luan një ditë të plotë pune vetë. Rreshti i verdhë shpjegon gjithçka thjesht.\n\nShtypni play → linku në bio 🐙'},
+  mk:{k:'СИСТЕМ · КОНТРОЛЕН ПАНЕЛ',h:'Целиот ваш бизнис.<br>Еден поглед.',f:[['✓','Резервации, одговори, рецензии, пари'],['✓','Наратор објаснува сè'],['✓','Гледајте цел ден како тече сам']],cta:'Стиснете play → bio',
+    cap:'Што ако можевте да го ВИДИТЕ вашиот бизнис како работи — секоја резервација, секој автоматски одговор, секоја рецензија — на еден екран? 📊\n\nОва демо пушта цел работен ден само. Жолтиот ред објаснува сè со едноставни зборови.\n\nСтиснете play → линк во bio 🐙'}},
+ {file:'demo-qrmenu.html',mode:'desk',
+  en:{k:'SYSTEM · QR MENU',h:'Prices changed<br>in 10 seconds.',f:[['✓','Customer scans → menu opens'],['✓','You edit prices from your phone'],['✓','Never print menus again']],cta:'Try the demo → bio',
+    cap:'Cafes & restaurants: how much did your last menu reprint cost? 📱\n\nQR menu: customer scans at the table, you change prices from your phone in 10 seconds.\n\nWatch the price update LIVE in the demo → bio 🐙'},
+  sq:{k:'SISTEM · QR MENY',h:'Çmimet ndryshuan<br>për 10 sekonda.',f:[['✓','Klienti skanon → menyja hapet'],['✓','Çmimet i ndryshoni nga telefoni'],['✓','Kurrë më shtypje menysh']],cta:'Provoni demon → bio',
+    cap:'Kafene & restorante: sa ju kushtoi shtypja e fundit e menyve? 📱\n\nQR meny: klienti skanon në tavolinë, ju ndryshoni çmimet nga telefoni për 10 sekonda.\n\nShikoni çmimin të ndryshojë LIVE në demo → bio 🐙'},
+  mk:{k:'СИСТЕМ · QR МЕНИ',h:'Цените променети<br>за 10 секунди.',f:[['✓','Клиентот скенира → менито се отвора'],['✓','Цените ги менувате од телефон'],['✓','Никогаш повеќе печатење менија']],cta:'Пробајте го демото → bio',
+    cap:'Кафулиња & ресторани: колку чинеше последното печатење менија? 📱\n\nQR мени: клиентот скенира на масата, вие ги менувате цените од телефон за 10 секунди.\n\nГледајте ја цената како се менува LIVE → bio 🐙'}}
+];
+
+let LANG='en', IDX=0;
+
+function render(){
+  const c=CARDS[IDX], t=c[LANG];
+  const url=BASE+c.file;
+  let mock='';
+  if(c.mode==='phone'){
+    mock=`<div class="phone-wrap"><div class="phone"><span class="notch"></span>
+      <div class="scr"><iframe src="${url}" id="ifr" scrolling="no"></iframe></div></div></div>`;
+  }else{
+    mock=`<div class="desk-wrap"><div class="desk">
+      <div class="bar"><i></i><i></i><i></i><span class="url">okto · ${c.file.replace('demo-','').replace('.html','')} · live</span></div>
+      <div class="scr"><iframe src="${url}" id="ifr" scrolling="no"></iframe></div></div></div>`;
+  }
+  document.getElementById('post').innerHTML=`
+    <div class="brand">🐙 OKTO</div>
+    <div class="live"><i></i>LIVE DEMO</div>
+    <div class="txt">
+      <div class="k">${t.k}</div>
+      <h1>${t.h}</h1>
+      <div class="feat">${t.f.map(x=>`<div class="f"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+      <span class="cta">${t.cta}</span>
+    </div>
+    ${mock}
+    <div class="handle">@okto · ${String(IDX+1).padStart(2,'0')}/09</div>`;
+  // scale iframe to its container
+  requestAnimationFrame(()=>{
+    const ifr=document.getElementById('ifr');
+    if(!ifr)return;
+    const holder=ifr.parentElement;
+    const scale=holder.clientWidth/(c.mode==='phone'?390:1280);
+    ifr.style.transform=`scale(${scale})`;
+  });
+  document.getElementById('cnt').textContent=`${IDX+1} / 9`;
+  document.getElementById('cap').textContent=t.cap;
+}
+function go(d){IDX=(IDX+9+d)%9;render();}
+function copyCap(){
+  navigator.clipboard.writeText(CARDS[IDX][LANG].cap).then(()=>{
+    const b=document.getElementById('cpb');
+    b.textContent='COPIED ✓'; setTimeout(()=>b.textContent='COPY',1500);
+  });
+}
+function setLang(l){
+  LANG=l;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  render();
+}
+addEventListener('resize',render);
+render();
+</script>
+</body>
+</html>
