@@ -8,10 +8,10 @@ Demo portfolio: premium websites and business automation systems, all trilingual
 |---|---|
 | Smart Inbox | WhatsApp, Instagram, Facebook & website messages in one screen — answered automatically |
 | WhatsApp Story | What a lost 9 PM message costs — and what a system saves |
-| Dr. Arden — Dental | Premium personal-brand dentist site |
-| MedikaLab — Clinic & Laboratory | Results-in-24h clinic site with lab price list |
-| Maison Belle — Beauty | Fashion-editorial salon site with price menu |
-| FORTIS — Construction | Industrial contractor site with project portfolio |
+| Dental Clinic | Premium dentist site with booking + reminders |
+| Clinic & Laboratory | Results-in-24h clinic site with lab price list |
+| Beauty Salon | Fashion-editorial salon site with price menu |
+| Construction Company | Industrial contractor site with project portfolio |
 | Restaurant, Villa, QR Menu, Booking, Reviews, Invoice | Full business toolkit demos |
 
 All businesses shown are fictional — these are concept demos.
