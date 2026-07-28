@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IG Post Frame</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;display:flex;flex-direction:column;align-items:center;gap:24px;padding:20px}
+  /* 4:5 Instagram frame — 1080x1350 scaled */
+  .frame{width:540px;height:675px;position:relative;overflow:hidden;background:#f6f3ee;flex-shrink:0}
+  .frame iframe{width:1180px;height:1475px;border:0;transform-origin:0 0;transform:scale(0.4576);position:absolute;top:0;left:0}
+  .frame.s2 iframe{top:-1475px}
+  .wm{position:absolute;bottom:16px;right:18px;z-index:5;font-family:'Space Grotesk',system-ui,sans-serif;
+    font-weight:700;font-size:13px;color:rgba(0,0,0,.35);letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="frame" id="f1"></div>
+<script>
+const p=new URLSearchParams(location.search);
+const site=p.get('site')||'demo-dental.html';
+const y=parseInt(p.get('y')||'0');
+const light=p.get('dark')!=='1';
+const f=document.getElementById('f1');
+f.innerHTML=`<iframe id="ifr" src="${site}" scrolling="no"></iframe><div class="wm" style="color:${light?'rgba(0,0,0,.32)':'rgba(255,255,255,.4)'}">OKTO</div>`;
+const ifr=document.getElementById('ifr');
+ifr.onload=()=>{
+  try{
+    const d=ifr.contentDocument;
+    d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,footer').forEach(e=>e.remove());
+    d.documentElement.style.scrollBehavior='auto';
+    d.body.style.overflow='hidden';
+    if(y) d.documentElement.scrollTop=y;
+    // force all reveal animations to finished state
+    d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
+    setTimeout(()=>{ if(y) d.documentElement.scrollTop=y; },300);
+  }catch(e){}
+};
+</script>
+</body>
+</html>
