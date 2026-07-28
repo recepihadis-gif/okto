@@ -111,8 +111,8 @@
 const BASE='';
 const CARDS=[
  {file:'demo-dental.html',mode:'phone',
-  en:{k:'WEBSITE · DENTAL CLINIC',h:'We built this.<br>Tap it — it\'s real.',f:[['✓','Online booking + reminders'],['✓','3 languages'],['✓','Made to calm nervous patients']],cta:'Live demo → link in bio',
-    cap:'This dental clinic website is LIVE — you can open it, scroll it, book inside it. 🦷\n\nOnline booking, automatic reminders, 3 languages.\n\nYour clinic could look like this. Link in bio → try it yourself. 🐙'},
+  en:{k:'WEBSITE · DENTAL CLINIC',h:'Built to calm patients.<br>Built to fill calendars.',f:[['✓','Online booking + reminders'],['✓','Speaks 3 languages'],['✓','Designed for nervous patients']],cta:'📩 DM "EXAMPLE"',
+    cap:'A dental clinic website we built. 🦷\n\nOnline booking, automatic reminders 24h before the visit, and it speaks 3 languages — so no patient is ever lost.\n\nWant one for your clinic? 📩 DM "EXAMPLE" 🐙'},
   sq:{k:'UEB-FAQE · KLINIKË DENTARE',h:'Këtë e ndërtuam ne.<br>Prekeni — është reale.',f:[['✓','Rezervim online + kujtesa'],['✓','3 gjuhë'],['✓','E bërë të qetësojë pacientët']],cta:'Demo live → linku në bio',
     cap:'Kjo faqe për klinikë dentare është LIVE — mund ta hapni, ta lëvizni, të rezervoni brenda saj. 🦷\n\nRezervim online, kujtesa automatike, 3 gjuhë.\n\nKlinika juaj mund të duket kështu. Linku në bio → provojeni vetë. 🐙'},
   mk:{k:'ВЕБ-СТРАНИЦА · СТОМАТОЛОШКА КЛИНИКА',h:'Ова го изградивме ние.<br>Допрете — реално е.',f:[['✓','Онлајн резервации + потсетници'],['✓','3 јазици'],['✓','Дизајн што смирува пациенти']],cta:'Live демо → линк во bio',
@@ -191,7 +191,7 @@ function render(){
   }
   document.getElementById('post').innerHTML=`
     <div class="brand">🐙 OKTO</div>
-    <div class="live"><i></i>LIVE DEMO</div>
+    <div class="live"><i></i>OUR WORK</div>
     <div class="txt">
       <div class="k">${t.k}</div>
       <h1>${t.h}</h1>
@@ -200,13 +200,17 @@ function render(){
     </div>
     ${mock}
     <div class="handle">@okto_web · 📩 DM «SHEMBULL» · ${String(IDX+1).padStart(2,'0')}/09</div>`;
-  // scale iframe to its container
+  // scale iframe to its container + strip labels for clean screenshots
   requestAnimationFrame(()=>{
     const ifr=document.getElementById('ifr');
     if(!ifr)return;
     const holder=ifr.parentElement;
     const scale=holder.clientWidth/(c.mode==='phone'?390:1280);
     ifr.style.transform=`scale(${scale})`;
+    ifr.onload=()=>{try{
+      const d=ifr.contentDocument;
+      d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,#foot,.foot,.fnote').forEach(e=>e.remove());
+    }catch(e){}};
   });
   document.getElementById('cnt').textContent=`${IDX+1} / 9`;
   document.getElementById('cap').textContent=t.cap;
