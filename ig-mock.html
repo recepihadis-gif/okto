@@ -69,42 +69,42 @@ const THEMES={
 const SITES={
  dental:{file:'demo-dental.html',theme:'dental',slides:[
    {l:'cover',y:0,k:'Website design',t:'Dental clinic',s:'Online booking · Reminders · 3 languages'},
-   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['.nav-r','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
    {l:'wide',y:1250,k:'Services',t:'Every price, clearly listed'},
    {l:'duo',y:2300,y2:4250,k:'Sections',t:'Practitioner & studio'},
    {l:'stack',k:'Conversion',t:'Questions & booking',sels:[['.faq','Expandable questions'],['.bform','Booking form']]}
  ]},
  beauty:{file:'demo-beauty.html',theme:'beauty',slides:[
    {l:'cover',y:0,k:'Website design',t:'Beauty salon',s:'Price menu · 24/7 booking · Reminders'},
-   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['.nav-r','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
    {l:'wide',y:1150,k:'The menu',t:'Services & prices'},
    {l:'duo',y:2200,y2:3100,k:'Sections',t:'Atelier & promise'},
    {l:'stack',k:'Conversion',t:'Reservation',sels:[['.proms','Why clients stay'],['.bform','Reservation form']]}
  ]},
  clinic:{file:'demo-clinic.html',theme:'clinic',slides:[
    {l:'cover',y:0,k:'Website design',t:'Clinic & laboratory',s:'Appointments · Lab results in 24h'},
-   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.badge-row','Trust badges']]},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['.nav-r','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
    {l:'wide',y:1500,k:'Laboratory',t:'Price list & turnaround'},
    {l:'duo',y:900,y2:2600,k:'Sections',t:'Departments & team'},
    {l:'stack',k:'Conversion',t:'How it works',sels:[['.steps','Three-step process'],['.bform','Booking form']]}
  ]},
  construction:{file:'demo-construction.html',theme:'construction',slides:[
    {l:'cover',y:0,k:'Website design',t:'Construction company',s:'Projects · Written quotes in 24h'},
-   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['.nav-r','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
    {l:'wide',y:1000,k:'Services',t:'Prices per m²'},
    {l:'duo',y:1900,y2:2900,k:'Sections',t:'Projects & process'},
    {l:'stack',k:'Conversion',t:'Guarantees & quote',sels:[['.guarantee','Guarantee bar'],['.bform','Estimate form']]}
  ]},
  restaurant:{file:'demo-restaurant.html',theme:'restaurant',slides:[
    {l:'cover',y:0,k:'Website design',t:'Restaurant',s:'Menu · Table booking · 3 languages'},
-   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['.nav-right','Navigation & language switch'],['.hero-inner','Hero & call to action']]},
    {l:'wide',y:1500,k:'The menu',t:'Dishes & prices'},
    {l:'duo',y:900,y2:2400,k:'Sections',t:'Story & gallery'},
-   {l:'stack',k:'Conversion',t:'Reservations',sels:[['form','Table booking form'],['.contact-grid','Contact details']]}
+   {l:'stack',k:'Conversion',t:'Reservations',sels:[['#resForm','Table booking form'],['.contact-grid','Contact details']]}
  ]},
  villa:{file:'demo-villa.html',theme:'villa',slides:[
    {l:'cover',y:0,k:'Website design',t:'Mountain villa',s:'Direct booking · Calendar sync'},
-   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['.nav-r','Navigation & language switch'],['.hero-in','Hero & call to action']]},
    {l:'wide',y:1500,k:'Amenities',t:'What guests get'},
    {l:'duo',y:800,y2:2300,k:'Sections',t:'Story & gallery'},
    {l:'stack',k:'Conversion',t:'Direct booking',sels:[['.bform','Booking form'],['.strip','Key numbers']]}
@@ -158,18 +158,19 @@ function scrollTo(f,y){
 }
 function cropTo(f,card,sel){
   const d=f.contentDocument, el=d.querySelector(sel);
-  if(!el){card.style.height='120px';return;}
+  if(!el){card.style.height='110px';return;}
+  el.scrollIntoView({block:'center'});
+  const isNav=/nav/.test(sel);
+  if(!isNav){const nv=d.querySelector('nav'); if(nv) nv.style.visibility='hidden';}
   const r=el.getBoundingClientRect();
-  const top=r.top+d.documentElement.scrollTop, left=r.left+d.documentElement.scrollLeft;
-  const pad=22, cw=r.width+pad*2, chh=r.height+pad*2;
-  const W=card.clientWidth, k=W/cw;
-  const maxH=sl.sels.length>1?200:400;
+  const pad=20, cw=r.width+pad*2, chh=r.height+pad*2;
+  const W=card.clientWidth;
+  const k=Math.min(W/cw,1.55);
+  const maxH=sl.sels.length>1?196:380;
   card.style.height=Math.min(chh*k,maxH)+'px';
-  f.style.width=d.documentElement.scrollWidth+'px';
-  f.style.height=(top+chh+400)+'px';
   f.style.transform=`scale(${k})`;
-  f.style.left=`${-(left-pad)*k}px`;
-  f.style.top=`${-(top-pad)*k}px`;
+  f.style.left=`${-(r.left-pad)*k}px`;
+  f.style.top=`${-(r.top-pad)*k}px`;
 }
 S.slides;
 [0,1].forEach(i=>{
@@ -177,7 +178,7 @@ S.slides;
   f.onload=()=>{try{
     const d=f.contentDocument; clean(d);
     if(sl.l==='stack'){
-      f.style.width='1280px'; f.style.height='3000px'; f.style.transform='scale(1)';
+      f.style.width='1280px'; f.style.height='860px'; f.style.transform='scale(1)';
       setTimeout(()=>cropTo(f,document.getElementById('c'+i),sl.sels[i][0]),260);
       setTimeout(()=>cropTo(f,document.getElementById('c'+i),sl.sels[i][0]),900);
     }else{
