@@ -2,138 +2,189 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IG Case Study Post</title>
+<title>Case Study Slide</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Prata&family=Space+Grotesk:wght@400;500;600;700&family=Anton&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:#000;display:flex;justify-content:center;padding:10px}
   .post{width:540px;height:675px;position:relative;overflow:hidden;
     background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif}
-
-  /* soft brand wash — subtle, not a gradient poster */
-  .wash{position:absolute;width:760px;height:760px;border-radius:50%;
-    background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:.10;
-    top:-330px;right:-300px;pointer-events:none}
-  .rule{position:absolute;left:40px;right:40px;top:112px;height:1px;background:var(--line);opacity:.55}
-
+  .wash{position:absolute;width:760px;height:760px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:.09;top:-340px;right:-300px}
+  .mark{position:absolute;top:38px;right:38px;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:11.5px;letter-spacing:.22em;color:var(--ink);opacity:.5;z-index:9}
+  .head{position:absolute;top:38px;left:38px;right:120px;z-index:9}
   .lab{font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);font-weight:600}
-  .mark{position:absolute;top:40px;right:40px;font-family:'Space Grotesk',sans-serif;font-weight:700;
-    font-size:12px;letter-spacing:.2em;color:var(--ink);opacity:.55;z-index:6}
-  .head{position:absolute;top:40px;left:40px;z-index:6}
-  .head h1{font-family:var(--disp);font-weight:var(--dw);font-size:36px;line-height:1.02;margin-top:9px;
+  .head h1{font-family:var(--disp);font-weight:var(--dw);font-size:34px;line-height:1.03;margin-top:9px;
     letter-spacing:var(--dls);text-transform:var(--dtt)}
-  .head .sub{font-size:11.5px;color:var(--muted);margin-top:9px;letter-spacing:.02em}
+  .post:not(.cover) .head h1{font-size:25px}
+  .head .sub{font-size:11.5px;color:var(--muted);margin-top:9px}
+  .num{position:absolute;bottom:28px;right:38px;font-size:10px;letter-spacing:.2em;color:var(--muted);z-index:9}
+  .rule{position:absolute;left:38px;right:38px;height:1px;background:var(--line);opacity:.6}
 
-  .foot{position:absolute;bottom:30px;left:40px;right:40px;display:flex;justify-content:space-between;
-    align-items:center;z-index:6;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-  .foot b{color:var(--ink);font-weight:600}
-
-  /* ---- phone ---- */
   .phone{position:absolute;border-radius:34px;background:var(--ink);padding:7px;
-    box-shadow:0 44px 70px -24px rgba(0,0,0,.42), 0 8px 22px rgba(0,0,0,.14)}
-  .phone .scr{position:relative;width:100%;height:100%;border-radius:28px;overflow:hidden;background:#fff}
-  .phone .dyn{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:62px;height:15px;
-    background:var(--ink);border-radius:99px;z-index:4;opacity:.92}
-  .phone iframe{border:0;transform-origin:0 0;pointer-events:none}
+    box-shadow:0 44px 66px -26px rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.12)}
+  .phone .scr{position:relative;width:100%;border-radius:28px;overflow:hidden;background:#fff}
+  .phone .dyn{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:58px;height:14px;
+    background:var(--ink);border-radius:99px;z-index:4;opacity:.9}
+  .phone iframe,.card iframe,.vp iframe{border:0;transform-origin:0 0;pointer-events:none;position:absolute}
 
-  /* cover: phone bleeds off bottom */
-  .cover .phone{width:284px;height:470px;left:50%;transform:translateX(-50%);top:205px}
+  .cover .phone{width:284px;left:50%;transform:translateX(-50%);top:205px}
   .cover .phone .scr{height:463px}
   .cover .phone iframe{width:390px;height:980px;transform:scale(.6923)}
-  .post:not(.cover) .head h1{font-size:26px}
 
-  /* portrait: tall phone, more of the page */
-  .portrait .phone{width:268px;height:500px;left:50%;transform:translateX(-50%);top:150px}
-  .portrait .phone .scr{height:486px}
-  .portrait .phone iframe{width:390px;height:1000px;transform:scale(.6513)}
+  .duo .p1{width:206px;left:38px;top:200px}
+  .duo .p1 .scr{height:372px}
+  .duo .p2{width:206px;right:38px;top:252px}
+  .duo .p2 .scr{height:372px}
+  .duo .phone iframe{width:390px;height:800px;transform:scale(.4923)}
 
-  /* wide: desktop card */
-  .wide .browser{position:absolute;left:34px;right:34px;top:190px;border-radius:12px;overflow:hidden;
-    background:#fff;box-shadow:0 40px 66px -26px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.12)}
-  .wide .bar{height:24px;background:var(--ink);display:flex;align-items:center;gap:5px;padding:0 10px;opacity:.92}
-  .wide .bar i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
-  .wide .vp{height:295px;overflow:hidden;position:relative;background:#fff}
-  .wide .vp iframe{width:1280px;height:900px;border:0;transform-origin:0 0;transform:scale(.3641);pointer-events:none}
+  .browser{position:absolute;left:34px;right:34px;top:190px;border-radius:12px;overflow:hidden;background:#fff;
+    box-shadow:0 40px 62px -28px rgba(0,0,0,.38),0 6px 16px rgba(0,0,0,.1)}
+  .bar{height:24px;background:var(--ink);opacity:.92;display:flex;align-items:center;gap:5px;padding:0 11px}
+  .bar i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.34)}
+  .vp{height:300px;overflow:hidden;position:relative;background:#fff}
+  .vp iframe{width:1280px;height:1000px;transform:scale(.3703)}
 
-  /* duo: two phones, staggered */
-  .duo .p1{width:214px;height:392px;left:34px;top:196px}
-  .duo .p1 .scr{height:378px}
-  .duo .p1 iframe{width:390px;height:760px;transform:scale(.5128)}
-  .duo .p2{width:214px;height:392px;right:34px;top:244px}
-  .duo .p2 .scr{height:378px}
-  .duo .p2 iframe{width:390px;height:760px;transform:scale(.5128)}
+  /* UI detail cards */
+  .stack{position:absolute;left:38px;right:38px;top:172px}
+  .cap{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);
+    font-weight:600;margin:0 0 9px 2px}
+  .card{position:relative;overflow:hidden;border-radius:10px;background:#fff;margin-bottom:22px;
+    box-shadow:0 20px 34px -18px rgba(0,0,0,.3),0 3px 10px rgba(0,0,0,.07)}
 </style>
 </head>
 <body>
 <div class="post" id="post"></div>
 <script>
 const THEMES={
- dental:{bg:'#f6f3ee',ink:'#1a1713',accent:'#a3763f',muted:'#8b8172',line:'#ded5c7',
-   disp:"'Fraunces',serif",dw:400,dls:'-.01em',dtt:'none'},
- beauty:{bg:'#faf5f0',ink:'#241b1b',accent:'#b76e79',muted:'#9a8289',line:'#ecdcd6',
-   disp:"'Prata',serif",dw:400,dls:'0',dtt:'none'},
- clinic:{bg:'#f5f9fa',ink:'#0c1f2c',accent:'#0e9e94',muted:'#7c8f99',line:'#d9e6ea',
-   disp:"'Space Grotesk',sans-serif",dw:600,dls:'-.02em',dtt:'none'},
- construction:{bg:'#14171c',ink:'#ffffff',accent:'#f26a1b',muted:'#8b93a1',line:'#2b303a',
-   disp:"'Anton',sans-serif",dw:400,dls:'.01em',dtt:'uppercase'},
- restaurant:{bg:'#faf6f0',ink:'#1a1512',accent:'#c8963e',muted:'#8a7f72',line:'#e8dfd1',
-   disp:"'Playfair Display',serif",dw:600,dls:'-.01em',dtt:'none'},
- villa:{bg:'#f4f1ec',ink:'#171512',accent:'#a3763f',muted:'#867d70',line:'#ded6c9',
-   disp:"'Cormorant Garamond',serif",dw:600,dls:'0',dtt:'none'}
+ dental:{bg:'#f6f3ee',ink:'#1a1713',accent:'#a3763f',muted:'#8b8172',line:'#ded5c7',disp:"'Fraunces',serif",dw:400,dls:'-.01em',dtt:'none'},
+ beauty:{bg:'#faf5f0',ink:'#241b1b',accent:'#b76e79',muted:'#9a8289',line:'#ecdcd6',disp:"'Prata',serif",dw:400,dls:'0',dtt:'none'},
+ clinic:{bg:'#f5f9fa',ink:'#0c1f2c',accent:'#0e9e94',muted:'#7c8f99',line:'#d9e6ea',disp:"'Space Grotesk',sans-serif",dw:600,dls:'-.02em',dtt:'none'},
+ construction:{bg:'#14171c',ink:'#ffffff',accent:'#f26a1b',muted:'#8b93a1',line:'#2b303a',disp:"'Anton',sans-serif",dw:400,dls:'.01em',dtt:'uppercase'},
+ restaurant:{bg:'#faf6f0',ink:'#1a1512',accent:'#c8963e',muted:'#8a7f72',line:'#e8dfd1',disp:"'Playfair Display',serif",dw:600,dls:'-.01em',dtt:'none'},
+ villa:{bg:'#f4f1ec',ink:'#171512',accent:'#a3763f',muted:'#867d70',line:'#ded6c9',disp:"'Cormorant Garamond',serif",dw:600,dls:'0',dtt:'none'}
+};
+
+const SITES={
+ dental:{file:'demo-dental.html',theme:'dental',slides:[
+   {l:'cover',y:0,k:'Website design',t:'Dental clinic',s:'Online booking · Reminders · 3 languages'},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'wide',y:1250,k:'Services',t:'Every price, clearly listed'},
+   {l:'duo',y:2300,y2:4250,k:'Sections',t:'Practitioner & studio'},
+   {l:'stack',k:'Conversion',t:'Questions & booking',sels:[['.faq','Expandable questions'],['.bform','Booking form']]}
+ ]},
+ beauty:{file:'demo-beauty.html',theme:'beauty',slides:[
+   {l:'cover',y:0,k:'Website design',t:'Beauty salon',s:'Price menu · 24/7 booking · Reminders'},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'wide',y:1150,k:'The menu',t:'Services & prices'},
+   {l:'duo',y:2200,y2:3100,k:'Sections',t:'Atelier & promise'},
+   {l:'stack',k:'Conversion',t:'Reservation',sels:[['.proms','Why clients stay'],['.bform','Reservation form']]}
+ ]},
+ clinic:{file:'demo-clinic.html',theme:'clinic',slides:[
+   {l:'cover',y:0,k:'Website design',t:'Clinic & laboratory',s:'Appointments · Lab results in 24h'},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.badge-row','Trust badges']]},
+   {l:'wide',y:1500,k:'Laboratory',t:'Price list & turnaround'},
+   {l:'duo',y:900,y2:2600,k:'Sections',t:'Departments & team'},
+   {l:'stack',k:'Conversion',t:'How it works',sels:[['.steps','Three-step process'],['.bform','Booking form']]}
+ ]},
+ construction:{file:'demo-construction.html',theme:'construction',slides:[
+   {l:'cover',y:0,k:'Website design',t:'Construction company',s:'Projects · Written quotes in 24h'},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'wide',y:1000,k:'Services',t:'Prices per m²'},
+   {l:'duo',y:1900,y2:2900,k:'Sections',t:'Projects & process'},
+   {l:'stack',k:'Conversion',t:'Guarantees & quote',sels:[['.guarantee','Guarantee bar'],['.bform','Estimate form']]}
+ ]},
+ restaurant:{file:'demo-restaurant.html',theme:'restaurant',slides:[
+   {l:'cover',y:0,k:'Website design',t:'Restaurant',s:'Menu · Table booking · 3 languages'},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'wide',y:1500,k:'The menu',t:'Dishes & prices'},
+   {l:'duo',y:900,y2:2400,k:'Sections',t:'Story & gallery'},
+   {l:'stack',k:'Conversion',t:'Reservations',sels:[['form','Table booking form'],['.contact-grid','Contact details']]}
+ ]},
+ villa:{file:'demo-villa.html',theme:'villa',slides:[
+   {l:'cover',y:0,k:'Website design',t:'Mountain villa',s:'Direct booking · Calendar sync'},
+   {l:'stack',k:'Interface',t:'Menu & buttons',sels:[['nav','Navigation & language switch'],['.cta-row','Call-to-action buttons']]},
+   {l:'wide',y:1500,k:'Amenities',t:'What guests get'},
+   {l:'duo',y:800,y2:2300,k:'Sections',t:'Story & gallery'},
+   {l:'stack',k:'Conversion',t:'Direct booking',sels:[['.bform','Booking form'],['.strip','Key numbers']]}
+ ]}
 };
 
 const q=new URLSearchParams(location.search);
-const site=q.get('site')||'demo-dental.html';
-const th=THEMES[q.get('theme')||'dental'];
-const layout=q.get('layout')||'cover';
-const y=parseInt(q.get('y')||'0');
-const y2=parseInt(q.get('y2')||'0');
-const title=q.get('t')||'Dental clinic';
-const kick=q.get('k')||'Website design';
-const sub=q.get('s')||'';
-const n=q.get('n')||'01 / 04';
-const cta=q.get('cta')||'DM “EXAMPLE”';
-
+const key=q.get('s')||'dental';
+const idx=parseInt(q.get('i')||'0');
+const S=SITES[key], sl=S.slides[idx], th=THEMES[S.theme];
 const post=document.getElementById('post');
-post.className='post '+layout;
-const r=post.style;
-r.setProperty('--bg',th.bg); r.setProperty('--ink',th.ink); r.setProperty('--accent',th.accent);
-r.setProperty('--muted',th.muted); r.setProperty('--line',th.line);
-r.setProperty('--disp',th.disp); r.setProperty('--dw',th.dw);
-r.setProperty('--dls',th.dls); r.setProperty('--dtt',th.dtt);
+post.className='post '+sl.l;
+const st=post.style;
+st.setProperty('--bg',th.bg);st.setProperty('--ink',th.ink);st.setProperty('--accent',th.accent);
+st.setProperty('--muted',th.muted);st.setProperty('--line',th.line);
+st.setProperty('--disp',th.disp);st.setProperty('--dw',th.dw);
+st.setProperty('--dls',th.dls);st.setProperty('--dtt',th.dtt);
 
-const phone=(id,src)=>`<div class="phone ${id}" ${id?'':''}><div class="scr"><span class="dyn"></span>
-   <iframe id="${id||'ifr'}" src="${src}" scrolling="no"></iframe></div></div>`;
+let h=`<div class="wash"></div><div class="mark">OKTO</div>
+ <div class="head"><div class="lab">${sl.k}</div><h1>${sl.t}</h1>${sl.s?`<div class="sub">${sl.s}</div>`:''}</div>
+ <div class="num">${String(idx+1).padStart(2,'0')} / ${String(S.slides.length).padStart(2,'0')}</div>`;
 
-let body=`<div class="wash"></div>
-  <div class="mark">OKTO</div>
-  <div class="head"><div class="lab">${kick}</div><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
-
-if(layout==='cover'){ body+=`<div class="rule" style="top:150px"></div>`+phone('ifr',site); }
-else if(layout==='portrait'){ body+=phone('ifr',site); }
-else if(layout==='wide'){
-  body+=`<div class="browser"><div class="bar"><i></i><i></i><i></i></div>
-    <div class="vp"><iframe id="ifr" src="${site}" scrolling="no"></iframe></div></div>`;
-}else if(layout==='duo'){
-  body+=`<div class="phone p1"><div class="scr"><span class="dyn"></span><iframe id="ifr" src="${site}" scrolling="no"></iframe></div></div>
-         <div class="phone p2"><div class="scr"><span class="dyn"></span><iframe id="ifr2" src="${site}" scrolling="no"></iframe></div></div>`;
+const F=S.file;
+if(sl.l==='cover'){
+  h+=`<div class="rule" style="top:150px"></div>
+   <div class="phone"><div class="scr"><span class="dyn"></span><iframe id="f0" src="${F}" scrolling="no"></iframe></div></div>`;
+}else if(sl.l==='duo'){
+  h+=`<div class="phone p1"><div class="scr"><span class="dyn"></span><iframe id="f0" src="${F}" scrolling="no"></iframe></div></div>
+      <div class="phone p2"><div class="scr"><span class="dyn"></span><iframe id="f1" src="${F}" scrolling="no"></iframe></div></div>`;
+}else if(sl.l==='wide'){
+  h+=`<div class="browser"><div class="bar"><i></i><i></i><i></i></div>
+      <div class="vp"><iframe id="f0" src="${F}" scrolling="no"></iframe></div></div>`;
+}else if(sl.l==='stack'){
+  h+=`<div class="stack">`+sl.sels.map((s,i)=>
+    `<div class="cap">${s[1]}</div><div class="card" id="c${i}"><iframe id="f${i}" src="${F}" scrolling="no"></iframe></div>`).join('')+`</div>`;
 }
-body+=`<div class="foot"><b>${cta}</b><span>${n}</span></div>`;
-post.innerHTML=body;
+post.innerHTML=h;
 
-function prep(frame,scroll){
-  frame.onload=()=>{try{
-    const d=frame.contentDocument;
-    d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,footer,.foot,.fnote').forEach(e=>e.remove());
-    d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
-    const go=()=>{d.documentElement.style.scrollBehavior='auto';
-      if(scroll>0){const nv=d.querySelector('nav'); if(nv) nv.style.position='static';}
-      d.documentElement.scrollTop=scroll; d.body.scrollTop=scroll;};
-    go(); setTimeout(go,300); setTimeout(go,900);
+function clean(d){
+  d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,footer,.foot,.fnote').forEach(e=>e.remove());
+  d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
+  // never show the site's own name
+  d.querySelectorAll('.wordmark,.logo,.brand').forEach(e=>e.style.visibility='hidden');
+}
+function scrollTo(f,y){
+  const d=f.contentDocument;
+  const go=()=>{d.documentElement.style.scrollBehavior='auto';
+    if(y>0){const nv=d.querySelector('nav'); if(nv) nv.style.position='static';}
+    d.documentElement.scrollTop=y; d.body.scrollTop=y;};
+  go(); setTimeout(go,300); setTimeout(go,900);
+}
+function cropTo(f,card,sel){
+  const d=f.contentDocument, el=d.querySelector(sel);
+  if(!el){card.style.height='120px';return;}
+  const r=el.getBoundingClientRect();
+  const top=r.top+d.documentElement.scrollTop, left=r.left+d.documentElement.scrollLeft;
+  const pad=22, cw=r.width+pad*2, chh=r.height+pad*2;
+  const W=card.clientWidth, k=W/cw;
+  const maxH=sl.sels.length>1?200:400;
+  card.style.height=Math.min(chh*k,maxH)+'px';
+  f.style.width=d.documentElement.scrollWidth+'px';
+  f.style.height=(top+chh+400)+'px';
+  f.style.transform=`scale(${k})`;
+  f.style.left=`${-(left-pad)*k}px`;
+  f.style.top=`${-(top-pad)*k}px`;
+}
+S.slides;
+[0,1].forEach(i=>{
+  const f=document.getElementById('f'+i); if(!f) return;
+  f.onload=()=>{try{
+    const d=f.contentDocument; clean(d);
+    if(sl.l==='stack'){
+      f.style.width='1280px'; f.style.height='3000px'; f.style.transform='scale(1)';
+      setTimeout(()=>cropTo(f,document.getElementById('c'+i),sl.sels[i][0]),260);
+      setTimeout(()=>cropTo(f,document.getElementById('c'+i),sl.sels[i][0]),900);
+    }else{
+      scrollTo(f, i===0?(sl.y||0):(sl.y2||0));
+    }
   }catch(e){}};
-}
-prep(document.getElementById('ifr'),y);
-const f2=document.getElementById('ifr2'); if(f2) prep(f2,y2);
+});
 </script>
 </body>
 </html>
