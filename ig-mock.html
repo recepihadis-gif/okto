@@ -2,64 +2,137 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IG Mockup Post</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<title>IG Case Study Post</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Prata&family=Space+Grotesk:wght@400;500;600;700&family=Anton&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:#000;display:flex;justify-content:center;padding:10px}
-  /* 4:5 post */
   .post{width:540px;height:675px;position:relative;overflow:hidden;
-    background:radial-gradient(90% 70% at 80% 0%,rgba(124,108,255,.45),transparent 60%),
-      radial-gradient(70% 60% at 0% 100%,rgba(56,212,195,.28),transparent 60%),#0b1020;
-    font-family:'Inter',sans-serif;color:#fff}
-  .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:36px 36px}
-  .top{position:absolute;top:26px;left:30px;right:30px;display:flex;justify-content:space-between;align-items:flex-start;z-index:5}
-  .kick{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7ee0d3;font-weight:600;margin-bottom:6px}
-  .title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;line-height:1.1}
-  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.12em;
-    display:flex;align-items:center;gap:6px;color:#fff;opacity:.9}
-  .brand i{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#7c6cff,#38d4c3);display:inline-block}
-  /* phone */
-  .phone{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:240px;height:600px;
-    background:#0a0d16;border-radius:42px;border:3px solid #2a3350;box-shadow:0 40px 90px rgba(0,0,0,.7),0 0 0 1px #05070c;overflow:hidden}
-  .phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:92px;height:24px;
-    background:#0a0d16;border-radius:99px;z-index:4}
-  .phone .scr{position:absolute;inset:6px;border-radius:36px;overflow:hidden;background:#fff}
-  .phone iframe{width:390px;height:1040px;border:0;transform-origin:0 0;transform:scale(0.5846);pointer-events:none}
-  .bottom{position:absolute;bottom:22px;left:22px;right:22px;display:flex;justify-content:space-between;align-items:flex-end;z-index:5}
-  .cta{font-size:9.5px;padding:7px 10px;letter-spacing:.1em}
-  .cta{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#fff;
-    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);padding:8px 14px;border-radius:99px}
-  .n{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.5)}
+    background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif}
+
+  /* soft brand wash — subtle, not a gradient poster */
+  .wash{position:absolute;width:760px;height:760px;border-radius:50%;
+    background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:.10;
+    top:-330px;right:-300px;pointer-events:none}
+  .rule{position:absolute;left:40px;right:40px;top:112px;height:1px;background:var(--line);opacity:.55}
+
+  .lab{font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .mark{position:absolute;top:40px;right:40px;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:12px;letter-spacing:.2em;color:var(--ink);opacity:.55;z-index:6}
+  .head{position:absolute;top:40px;left:40px;z-index:6}
+  .head h1{font-family:var(--disp);font-weight:var(--dw);font-size:36px;line-height:1.02;margin-top:9px;
+    letter-spacing:var(--dls);text-transform:var(--dtt)}
+  .head .sub{font-size:11.5px;color:var(--muted);margin-top:9px;letter-spacing:.02em}
+
+  .foot{position:absolute;bottom:30px;left:40px;right:40px;display:flex;justify-content:space-between;
+    align-items:center;z-index:6;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .foot b{color:var(--ink);font-weight:600}
+
+  /* ---- phone ---- */
+  .phone{position:absolute;border-radius:34px;background:var(--ink);padding:7px;
+    box-shadow:0 44px 70px -24px rgba(0,0,0,.42), 0 8px 22px rgba(0,0,0,.14)}
+  .phone .scr{position:relative;width:100%;height:100%;border-radius:28px;overflow:hidden;background:#fff}
+  .phone .dyn{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:62px;height:15px;
+    background:var(--ink);border-radius:99px;z-index:4;opacity:.92}
+  .phone iframe{border:0;transform-origin:0 0;pointer-events:none}
+
+  /* cover: phone bleeds off bottom */
+  .cover .phone{width:262px;height:430px;left:50%;transform:translateX(-50%);top:268px}
+  .cover .phone .scr{height:423px}
+  .cover .phone iframe{width:390px;height:900px;transform:scale(.6359)}
+
+  /* portrait: tall phone, more of the page */
+  .portrait .phone{width:268px;height:500px;left:50%;transform:translateX(-50%);top:150px}
+  .portrait .phone .scr{height:486px}
+  .portrait .phone iframe{width:390px;height:1000px;transform:scale(.6513)}
+
+  /* wide: desktop card */
+  .wide .browser{position:absolute;left:34px;right:34px;top:190px;border-radius:12px;overflow:hidden;
+    background:#fff;box-shadow:0 40px 66px -26px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.12)}
+  .wide .bar{height:24px;background:var(--ink);display:flex;align-items:center;gap:5px;padding:0 10px;opacity:.92}
+  .wide .bar i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
+  .wide .vp{height:295px;overflow:hidden;position:relative;background:#fff}
+  .wide .vp iframe{width:1280px;height:900px;border:0;transform-origin:0 0;transform:scale(.3641);pointer-events:none}
+
+  /* duo: two phones, staggered */
+  .duo .p1{width:214px;height:392px;left:34px;top:196px}
+  .duo .p1 .scr{height:378px}
+  .duo .p1 iframe{width:390px;height:760px;transform:scale(.5128)}
+  .duo .p2{width:214px;height:392px;right:34px;top:244px}
+  .duo .p2 .scr{height:378px}
+  .duo .p2 iframe{width:390px;height:760px;transform:scale(.5128)}
 </style>
 </head>
 <body>
-<div class="post">
-  <div class="grid"></div>
-  <div class="top">
-    <div><div class="kick" id="kick">Website</div><div class="title" id="title">Dental clinic</div></div>
-    <div class="brand"><i></i>OKTO</div>
-  </div>
-  <div class="phone"><span class="notch"></span><div class="scr"><iframe id="ifr" scrolling="no"></iframe></div></div>
-  <div class="bottom"><span class="cta" id="cta">📩 DM “EXAMPLE”</span><span class="n" id="n">01 / 04</span></div>
-</div>
+<div class="post" id="post"></div>
 <script>
-const p=new URLSearchParams(location.search);
-const site=p.get('site')||'demo-dental.html', y=parseInt(p.get('y')||'0');
-document.getElementById('title').textContent=p.get('t')||'Dental clinic';
-document.getElementById('kick').textContent=p.get('k')||'Website';
-document.getElementById('n').textContent=p.get('n')||'01 / 04';
-const ifr=document.getElementById('ifr'); ifr.src=site;
-ifr.onload=()=>{try{
-  const d=ifr.contentDocument;
-  d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,footer,.foot,.fnote').forEach(e=>e.remove());
-  d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
-  const go=()=>{d.documentElement.style.scrollBehavior='auto';
-    if(y>0){const nv=d.querySelector('nav'); if(nv) nv.style.position='static';}
-    d.documentElement.scrollTop=y; d.body.scrollTop=y;};
-  go(); setTimeout(go,300); setTimeout(go,800);
-}catch(e){}};
+const THEMES={
+ dental:{bg:'#f6f3ee',ink:'#1a1713',accent:'#a3763f',muted:'#8b8172',line:'#ded5c7',
+   disp:"'Fraunces',serif",dw:400,dls:'-.01em',dtt:'none'},
+ beauty:{bg:'#faf5f0',ink:'#241b1b',accent:'#b76e79',muted:'#9a8289',line:'#ecdcd6',
+   disp:"'Prata',serif",dw:400,dls:'0',dtt:'none'},
+ clinic:{bg:'#f5f9fa',ink:'#0c1f2c',accent:'#0e9e94',muted:'#7c8f99',line:'#d9e6ea',
+   disp:"'Space Grotesk',sans-serif",dw:600,dls:'-.02em',dtt:'none'},
+ construction:{bg:'#14171c',ink:'#ffffff',accent:'#f26a1b',muted:'#8b93a1',line:'#2b303a',
+   disp:"'Anton',sans-serif",dw:400,dls:'.01em',dtt:'uppercase'},
+ restaurant:{bg:'#faf6f0',ink:'#1a1512',accent:'#c8963e',muted:'#8a7f72',line:'#e8dfd1',
+   disp:"'Playfair Display',serif",dw:600,dls:'-.01em',dtt:'none'},
+ villa:{bg:'#f4f1ec',ink:'#171512',accent:'#a3763f',muted:'#867d70',line:'#ded6c9',
+   disp:"'Cormorant Garamond',serif",dw:600,dls:'0',dtt:'none'}
+};
+
+const q=new URLSearchParams(location.search);
+const site=q.get('site')||'demo-dental.html';
+const th=THEMES[q.get('theme')||'dental'];
+const layout=q.get('layout')||'cover';
+const y=parseInt(q.get('y')||'0');
+const y2=parseInt(q.get('y2')||'0');
+const title=q.get('t')||'Dental clinic';
+const kick=q.get('k')||'Website design';
+const sub=q.get('s')||'';
+const n=q.get('n')||'01 / 04';
+const cta=q.get('cta')||'DM “EXAMPLE”';
+
+const post=document.getElementById('post');
+post.className='post '+layout;
+const r=post.style;
+r.setProperty('--bg',th.bg); r.setProperty('--ink',th.ink); r.setProperty('--accent',th.accent);
+r.setProperty('--muted',th.muted); r.setProperty('--line',th.line);
+r.setProperty('--disp',th.disp); r.setProperty('--dw',th.dw);
+r.setProperty('--dls',th.dls); r.setProperty('--dtt',th.dtt);
+
+const phone=(id,src)=>`<div class="phone ${id}" ${id?'':''}><div class="scr"><span class="dyn"></span>
+   <iframe id="${id||'ifr'}" src="${src}" scrolling="no"></iframe></div></div>`;
+
+let body=`<div class="wash"></div>
+  <div class="mark">OKTO</div>
+  <div class="head"><div class="lab">${kick}</div><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
+
+if(layout==='cover'){ body+=`<div class="rule" style="top:150px"></div>`+phone('ifr',site); }
+else if(layout==='portrait'){ body+=phone('ifr',site); }
+else if(layout==='wide'){
+  body+=`<div class="browser"><div class="bar"><i></i><i></i><i></i></div>
+    <div class="vp"><iframe id="ifr" src="${site}" scrolling="no"></iframe></div></div>`;
+}else if(layout==='duo'){
+  body+=`<div class="phone p1"><div class="scr"><span class="dyn"></span><iframe id="ifr" src="${site}" scrolling="no"></iframe></div></div>
+         <div class="phone p2"><div class="scr"><span class="dyn"></span><iframe id="ifr2" src="${site}" scrolling="no"></iframe></div></div>`;
+}
+body+=`<div class="foot"><b>${cta}</b><span>${n}</span></div>`;
+post.innerHTML=body;
+
+function prep(frame,scroll){
+  frame.onload=()=>{try{
+    const d=frame.contentDocument;
+    d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,footer,.foot,.fnote').forEach(e=>e.remove());
+    d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
+    const go=()=>{d.documentElement.style.scrollBehavior='auto';
+      if(scroll>0){const nv=d.querySelector('nav'); if(nv) nv.style.position='static';}
+      d.documentElement.scrollTop=scroll; d.body.scrollTop=scroll;};
+    go(); setTimeout(go,300); setTimeout(go,900);
+  }catch(e){}};
+}
+prep(document.getElementById('ifr'),y);
+const f2=document.getElementById('ifr2'); if(f2) prep(f2,y2);
 </script>
 </body>
 </html>
