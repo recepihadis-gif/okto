@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IG Mockup Post</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;display:flex;justify-content:center;padding:10px}
+  /* 4:5 post */
+  .post{width:540px;height:675px;position:relative;overflow:hidden;
+    background:radial-gradient(90% 70% at 80% 0%,rgba(124,108,255,.45),transparent 60%),
+      radial-gradient(70% 60% at 0% 100%,rgba(56,212,195,.28),transparent 60%),#0b1020;
+    font-family:'Inter',sans-serif;color:#fff}
+  .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:36px 36px}
+  .top{position:absolute;top:26px;left:30px;right:30px;display:flex;justify-content:space-between;align-items:flex-start;z-index:5}
+  .kick{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7ee0d3;font-weight:600;margin-bottom:6px}
+  .title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;line-height:1.1}
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.12em;
+    display:flex;align-items:center;gap:6px;color:#fff;opacity:.9}
+  .brand i{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#7c6cff,#38d4c3);display:inline-block}
+  /* phone */
+  .phone{position:absolute;left:50%;top:104px;transform:translateX(-50%);width:296px;height:600px;
+    background:#0a0d16;border-radius:42px;border:3px solid #2a3350;box-shadow:0 40px 90px rgba(0,0,0,.7),0 0 0 1px #05070c;overflow:hidden}
+  .phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:92px;height:24px;
+    background:#0a0d16;border-radius:99px;z-index:4}
+  .phone .scr{position:absolute;inset:6px;border-radius:36px;overflow:hidden;background:#fff}
+  .phone iframe{width:390px;height:780px;border:0;transform-origin:0 0;transform:scale(0.7282);pointer-events:none}
+  .bottom{position:absolute;bottom:22px;left:30px;right:30px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+  .cta{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#fff;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);padding:8px 14px;border-radius:99px}
+  .n{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+<div class="post">
+  <div class="grid"></div>
+  <div class="top">
+    <div><div class="kick" id="kick">Website</div><div class="title" id="title">Dental clinic</div></div>
+    <div class="brand"><i></i>OKTO</div>
+  </div>
+  <div class="phone"><span class="notch"></span><div class="scr"><iframe id="ifr" scrolling="no"></iframe></div></div>
+  <div class="bottom"><span class="cta" id="cta">📩 DM “EXAMPLE”</span><span class="n" id="n">01 / 04</span></div>
+</div>
+<script>
+const p=new URLSearchParams(location.search);
+const site=p.get('site')||'demo-dental.html', y=parseInt(p.get('y')||'0');
+document.getElementById('title').textContent=p.get('t')||'Dental clinic';
+document.getElementById('kick').textContent=p.get('k')||'Website';
+document.getElementById('n').textContent=p.get('n')||'01 / 04';
+const ifr=document.getElementById('ifr'); ifr.src=site;
+ifr.onload=()=>{try{
+  const d=ifr.contentDocument;
+  d.querySelectorAll('.explain,.demo-b,.demo-badge,.demo-tag,footer,.foot,.fnote').forEach(e=>e.remove());
+  d.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));
+  const go=()=>{d.documentElement.style.scrollBehavior='auto';
+    if(y>0){const nv=d.querySelector('nav'); if(nv) nv.style.position='static';}
+    d.documentElement.scrollTop=y; d.body.scrollTop=y;};
+  go(); setTimeout(go,300); setTimeout(go,800);
+}catch(e){}};
+</script>
+</body>
+</html>
